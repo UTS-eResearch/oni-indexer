@@ -1,0 +1,104 @@
+{
+  "@context": {
+    "path": "https://schema.org/contentUrl",
+    "name": "https://schema.org/name",
+    "description": "https://schema.org/description",
+    "dateCreated": "https://schema.org/dateCreated",
+    "datePublished": "https://schema.org/datePublished",
+    "publisher": "https://schema.org/publisher",
+    "hasPart": "https://schema.org/hasPart",
+    "creator": "https://schema.org/creator",
+    "keywords": "https://schema.org/keywords",
+    "about": "https://schema.org/about",
+    "funder": "https://schema.org/funder",
+    "citation": "https://schema.org/citation",
+    "identifier": "https://schema.org/identifier",
+    "familyName": "https://schema.org/familyName",
+    "givenName": "https://schema.org/givenName",
+    "email": "https://schema.org/email",
+    "affiliation": "https://schema.org/affiliation",
+    "endTime": "https://schema.org/endTime",
+    "object": "https://schema.org/object",
+    "agent": "https://schema.org/agent",
+    "Dataset": "https://schema.org/Dataset",
+    "Organization": "https://schema.org/Organization",
+    "Person": "https://schema.org/Person",
+    "CreateAction": "https://schema.org/CreateAction",
+    "UpdateAction": "https://schema.org/UpdateAction"
+  },
+  "@graph": [
+    {
+      "@id": "cefdbe3d-f3f7-49bd-97a5-6575549c2d1c",
+      "@type": "Dataset",
+      "path": "./",
+      "name": "Perioding Friska Renograms Stromatolite Vertebrates Reintegrates Involutedly Parablastic Betweenbrain Basics Funnymen Contenders Cartages Susceptivity Degringolading Palamate Vendible Florigen Methylphenol Sitreps Underkeeping Syndicator Virtuoso",
+      "description": "Knottier strander endzone quoins accusers oniscoid serviettes faugh handcarts gingelli logicality sterner agama supersystems versionist trinketed capitulate claes seizes phonetization prostatites unnaturalising gnomonology paciest nominee snowslip unconstructive epitomizer. Semigroup atabrin microtechnique fisherwoman wholesale museologies displed. Structuralization ringbarks specifying polychotomy appositely casuistical temporalise kebbie unshriven homeschool leben initiatress fratchety mydriatics bandy scandalisations vacatur braciolas discophoran quarrymasters coggies dimerization butyraceous. Secondees freedwomen haptotropic furcate baresark stolen quartile rejoneadora neurosensory bogyism gallanting caudally teaser esemplasy misclassifying toplessness mamakos geotaxes acai orthographers undivorced imagination. Infallibilism genoas meliphagous partisan yukiest avenaceous raunchiest groundbaiting feedhole codesign. Wavey mauvine rescores blaer indignifying avoidant slopy exactress. Clarinet relatives millepedes ramrods leukoblast bushelers consignor havering nonassociated rhizophore leaf diabolized. Snickering telearchics finery heaping pyromantic illumining unprayed gypper porphyrias. Mournfully harmfulnesses trivialist deader carjackings busticate phallicists windock blockboards shrieved interlooping mashman awfuller hardbeam giber.\n",
+      "dateCreated": "2019-05-25T14:03:33.541Z",
+      "datePublished": "2019-05-25T14:03:33.541Z",
+      "publisher": {
+        "@id": "https://examples.edu"
+      },
+      "hasPart": [],
+      "creator": [
+        {
+          "@id": "Aiva.Klapp@examples.edu"
+        }
+      ],
+      "keywords": "",
+      "about": [],
+      "funder": [],
+      "citation": []
+    },
+    {
+      "@id": "https://examples.edu",
+      "@type": "Organization",
+      "identifier": "https://examples.edu",
+      "name": "Examples University"
+    },
+    {
+      "@id": "Aiva.Klapp@examples.edu",
+      "@type": "Person",
+      "identifier": "Aiva.Klapp@examples.edu",
+      "name": "Aiva Klapp",
+      "email": "Aiva.Klapp@examples.edu",
+      "affiliation": {
+        "@id": "https://examples.edu"
+      }
+    },
+    {
+      "@id": "owner@examples.edu",
+      "@type": "Person",
+      "email": "owner@examples.edu"
+    },
+    {
+      "@id": "approver@examples.edu",
+      "@type": "Person",
+      "email": "approver@examples.edu"
+    },
+    {
+      "@id": "history1",
+      "@type": "CreateAction",
+      "name": "Create",
+      "description": "Data record created",
+      "endTime": "2019-05-25T14:03:33.541Z",
+      "object": {
+        "@id": "cefdbe3d-f3f7-49bd-97a5-6575549c2d1c"
+      },
+      "agent": {
+        "@id": "owner@examples.edu"
+      }
+    },
+    {
+      "@id": "history2",
+      "@type": "UpdateAction",
+      "name": "Publish",
+      "endTime": "2019-05-25T14:03:33.541Z",
+      "object": {
+        "@id": "cefdbe3d-f3f7-49bd-97a5-6575549c2d1c"
+      },
+      "agent": {
+        "@id": "approver@examples.edu"
+      }
+    }
+  ]
+}

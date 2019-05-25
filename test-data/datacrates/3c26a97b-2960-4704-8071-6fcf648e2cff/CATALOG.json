@@ -1,0 +1,117 @@
+{
+  "@context": {
+    "path": "https://schema.org/contentUrl",
+    "name": "https://schema.org/name",
+    "description": "https://schema.org/description",
+    "dateCreated": "https://schema.org/dateCreated",
+    "datePublished": "https://schema.org/datePublished",
+    "publisher": "https://schema.org/publisher",
+    "hasPart": "https://schema.org/hasPart",
+    "creator": "https://schema.org/creator",
+    "keywords": "https://schema.org/keywords",
+    "about": "https://schema.org/about",
+    "funder": "https://schema.org/funder",
+    "citation": "https://schema.org/citation",
+    "identifier": "https://schema.org/identifier",
+    "familyName": "https://schema.org/familyName",
+    "givenName": "https://schema.org/givenName",
+    "email": "https://schema.org/email",
+    "affiliation": "https://schema.org/affiliation",
+    "endTime": "https://schema.org/endTime",
+    "object": "https://schema.org/object",
+    "agent": "https://schema.org/agent",
+    "Dataset": "https://schema.org/Dataset",
+    "Organization": "https://schema.org/Organization",
+    "Person": "https://schema.org/Person",
+    "CreateAction": "https://schema.org/CreateAction",
+    "UpdateAction": "https://schema.org/UpdateAction"
+  },
+  "@graph": [
+    {
+      "@id": "3c26a97b-2960-4704-8071-6fcf648e2cff",
+      "@type": "Dataset",
+      "path": "./",
+      "name": "Amens Culminant Bidden Bronchitic Prokaryotes Midlander Kerbside Embruted Ponderment Geometrics Moralises Unlevelling",
+      "description": "Entrusted southwards ethicise poormouth choriambic weighbridges prolamins encrimsoned united simillimum hominize honorer thalassemias unpleasing sepmag chattier anabaptizing exodos nicish beckoned. Afflux nonterminating plebe upborne cancelation bibliography scoutcrafts multistranded cider darraigned malformation eucaryons flews featherheads ticken wares doitkin tridimensionality trolleybusses moraceous seasonableness. Dissentient ecloses pinchcocks tetrabrach countersignatures timoneer gentes. Obtuseness jigajog united subspecialises hardiment marque cerberean. Triumvirates stegodon oxyhemoglobins crackle fimbria upcatch pearmains begild synovias plectrum snobbishness straighted shovelheads aluminise orthohydrogen betook tutsan inequitable unarmoured tinas ingested neoplasty ectogeneses easying chondres. Retraicts diplostemonous stalemating pool cushinesses summarises demount proletariat archetypical nidgets balisaurs centerlines. Reasonableness terrellas phonophobias persnicketiness tutelar pulsative entropies gastritic infamize zoonotic multisense ragweeds swanky compunctions pyrocerams lamellate gothics honouree affair declamatorily footfaulting quietly conciseness.\n",
+      "dateCreated": "2019-05-25T14:04:22.433Z",
+      "datePublished": "2019-05-25T14:04:22.433Z",
+      "publisher": {
+        "@id": "https://examples.edu"
+      },
+      "hasPart": [],
+      "creator": [
+        {
+          "@id": "Missy.Oikonomou@examples.edu"
+        },
+        {
+          "@id": "Mario.Knappett@examples.edu"
+        }
+      ],
+      "keywords": "",
+      "about": [],
+      "funder": [],
+      "citation": []
+    },
+    {
+      "@id": "https://examples.edu",
+      "@type": "Organization",
+      "identifier": "https://examples.edu",
+      "name": "Examples University"
+    },
+    {
+      "@id": "Missy.Oikonomou@examples.edu",
+      "@type": "Person",
+      "identifier": "Missy.Oikonomou@examples.edu",
+      "name": "Missy Oikonomou",
+      "email": "Missy.Oikonomou@examples.edu",
+      "affiliation": {
+        "@id": "https://examples.edu"
+      }
+    },
+    {
+      "@id": "Mario.Knappett@examples.edu",
+      "@type": "Person",
+      "identifier": "Mario.Knappett@examples.edu",
+      "name": "Mario Knappett",
+      "email": "Mario.Knappett@examples.edu",
+      "affiliation": {
+        "@id": "https://examples.edu"
+      }
+    },
+    {
+      "@id": "owner@examples.edu",
+      "@type": "Person",
+      "email": "owner@examples.edu"
+    },
+    {
+      "@id": "approver@examples.edu",
+      "@type": "Person",
+      "email": "approver@examples.edu"
+    },
+    {
+      "@id": "history1",
+      "@type": "CreateAction",
+      "name": "Create",
+      "description": "Data record created",
+      "endTime": "2019-05-25T14:04:22.433Z",
+      "object": {
+        "@id": "3c26a97b-2960-4704-8071-6fcf648e2cff"
+      },
+      "agent": {
+        "@id": "owner@examples.edu"
+      }
+    },
+    {
+      "@id": "history2",
+      "@type": "UpdateAction",
+      "name": "Publish",
+      "endTime": "2019-05-25T14:04:22.433Z",
+      "object": {
+        "@id": "3c26a97b-2960-4704-8071-6fcf648e2cff"
+      },
+      "agent": {
+        "@id": "approver@examples.edu"
+      }
+    }
+  ]
+}

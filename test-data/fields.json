@@ -1,0 +1,70 @@
+{
+  "dataset": {
+    "core": "dataset",
+    "format": "jsonld",
+    "recordTypeName": "dataset",
+    "rootNodeFieldContextId": "path",
+    "skip": ["hasPart"],
+    "rootNodeFieldValues": ["data/", "./"],
+    "flatten": {
+      "rootNode": [
+        "scripts/jsonld-parse/add-root-dataset.groovy",
+        "scripts/jsonld-parse/add-oaipmh.groovy"
+      ],
+      "Person": [
+        "scripts/jsonld-parse/add-person.groovy"
+      ],
+      "GeoCoordinates": [
+        "scripts/jsonld-parse/add-flattened-child.groovy",
+        "scripts/jsonld-parse/geojson.groovy"
+      ]
+    },
+    "facets": {
+      "datePublished": {
+        "field_suffix": "_Dataset_facet",
+        "trim": true
+      },
+      "keywords": {
+        "trim": true,
+        "field_suffix": "_Dataset_facetmulti",
+        "tokenize": {
+          "delim": ","
+        }
+      },
+      "creator": {
+        "trim": true,
+        "fieldName": "name",
+        "field_suffix": "_Dataset_facetmulti"
+      },
+      "publisher": {
+        "trim": true,
+        "fieldName": "@id"
+      },
+      "type": {
+        "trim": true,
+        "field_suffix": "facetmulti",
+        "skip_entry_type_suffix": true,
+        "escape_value": "solr_field"
+      }
+    },
+    "oai-pmh": {
+      "core": "dataset",
+      "set": "datasource:ReDBox"
+    }
+  },
+  "person": {
+    "core": "dataset",
+    "format": "jsonld",
+    "recordTypeName": "person",
+    "rootNodeFieldValues": [],
+    "flatten": {},
+    "facets": {
+      "type": {
+        "trim": true,
+        "field_suffix": "facetmulti",
+        "skip_entry_type_suffix": true,
+        "escape_value": "solr_field"
+      }
+    }
+  }
+}

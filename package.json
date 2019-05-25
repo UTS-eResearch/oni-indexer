@@ -1,0 +1,24 @@
+{
+  "name": "solr-catalog",
+  "version": "1.0.0",
+  "description": "pushes catalog.json to solr via HTTP json",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/_mocha"
+  },
+  "keywords": [
+    "solr",
+    "datacrate"
+  ],
+  "author": "Moises",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "fs-extra": "^8.0.1",
+    "lodash": "^4.17.11"
+  },
+  "devDependencies": {
+    "datacrate": "git+https://code.research.uts.edu.au/eresearch/datacrate.git#random_as_library",
+    "mocha": "^6.1.4"
+  }
+}

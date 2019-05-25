@@ -1,0 +1,117 @@
+{
+  "@context": {
+    "path": "https://schema.org/contentUrl",
+    "name": "https://schema.org/name",
+    "description": "https://schema.org/description",
+    "dateCreated": "https://schema.org/dateCreated",
+    "datePublished": "https://schema.org/datePublished",
+    "publisher": "https://schema.org/publisher",
+    "hasPart": "https://schema.org/hasPart",
+    "creator": "https://schema.org/creator",
+    "keywords": "https://schema.org/keywords",
+    "about": "https://schema.org/about",
+    "funder": "https://schema.org/funder",
+    "citation": "https://schema.org/citation",
+    "identifier": "https://schema.org/identifier",
+    "familyName": "https://schema.org/familyName",
+    "givenName": "https://schema.org/givenName",
+    "email": "https://schema.org/email",
+    "affiliation": "https://schema.org/affiliation",
+    "endTime": "https://schema.org/endTime",
+    "object": "https://schema.org/object",
+    "agent": "https://schema.org/agent",
+    "Dataset": "https://schema.org/Dataset",
+    "Organization": "https://schema.org/Organization",
+    "Person": "https://schema.org/Person",
+    "CreateAction": "https://schema.org/CreateAction",
+    "UpdateAction": "https://schema.org/UpdateAction"
+  },
+  "@graph": [
+    {
+      "@id": "1c4b4b88-28ed-4cc8-9f55-7c3a93941a7f",
+      "@type": "Dataset",
+      "path": "./",
+      "name": "Grapeseed Agloos Vacantly Geomancers Ticktacks Handwheels Socializable Localness Handsets Chemoprophylaxis Suppositious Bookmakings Hindering Industrializing Wisest Microliths Podzolisations Gracilities Slithered Cocainizations",
+      "description": "Anatoxin retrorse leglessnesses backbends pandering tumorgenicities puss tabued subpoenaing quintic scheffleras desaturation magnons rep specklednesses unperturbed excluding bimillennia volvuli lysogenise. Moldiest pleonastical hydroxylating eicosanoid pyrotartrates macroevolutions. Demilitarising benedicites gastrosophy entwisting millier cellulitides subsultuses pamphlets indicting. Eyehook worriment ungarbed isonomic. Allegeance phoneynesses hangnests newsdealers scootches pussy nothings equalizes mars eutaxite microsomes bacteriophagic expensive nascent pedophilias annexing shmatte conima vogueings proficience noviciates inerasible coxitides fusain gaolbreaks bardes abature. Nointed countdowns endogenic imparkation fishtailing apodosis petunias pollack dribblier churrs sedatest dulcian lantskips.\n",
+      "dateCreated": "2019-05-25T14:13:20.234Z",
+      "datePublished": "2019-05-25T14:13:20.234Z",
+      "publisher": {
+        "@id": "https://examples.edu"
+      },
+      "hasPart": [],
+      "creator": [
+        {
+          "@id": "Kamil.Bertman@examples.edu"
+        },
+        {
+          "@id": "Sander.Geiser@examples.edu"
+        }
+      ],
+      "keywords": "",
+      "about": [],
+      "funder": [],
+      "citation": []
+    },
+    {
+      "@id": "https://examples.edu",
+      "@type": "Organization",
+      "identifier": "https://examples.edu",
+      "name": "Examples University"
+    },
+    {
+      "@id": "Kamil.Bertman@examples.edu",
+      "@type": "Person",
+      "identifier": "Kamil.Bertman@examples.edu",
+      "name": "Kamil Bertman",
+      "email": "Kamil.Bertman@examples.edu",
+      "affiliation": {
+        "@id": "https://examples.edu"
+      }
+    },
+    {
+      "@id": "Sander.Geiser@examples.edu",
+      "@type": "Person",
+      "identifier": "Sander.Geiser@examples.edu",
+      "name": "Sander Geiser",
+      "email": "Sander.Geiser@examples.edu",
+      "affiliation": {
+        "@id": "https://examples.edu"
+      }
+    },
+    {
+      "@id": "owner@examples.edu",
+      "@type": "Person",
+      "email": "owner@examples.edu"
+    },
+    {
+      "@id": "approver@examples.edu",
+      "@type": "Person",
+      "email": "approver@examples.edu"
+    },
+    {
+      "@id": "history1",
+      "@type": "CreateAction",
+      "name": "Create",
+      "description": "Data record created",
+      "endTime": "2019-05-25T14:13:20.234Z",
+      "object": {
+        "@id": "1c4b4b88-28ed-4cc8-9f55-7c3a93941a7f"
+      },
+      "agent": {
+        "@id": "owner@examples.edu"
+      }
+    },
+    {
+      "@id": "history2",
+      "@type": "UpdateAction",
+      "name": "Publish",
+      "endTime": "2019-05-25T14:13:20.234Z",
+      "object": {
+        "@id": "1c4b4b88-28ed-4cc8-9f55-7c3a93941a7f"
+      },
+      "agent": {
+        "@id": "approver@examples.edu"
+      }
+    }
+  ]
+}

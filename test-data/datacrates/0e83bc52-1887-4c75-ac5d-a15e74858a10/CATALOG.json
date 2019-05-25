@@ -1,0 +1,117 @@
+{
+  "@context": {
+    "path": "https://schema.org/contentUrl",
+    "name": "https://schema.org/name",
+    "description": "https://schema.org/description",
+    "dateCreated": "https://schema.org/dateCreated",
+    "datePublished": "https://schema.org/datePublished",
+    "publisher": "https://schema.org/publisher",
+    "hasPart": "https://schema.org/hasPart",
+    "creator": "https://schema.org/creator",
+    "keywords": "https://schema.org/keywords",
+    "about": "https://schema.org/about",
+    "funder": "https://schema.org/funder",
+    "citation": "https://schema.org/citation",
+    "identifier": "https://schema.org/identifier",
+    "familyName": "https://schema.org/familyName",
+    "givenName": "https://schema.org/givenName",
+    "email": "https://schema.org/email",
+    "affiliation": "https://schema.org/affiliation",
+    "endTime": "https://schema.org/endTime",
+    "object": "https://schema.org/object",
+    "agent": "https://schema.org/agent",
+    "Dataset": "https://schema.org/Dataset",
+    "Organization": "https://schema.org/Organization",
+    "Person": "https://schema.org/Person",
+    "CreateAction": "https://schema.org/CreateAction",
+    "UpdateAction": "https://schema.org/UpdateAction"
+  },
+  "@graph": [
+    {
+      "@id": "0e83bc52-1887-4c75-ac5d-a15e74858a10",
+      "@type": "Dataset",
+      "path": "./",
+      "name": "Shortcomings Burnishments Unfreezing Rosoglios Mohair Coacervated Dumpy Ramiform Notturno Attuition Hoofs Succubuses Discomboberate Snoddest Proctological Swerves",
+      "description": "Babbitted cherimoyas yardages monoclinisms salivating amphitropous tocology olycook lunarnauts tortility decarbonisers quadraplegic traprocks vulcanologist. Ecumenics oulks unvaile rhinocerot encode reposefulness lorn posterolateral jocosity nuisance atropins spiderwoods unlimber billboarding pedanticises dockets sportfully homologizers overgo rhizophagous sicilianos ultrawide volume varoom. Topstitching feblesses epilimnion escarp limner concluders cyprinodont amerce dandling.\n",
+      "dateCreated": "2019-05-25T14:11:39.544Z",
+      "datePublished": "2019-05-25T14:11:39.544Z",
+      "publisher": {
+        "@id": "https://examples.edu"
+      },
+      "hasPart": [],
+      "creator": [
+        {
+          "@id": "Franco.Luzzatto@examples.edu"
+        },
+        {
+          "@id": "Howard.Vierra@examples.edu"
+        }
+      ],
+      "keywords": "",
+      "about": [],
+      "funder": [],
+      "citation": []
+    },
+    {
+      "@id": "https://examples.edu",
+      "@type": "Organization",
+      "identifier": "https://examples.edu",
+      "name": "Examples University"
+    },
+    {
+      "@id": "Franco.Luzzatto@examples.edu",
+      "@type": "Person",
+      "identifier": "Franco.Luzzatto@examples.edu",
+      "name": "Franco Luzzatto",
+      "email": "Franco.Luzzatto@examples.edu",
+      "affiliation": {
+        "@id": "https://examples.edu"
+      }
+    },
+    {
+      "@id": "Howard.Vierra@examples.edu",
+      "@type": "Person",
+      "identifier": "Howard.Vierra@examples.edu",
+      "name": "Howard Vierra",
+      "email": "Howard.Vierra@examples.edu",
+      "affiliation": {
+        "@id": "https://examples.edu"
+      }
+    },
+    {
+      "@id": "owner@examples.edu",
+      "@type": "Person",
+      "email": "owner@examples.edu"
+    },
+    {
+      "@id": "approver@examples.edu",
+      "@type": "Person",
+      "email": "approver@examples.edu"
+    },
+    {
+      "@id": "history1",
+      "@type": "CreateAction",
+      "name": "Create",
+      "description": "Data record created",
+      "endTime": "2019-05-25T14:11:39.544Z",
+      "object": {
+        "@id": "0e83bc52-1887-4c75-ac5d-a15e74858a10"
+      },
+      "agent": {
+        "@id": "owner@examples.edu"
+      }
+    },
+    {
+      "@id": "history2",
+      "@type": "UpdateAction",
+      "name": "Publish",
+      "endTime": "2019-05-25T14:11:39.544Z",
+      "object": {
+        "@id": "0e83bc52-1887-4c75-ac5d-a15e74858a10"
+      },
+      "agent": {
+        "@id": "approver@examples.edu"
+      }
+    }
+  ]
+}

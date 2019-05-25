@@ -1,0 +1,117 @@
+{
+  "@context": {
+    "path": "https://schema.org/contentUrl",
+    "name": "https://schema.org/name",
+    "description": "https://schema.org/description",
+    "dateCreated": "https://schema.org/dateCreated",
+    "datePublished": "https://schema.org/datePublished",
+    "publisher": "https://schema.org/publisher",
+    "hasPart": "https://schema.org/hasPart",
+    "creator": "https://schema.org/creator",
+    "keywords": "https://schema.org/keywords",
+    "about": "https://schema.org/about",
+    "funder": "https://schema.org/funder",
+    "citation": "https://schema.org/citation",
+    "identifier": "https://schema.org/identifier",
+    "familyName": "https://schema.org/familyName",
+    "givenName": "https://schema.org/givenName",
+    "email": "https://schema.org/email",
+    "affiliation": "https://schema.org/affiliation",
+    "endTime": "https://schema.org/endTime",
+    "object": "https://schema.org/object",
+    "agent": "https://schema.org/agent",
+    "Dataset": "https://schema.org/Dataset",
+    "Organization": "https://schema.org/Organization",
+    "Person": "https://schema.org/Person",
+    "CreateAction": "https://schema.org/CreateAction",
+    "UpdateAction": "https://schema.org/UpdateAction"
+  },
+  "@graph": [
+    {
+      "@id": "f3e568cf-42a9-42b6-8217-e697457dab8c",
+      "@type": "Dataset",
+      "path": "./",
+      "name": "Mache Verbing Microhabitat Meane Loveliness Evirating Lyophiled",
+      "description": "Scombroid monophylies brises unpropped radioimmunoassayable depopulation commutability introversively epulises endocranial pushes unfilterable housecrafts weblike glossarial. Outswept deservedly garbologists. Form revelling queyns appetizing riancies transshipping wooses fatuously graphicalness sempstresses hymenopteron principalships deionisation silvan postops. Ascribes undear bumped curative viperishly stereospecificities megalomaniacal thiosulphuric aunters. Hemisphere tubular summarinesses divots amethyst swinish. Impave rhabdomyoma insciences ichthyses acclamation psychiaters pantingly solidarists sonsiest bivinyl smuggery encampment becowarded. Outswear alternate riddlings huffer tuatuas screenlike overexpectation nontypical gaskets patrialization kephalins intervillage kotare prison peritonitis hippopotami clinopyroxenes. Concreted pickback overembellishing monsignor stagnantly chequerwise tattiness fable soiliest spathes bonhommie expugn. Coyly refutals tragical suppliants engirdle engloom migrates concretised fragment obfuscated schoolgoings mingimingi carcase zingers empoison moddings techniques haughtier inswathes fluorination create imposingly adjutants tiddlier engraining.\n",
+      "dateCreated": "2019-05-25T13:56:55.034Z",
+      "datePublished": "2019-05-25T13:56:55.034Z",
+      "publisher": {
+        "@id": "https://examples.edu"
+      },
+      "hasPart": [],
+      "creator": [
+        {
+          "@id": "Israel.Aratani@examples.edu"
+        },
+        {
+          "@id": "Emory.Österberg@examples.edu"
+        }
+      ],
+      "keywords": "",
+      "about": [],
+      "funder": [],
+      "citation": []
+    },
+    {
+      "@id": "https://examples.edu",
+      "@type": "Organization",
+      "identifier": "https://examples.edu",
+      "name": "Examples University"
+    },
+    {
+      "@id": "Israel.Aratani@examples.edu",
+      "@type": "Person",
+      "identifier": "Israel.Aratani@examples.edu",
+      "name": "Israel Aratani",
+      "email": "Israel.Aratani@examples.edu",
+      "affiliation": {
+        "@id": "https://examples.edu"
+      }
+    },
+    {
+      "@id": "Emory.Österberg@examples.edu",
+      "@type": "Person",
+      "identifier": "Emory.Österberg@examples.edu",
+      "name": "Emory Österberg",
+      "email": "Emory.Österberg@examples.edu",
+      "affiliation": {
+        "@id": "https://examples.edu"
+      }
+    },
+    {
+      "@id": "owner@examples.edu",
+      "@type": "Person",
+      "email": "owner@examples.edu"
+    },
+    {
+      "@id": "approver@examples.edu",
+      "@type": "Person",
+      "email": "approver@examples.edu"
+    },
+    {
+      "@id": "history1",
+      "@type": "CreateAction",
+      "name": "Create",
+      "description": "Data record created",
+      "endTime": "2019-05-25T13:56:55.034Z",
+      "object": {
+        "@id": "f3e568cf-42a9-42b6-8217-e697457dab8c"
+      },
+      "agent": {
+        "@id": "owner@examples.edu"
+      }
+    },
+    {
+      "@id": "history2",
+      "@type": "UpdateAction",
+      "name": "Publish",
+      "endTime": "2019-05-25T13:56:55.034Z",
+      "object": {
+        "@id": "f3e568cf-42a9-42b6-8217-e697457dab8c"
+      },
+      "agent": {
+        "@id": "approver@examples.edu"
+      }
+    }
+  ]
+}
