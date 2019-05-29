@@ -1,23 +1,14 @@
 {
-  "dataset": {
+  "Dataset": {
     "core": "dataset",
     "format": "jsonld",
     "recordTypeName": "dataset",
-    "rootNodeFieldContextId": "path",
     "skip": ["hasPart"],
-    "rootNodeFieldValues": ["data/", "./"],
     "flatten": {
-      "rootNode": [
-        "scripts/jsonld-parse/add-root-dataset.groovy",
-        "scripts/jsonld-parse/add-oaipmh.groovy"
-      ],
-      "Person": [
-        "scripts/jsonld-parse/add-person.groovy"
-      ],
-      "GeoCoordinates": [
-        "scripts/jsonld-parse/add-flattened-child.groovy",
-        "scripts/jsonld-parse/geojson.groovy"
-      ]
+      "creator": {
+        "obj": "array"
+      },
+      "GeoCoordinates": {}
     },
     "facets": {
       "datePublished": {
@@ -38,7 +29,8 @@
       },
       "publisher": {
         "trim": true,
-        "fieldName": "@id"
+        "fieldName": "@id",
+        "field_suffix": "_Dataset_facet"
       },
       "type": {
         "trim": true,
@@ -52,12 +44,15 @@
       "set": "datasource:ReDBox"
     }
   },
-  "person": {
+  "Person": {
     "core": "dataset",
     "format": "jsonld",
     "recordTypeName": "person",
-    "rootNodeFieldValues": [],
-    "flatten": {},
+    "flatten": {
+      "affiliation": {
+        "obj": "array"
+      }
+    },
     "facets": {
       "type": {
         "trim": true,
