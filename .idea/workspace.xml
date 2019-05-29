@@ -2,18 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ad75bb9b-12db-4cad-af64-4c68cecdb87b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/CatalogSolr.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/CatalogSolr.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-data/datacrates/0e83bc52-1887-4c75-ac5d-a15e74858a10/CATALOG.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-data/datacrates/1c4b4b88-28ed-4cc8-9f55-7c3a93941a7f/CATALOG.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-data/datacrates/3c26a97b-2960-4704-8071-6fcf648e2cff/CATALOG.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-data/datacrates/5aed364c-3459-485c-99fa-2526719227a6/CATALOG.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-data/datacrates/8019258e-e826-4387-bac0-7730bc333514/CATALOG.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-data/datacrates/82d1b263-2beb-443a-85b5-8b9018137991/CATALOG.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-data/datacrates/cefdbe3d-f3f7-49bd-97a5-6575549c2d1c/CATALOG.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-data/datacrates/dc1b4d81-4c48-439a-a329-39cb10a28e0f/CATALOG.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-data/datacrates/f3e568cf-42a9-42b6-8217-e697457dab8c/CATALOG.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test-data/fields.json" beforeDir="false" afterPath="$PROJECT_DIR$/test-data/fields.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/catalog.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/test/catalog.spec.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -32,8 +20,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/test/catalog.spec.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="555">
-                  <caret line="129" column="64" selection-start-line="129" selection-start-column="64" selection-end-line="129" selection-end-column="64" />
+                <state relative-caret-position="269">
+                  <caret line="137" column="63" selection-start-line="137" selection-start-column="63" selection-end-line="137" selection-end-column="63" />
                 </state>
               </provider>
             </entry>
@@ -81,7 +69,7 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/test-data/fields.json">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="291">
+                <state relative-caret-position="678">
                   <caret line="46" column="4" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="4" />
                 </state>
               </provider>
@@ -128,17 +116,17 @@
         <option value="$PROJECT_DIR$/test-data/FARMTOFREEWAYS_CATALOG.json" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_3.js" />
         <option value="$PROJECT_DIR$/test-data/CatalogSolr.json" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/lib/CatalogSolr.js" />
         <option value="$PROJECT_DIR$/test-data/fields.json" />
+        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/test/catalog.spec.js" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1440" />
+    <option name="x" value="1442" />
     <option name="y" value="-277" />
-    <option name="width" value="1920" />
+    <option name="width" value="1918" />
     <option name="height" value="1177" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -233,17 +221,11 @@
       <option name="presentableId" value="Default" />
       <updated>1558421147646</updated>
       <workItem from="1558421149207" duration="30478000" />
-      <workItem from="1558654598476" duration="36666000" />
+      <workItem from="1558654598476" duration="36874000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 22m 07s.xml">
-      <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
-    </history-entry>
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 22m 47s.xml">
-      <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
-    </history-entry>
     <history-entry file="catalog_spec_js - 2019.05.29 at 11h 24m 46s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
@@ -268,27 +250,33 @@
     <history-entry file="catalog_spec_js - 2019.05.29 at 11h 32m 46s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
+    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 33m 20s.xml">
+      <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 33m 21s.xml">
+      <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="67144000" />
+    <option name="totallyTimeSpent" value="67352000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1440" y="-277" width="1920" height="1177" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15481833" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15481833" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.3299539" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.35668203" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.35668203" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.23870967" />
+      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.23870967" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -297,18 +285,6 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/test/catalog.spec.js</url>
-          <line>128</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="95" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/test-data/datacrates/c1517eee-9bef-4d05-912c-6b73413718c7/CATALOG.json" />
@@ -327,13 +303,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1620">
           <caret line="108" column="29" selection-start-line="108" selection-start-column="29" selection-end-line="108" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="12" selection-start-line="1" selection-start-column="12" selection-end-line="1" selection-end-column="12" />
         </state>
       </provider>
     </entry>
@@ -360,7 +329,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test-data/fields.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
+        <state relative-caret-position="678">
           <caret line="46" column="4" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="4" />
         </state>
       </provider>
@@ -372,10 +341,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="21" lean-forward="true" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test/catalog.spec.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="129" column="64" selection-start-line="129" selection-start-column="64" selection-end-line="129" selection-end-column="64" />
+        <state relative-caret-position="269">
+          <caret line="137" column="63" selection-start-line="137" selection-start-column="63" selection-end-line="137" selection-end-column="63" />
         </state>
       </provider>
     </entry>
