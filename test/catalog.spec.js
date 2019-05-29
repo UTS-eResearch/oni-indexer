@@ -33,17 +33,11 @@ describe('catalog', function () {
   let catalog = {};
 
   before(function () {
-    catalog = new CatalogSolr(catalogjson);
+    catalog = new CatalogSolr();
   });
 
-  describe('catalog', function () {
-    it('should load catalog', function () {
-      assert.strictEqual(_.isObject(catalog.jsonld['@context']), true, 'catalog not loaded')
-    });
-  });
-
-  describe('load special fields', function () {
-    it('should get special fields', function () {
+  describe('load config fields', function () {
+    it('should get config fields', function () {
       const fields = require(fieldsPath);
       const isConfig = catalog.setConfig(fields);
       assert.strictEqual(isConfig, true, 'Config not complete');
@@ -58,7 +52,7 @@ describe('catalog', function () {
 
       const fieldConfig = catalog.config;
 
-      //TODO: Peter's idea is to convert everything into an array then it is safer to work to convert
+      //Peter's idea is to convert everything into an array then it is safer to work to convert
       const graph = _.each(ca['@graph'], (g) => {
         return catalog.ensureObjArray(g);
       });

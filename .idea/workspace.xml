@@ -2,6 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ad75bb9b-12db-4cad-af64-4c68cecdb87b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/commit-to-solr.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fields.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/CatalogSolr.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/CatalogSolr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-data/fields.json" beforeDir="false" afterPath="$PROJECT_DIR$/test-data/fields.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/catalog.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/test/catalog.spec.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -14,23 +22,41 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5009346">
+    <splitter split-orientation="horizontal" split-proportion="0.5182222">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/test/catalog.spec.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="269">
-                  <caret line="137" column="63" selection-start-line="137" selection-start-column="63" selection-end-line="137" selection-end-column="63" />
+                <state relative-caret-position="395">
+                  <caret line="121" column="6" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="6" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/commit-to-solr.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="587">
+                  <caret line="137" column="31" lean-forward="true" selection-start-line="137" selection-start-column="31" selection-end-line="137" selection-end-column="31" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/config.json">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="75">
+                  <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/lib/CatalogSolr.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="217">
-                  <caret line="90" column="17" selection-start-line="90" selection-start-column="17" selection-end-line="90" selection-end-column="17" />
+                <state relative-caret-position="245">
+                  <caret line="38" column="14" selection-start-line="38" selection-start-column="14" selection-end-line="38" selection-end-column="14" />
                 </state>
               </provider>
             </entry>
@@ -60,8 +86,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/test-data/CATALOG.json">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="308">
-                  <caret line="62" column="22" selection-start-line="62" selection-start-column="16" selection-end-line="62" selection-end-column="22" />
+                <state relative-caret-position="329">
+                  <caret line="45" column="9" lean-forward="true" selection-start-line="45" selection-start-column="9" selection-end-line="45" selection-end-column="9" />
                 </state>
               </provider>
             </entry>
@@ -69,8 +95,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/test-data/fields.json">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="678">
-                  <caret line="46" column="4" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="4" />
+                <state relative-caret-position="409">
+                  <caret line="32" column="39" selection-start-line="32" selection-start-column="25" selection-end-line="32" selection-end-column="39" />
                 </state>
               </provider>
             </entry>
@@ -78,8 +104,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/test-data/CatalogSolr.json">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-459">
-                  <caret line="2" column="29" selection-start-line="2" selection-start-column="22" selection-end-line="2" selection-end-column="29" />
+                <state relative-caret-position="-17">
+                  <caret line="27" column="31" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="31" />
                 </state>
               </provider>
             </entry>
@@ -87,8 +113,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/test-data/FARMTOFREEWAYS_CATALOG.json">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="300">
-                  <caret line="20" column="14" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="14" />
+                <state relative-caret-position="915">
+                  <caret line="61" column="20" selection-start-line="61" selection-start-column="20" selection-end-line="61" selection-end-column="20" />
                 </state>
               </provider>
             </entry>
@@ -101,6 +127,7 @@
     <findStrings>
       <find>datePublished</find>
       <find>geo</find>
+      <find>requestData</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -116,17 +143,20 @@
         <option value="$PROJECT_DIR$/test-data/FARMTOFREEWAYS_CATALOG.json" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_3.js" />
         <option value="$PROJECT_DIR$/test-data/CatalogSolr.json" />
-        <option value="$PROJECT_DIR$/lib/CatalogSolr.js" />
-        <option value="$PROJECT_DIR$/test-data/fields.json" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/fields.json" />
+        <option value="$PROJECT_DIR$/config.json" />
+        <option value="$PROJECT_DIR$/commit-to-solr.js" />
         <option value="$PROJECT_DIR$/test/catalog.spec.js" />
+        <option value="$PROJECT_DIR$/test-data/fields.json" />
+        <option value="$PROJECT_DIR$/lib/CatalogSolr.js" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1442" />
+    <option name="x" value="1440" />
     <option name="y" value="-277" />
-    <option name="width" value="1918" />
+    <option name="width" value="1920" />
     <option name="height" value="1177" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -150,11 +180,6 @@
             <path>
               <item name="solr-catalog" type="b2602c69:ProjectViewProjectNode" />
               <item name="solr-catalog" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="solr-catalog" type="b2602c69:ProjectViewProjectNode" />
-              <item name="solr-catalog" type="462c0819:PsiDirectoryNode" />
               <item name="test-data" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -172,7 +197,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="JavaScript" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/test-data" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs.mocha.mocha_node_package_dir" value="$PROJECT_DIR$/node_modules/mocha" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -181,6 +206,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/test-data" />
     </key>
   </component>
@@ -196,7 +222,10 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Node.js.commit-to-solr">
+    <configuration name="commit-to-solr" type="NodeJSConfigurationType" path-to-js-file="commit-to-solr.js" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
     <configuration name="catalog.spec.js" type="mocha-javascript-test-runner">
       <node-interpreter>project</node-interpreter>
       <node-options />
@@ -209,6 +238,10 @@
       <test-file>$PROJECT_DIR$/test/catalog.spec.js</test-file>
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Mocha.catalog.spec.js" />
+      <item itemvalue="Node.js.commit-to-solr" />
+    </list>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -221,62 +254,61 @@
       <option name="presentableId" value="Default" />
       <updated>1558421147646</updated>
       <workItem from="1558421149207" duration="30478000" />
-      <workItem from="1558654598476" duration="36874000" />
+      <workItem from="1558654598476" duration="48948000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 24m 46s.xml">
+    <history-entry file="catalog_spec_js - 2019.05.29 at 14h 50m 34s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 25m 32s.xml">
+    <history-entry file="catalog_spec_js - 2019.05.29 at 15h 29m 39s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 26m 13s.xml">
+    <history-entry file="catalog_spec_js - 2019.05.29 at 15h 29m 51s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 28m 24s.xml">
+    <history-entry file="catalog_spec_js - 2019.05.29 at 15h 31m 49s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 31m 09s.xml">
+    <history-entry file="catalog_spec_js - 2019.05.29 at 15h 31m 51s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 31m 10s.xml">
+    <history-entry file="catalog_spec_js - 2019.05.29 at 15h 33m 16s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 32m 20s.xml">
+    <history-entry file="catalog_spec_js - 2019.05.29 at 15h 34m 30s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 32m 46s.xml">
+    <history-entry file="catalog_spec_js - 2019.05.29 at 15h 35m 20s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 33m 20s.xml">
+    <history-entry file="catalog_spec_js - 2019.05.29 at 15h 35m 32s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
-    <history-entry file="catalog_spec_js - 2019.05.29 at 11h 33m 21s.xml">
+    <history-entry file="catalog_spec_js - 2019.05.29 at 15h 35m 38s.xml">
       <configuration name="catalog.spec.js" configurationId="mocha-javascript-test-runner" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="67352000" />
+    <option name="totallyTimeSpent" value="79426000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1440" y="-277" width="1920" height="1177" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15481833" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15481833" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.3299539" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.35668203" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.27834103" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.23870967" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.23821656" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -306,41 +338,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test-data/FARMTOFREEWAYS_CATALOG.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="14" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test-data/CATALOG.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="62" column="22" selection-start-line="62" selection-start-column="16" selection-end-line="62" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test-data/CatalogSolr.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-459">
-          <caret line="2" column="29" selection-start-line="2" selection-start-column="22" selection-end-line="2" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test-data/fields.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="678">
-          <caret line="46" column="4" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/CatalogSolr.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="90" column="17" selection-start-line="90" selection-start-column="17" selection-end-line="90" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -348,10 +345,66 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/fields.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="29" column="20" lean-forward="true" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test-data/CatalogSolr.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-17">
+          <caret line="27" column="31" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test-data/FARMTOFREEWAYS_CATALOG.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="915">
+          <caret line="61" column="20" selection-start-line="61" selection-start-column="20" selection-end-line="61" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test/catalog.spec.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="137" column="63" selection-start-line="137" selection-start-column="63" selection-end-line="137" selection-end-column="63" />
+        <state relative-caret-position="395">
+          <caret line="121" column="6" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/commit-to-solr.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="587">
+          <caret line="137" column="31" lean-forward="true" selection-start-line="137" selection-start-column="31" selection-end-line="137" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test-data/CATALOG.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="45" column="9" lean-forward="true" selection-start-line="45" selection-start-column="9" selection-end-line="45" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test-data/fields.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="32" column="39" selection-start-line="32" selection-start-column="25" selection-end-line="32" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/CatalogSolr.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="245">
+          <caret line="38" column="14" selection-start-line="38" selection-start-column="14" selection-end-line="38" selection-end-column="14" />
         </state>
       </provider>
     </entry>

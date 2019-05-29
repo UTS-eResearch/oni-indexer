@@ -45,7 +45,6 @@
     }
   },
   "Person": {
-    "reverse": "in the reverse jsonld pointer",
     "core": "dataset",
     "format": "jsonld",
     "recordTypeName": "person",
@@ -57,7 +56,7 @@
     "facets": {
       "type": {
         "trim": true,
-        "field_suffix": "facetmulti",
+        "field_suffix": "_Dataset_facetmulti",
         "skip_entry_type_suffix": true,
         "escape_value": "solr_field"
       }
