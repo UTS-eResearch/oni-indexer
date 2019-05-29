@@ -16,6 +16,7 @@ const solrUpdate = configJson['solrUpdate'] || '';
 const fieldConfig = require(configJson['fields']);
 const logLevel = configJson['logLevel'] || 4;
 const waitPeriod = configJson['waitPeriod'] || 0;
+const batchNum = configJson['batch'] || 1000;
 
 const catalog = new CatalogSolr();
 catalog.setConfig(fieldConfig);
@@ -101,35 +102,37 @@ if (fs.existsSync(sourcePath)) {
   process.exit(1);
 }
 
-catalogs = [];
-
-records.forEach((r) => {
-  const solrObj = createCatalogSolr(r);
-  if (solrObj) {
-    if (solrObj.Dataset) {
-      solrObj.Dataset.forEach((c) => {
-        catalogs.push(c);
-      });
+function catalogToArray(recs) {
+  const catalogs = [];
+  recs.forEach((rec) => {
+    const solrObj = createCatalogSolr(rec);
+    if (solrObj) {
+      if (solrObj.Dataset) {
+        solrObj.Dataset.forEach((c) => {
+          catalogs.push(c);
+        });
+      }
+      if (solrObj.Person) {
+        solrObj.Person.forEach((c) => {
+          catalogs.push(c);
+        });
+      }
     }
-    if (solrObj.Person) {
-      solrObj.Person.forEach((c) => {
-        catalogs.push(c);
-      });
-    }
-  }
+  });
+  return catalogs;
+}
 
-});
+const batch = _.chunk(records, batchNum);
 
-const fakePromises = [1];
-
-fakePromises.reduce((promise, p, index) => {
+batch.reduce((promise, p, index) => {
   return promise.then(() => {
+    const catalogs = catalogToArray(records);
     return updateDocs(catalogs).then(async () => {
       if (waitPeriod) {
         const waited = await sleep(waitPeriod);
       }
       console.log('Update docs');
-      if (index >= fakePromises.length - 1) {
+      if (index >= batch.length - 1) {
         console.log('run commit');
         return commitDocs('?commit=true&overwrite=true').then(() => {
           return Promise.resolve();

@@ -4,5 +4,6 @@
   "solrUpdate": "http://localhost:8983/solr/dataset/update/json",
   "logLevel": 3,
   "waitPeriod": 1,
-  "fields": "./fields.json"
+  "fields": "./fields.json",
+  "batch": 1000
 }
