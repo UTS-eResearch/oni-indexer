@@ -4,7 +4,9 @@
   "description": "pushes catalog.json to solr via HTTP json",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/_mocha"
+    "test": "./node_modules/.bin/_mocha",
+    "commit": "node ./commit-to-solr.js --config ./config.json",
+    "generate": "node generate-datacrates.js -d ./test-data/generated/ -n 100"
   },
   "keywords": [
     "solr",

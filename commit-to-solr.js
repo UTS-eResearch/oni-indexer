@@ -11,7 +11,7 @@ if (!fs.existsSync(configPath)) {
   process.exit(1);
 }
 const configJson = require(configPath);
-const sourcePath = _.endsWith(configJson.source, '/') ? configJson.source : `${configJson.source}/`;
+const sourcePath = _.endsWith(configJson['source'], '/') ? configJson['source'] : `${configJson['source']}/`;
 const solrUpdate = configJson['solrUpdate'] || '';
 const fieldConfig = require(configJson['fields']);
 const logLevel = configJson['logLevel'] || 4;
