@@ -68,7 +68,7 @@ function recordsArray(sourcePath) {
   return records;
 }
 
-function entries(basePath, dirs) {
+function jsonRecords(basePath, dirs) {
   const records = [];
   _.each(dirs, (d) => {
     const entryPath = path.join(basePath, `${d}/CATALOG.json`);
@@ -108,7 +108,7 @@ function createCatalogSolr(catalog, ca) {
   return catalogSolr;
 }
 
-function catalogToArray(recs) {
+function solrObjects(recs) {
   let catalog = new CatalogSolr();
   catalog.setConfig(fieldConfig);
   const catalogs = [];
@@ -147,8 +147,8 @@ dirs = null;
 batch.reduce((promise, p, index) => {
   return promise.then(() => {
     if (logLevel >= 4) console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
-    const records = entries(sourcePath, p);
-    const catalogs = catalogToArray(records);
+    const records = jsonRecords(sourcePath, p);
+    const catalogs = solrObjects(records);
     return updateDocs(solrUpdate, catalogs).then(async () => {
       if (waitPeriod) {
         const waited = await sleep(waitPeriod);

@@ -1,0 +1,66 @@
+## JSON LD Solr Indexer
+
+---
+**NOTES:** 
+    
+    - Currently spec'd to work only with Datacrate JSON-LD.
+    TODO: 
+    - build schema of solr with config file
+    - Generalise to use any json-ld
+    - Make createCatalogSolr as part of the library
+    - Test with other types of json-ld's
+---
+
+Example implementation:
+
+### Generate JSON-LDs
+
+```
+node generate-datacrates.js -d ./test-data/generated/ -n 100
+```
+or
+```
+npm run generate
+```
+
+### Commit to SOLR
+
+Modify config.json to suit your needs.
+
+Use     
+```
+node ./commit-to-solr.js --config ./config.json
+```
+or 
+```
+npm run commit
+```
+
+### Detail
+
+```JavaScript
+const fieldConfig = require('./fields.json');
+let catalog = new CatalogSolr();
+catalog.setConfig(fieldConfig);
+
+const graph = _.each(ca['@graph'], (g) => {
+return catalog.ensureObjArray(g);
+});
+  
+const solrObject = {};
+_.each(fieldConfig, (field, name) => {
+let graphElement = _.filter(graph, (g) => {
+  return _.find(g['@type'], (gg) => gg === name) ? g : undefined;
+});
+if (graphElement) {
+  _.each(graphElement, (ge) => {
+    if (Array.isArray(solrObject[name])) {
+      solrObject[name].push(catalog.getGraphElement(fieldConfig[name], graph, ge));
+    } else {
+      solrObject[name] = [catalog.getGraphElement(fieldConfig[name], graph, ge)];
+    }
+  });
+}
+});
+```
+
