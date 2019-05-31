@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ad75bb9b-12db-4cad-af64-4c68cecdb87b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commit-to-solr.js" beforeDir="false" afterPath="$PROJECT_DIR$/commit-to-solr.js" afterDir="false" />
-    </list>
+    <list default="true" id="ad75bb9b-12db-4cad-af64-4c68cecdb87b" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -48,8 +44,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="260">
-                <caret line="43" column="31" lean-forward="true" selection-start-line="43" selection-start-column="31" selection-end-line="43" selection-end-column="31" />
+              <first_editor relative-caret-position="304">
+                <caret line="47" column="3" lean-forward="true" selection-start-line="47" selection-start-column="3" selection-end-line="47" selection-end-column="3" />
               </first_editor>
               <second_editor />
             </state>
@@ -214,7 +210,7 @@
       <option name="presentableId" value="Default" />
       <updated>1558421147646</updated>
       <workItem from="1558421149207" duration="30478000" />
-      <workItem from="1558654598476" duration="79515000" />
+      <workItem from="1558654598476" duration="81306000" />
     </task>
     <servers />
   </component>
@@ -251,18 +247,18 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="109993000" />
+    <option name="totallyTimeSpent" value="111784000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1441" y="-277" width="1920" height="1177" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15654951" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15654951" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3281106" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3281106" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.28847927" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -285,13 +281,6 @@
     <entry file="file://$PROJECT_DIR$/test-data/datacrates/43756ed8-b791-4507-a275-5bf8348de9f6/CATALOG.json" />
     <entry file="file://$PROJECT_DIR$/test-data/datacrates/a564801a-eaf2-4461-8214-405151401157/CATALOG.json" />
     <entry file="file://$PROJECT_DIR$/test-data/datacrates/c5192cd5-c8f4-4393-8bd1-f803ca944bac/CATALOG.json" />
-    <entry file="file://$PROJECT_DIR$/fields.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="29" column="20" lean-forward="true" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
@@ -383,11 +372,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/fields.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" column="20" lean-forward="true" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="260">
-            <caret line="43" column="31" lean-forward="true" selection-start-line="43" selection-start-column="31" selection-end-line="43" selection-end-column="31" />
+          <first_editor relative-caret-position="304">
+            <caret line="47" column="3" lean-forward="true" selection-start-line="47" selection-start-column="3" selection-end-line="47" selection-end-column="3" />
           </first_editor>
           <second_editor />
         </state>

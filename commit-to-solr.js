@@ -48,26 +48,6 @@ function updateDocs(solrURL, coreObjects) {
   });
 }
 
-function recordsArray(sourcePath) {
-  const records = [];
-  _.each(fs.readdirSync(sourcePath, {encoding: 'utf-8', withFileTypes: true}), (dirEnt) => {
-    // fs.dirEnt needs node version 10 +
-    if (dirEnt.isDirectory()) {
-      const entryPath = `${sourcePath}${dirEnt.name}/CATALOG.json`;
-      if (fs.existsSync(entryPath)) {
-        const entryJson = require(entryPath);
-        records.push(entryJson);
-        if (logLevel >= 4) console.log(`Added: ${entryPath}`);
-      } else {
-        console.error(`CATALOG.json missing: ${entryPath}`);
-      }
-    } else {
-      if (logLevel >= 4) console.log(`Ignoring, not a directory: ${dirEnt.name}`);
-    }
-  });
-  return records;
-}
-
 function jsonRecords(basePath, dirs) {
   const records = [];
   _.each(dirs, (d) => {

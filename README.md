@@ -43,6 +43,10 @@ const fieldConfig = require('./fields.json');
 let catalog = new CatalogSolr();
 catalog.setConfig(fieldConfig);
 
+const entryPath = path.join('test-data','CATALOG.json');
+let entryJson = fs.readFileSync(entryPath).toString();
+entryJson = JSON.parse(entryJson);
+
 const graph = _.each(ca['@graph'], (g) => {
 return catalog.ensureObjArray(g);
 });
