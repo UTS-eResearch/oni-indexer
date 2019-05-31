@@ -131,56 +131,7 @@ function catalogToArray(recs) {
   return catalogs;
 }
 
-function batchIt(b) {
-  b.map(async (p, index) => {
-    try {
-      if (logLevel >= 4) console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
-      records = entries(sourcePath, p);
-      catalogs = catalogToArray(records);
-      records = null;
-      let update = await updateDocs(solrUpdate, catalogs);
-      catalogs = null;
-      p = null;
-      console.log(`batch ${index} of ${batch.length} : Update docs`);
-      if (waitPeriod) {
-        const waited = await sleep(waitPeriod);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  });
-  commitDocs(solrUpdate, '?commit=true&overwrite=true').then(() => {
-    console.log('solr commit');
-    return Promise.resolve();
-  }).catch((err) => {
-    return Promise.reject(err);
-  });
-}
-
-function reduceIt(b){
-  b.reduce((promise, p, index) => {
-    return promise.then(() => {
-      if (logLevel >= 4) console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
-      const records = entries(sourcePath, p);
-      const catalogs = catalogToArray(records);
-      return updateDocs(solrUpdate, catalogs).then(async () => {
-        if (waitPeriod) {
-          const waited = await sleep(waitPeriod);
-        }
-        console.log(`batch ${index} of ${batch.length} : Update docs`);
-        if (index >= b.length - 1) {
-          console.log('run commit');
-          return commitDocs(solrUpdate,'?commit=true&overwrite=true').then(() => {
-            return Promise.resolve();
-          });
-        }
-        return Promise.resolve();
-      });
-    }).catch((e) => {
-      console.log(e);
-    })
-  }, Promise.resolve());
-}
+// MAIN APP
 
 let dirs = null;
 if (fs.existsSync(sourcePath)) {
@@ -192,11 +143,28 @@ if (fs.existsSync(sourcePath)) {
 
 const batch = _.chunk(dirs, batchNum);
 dirs = null;
-let records = [];
-let catalogs = [];
 
-//batchIt(batch);
-reduceIt(batch);
+batch.reduce((promise, p, index) => {
+  return promise.then(() => {
+    if (logLevel >= 4) console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
+    const records = entries(sourcePath, p);
+    const catalogs = catalogToArray(records);
+    return updateDocs(solrUpdate, catalogs).then(async () => {
+      if (waitPeriod) {
+        const waited = await sleep(waitPeriod);
+      }
+      console.log(`batch ${index} of ${batch.length} : Update docs`);
+      if (index >= batch.length - 1) {
+        console.log('run commit');
+        return commitDocs(solrUpdate, '?commit=true&overwrite=true').then(() => {
+          return Promise.resolve();
+        });
+      }
+      return Promise.resolve();
+    });
+  }).catch((e) => {
+    console.log(e);
+  })
+}, Promise.resolve());
 
-if (logLevel >= 4) console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
 

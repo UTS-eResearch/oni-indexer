@@ -19,8 +19,6 @@
     "datacrate": "git+https://code.research.uts.edu.au/eresearch/datacrate.git#random_as_library",
     "fs-extra": "^8.0.1",
     "lodash": "^4.17.11",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.4",
     "yargs": "^13.2.4"
   },
   "devDependencies": {
