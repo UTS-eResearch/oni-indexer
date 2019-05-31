@@ -3,6 +3,7 @@ const _ = require('lodash');
 const yargs = require('yargs');
 const CatalogSolr = require('./lib/CatalogSolr');
 const fs = require('fs-extra');
+const path = require('path');
 
 const argv = yargs['argv'];
 const configPath = argv.config || './config.json';
@@ -10,6 +11,7 @@ if (!fs.existsSync(configPath)) {
   console.error(`Please provide a valid config file path: ${configPath}`);
   process.exit(1);
 }
+
 const configJson = require(configPath);
 const sourcePath = _.endsWith(configJson['source'], '/') ? configJson['source'] : `${configJson['source']}/`;
 const solrUpdate = configJson['solrUpdate'] || '';
@@ -18,17 +20,14 @@ const logLevel = configJson['logLevel'] || 4;
 const waitPeriod = configJson['waitPeriod'] || 0;
 const batchNum = configJson['batch'] || 1000;
 
-const catalog = new CatalogSolr();
-catalog.setConfig(fieldConfig);
-
 const sleep = ms => new Promise((r, j) => {
   console.log('Waiting for ' + ms + ' seconds');
   setTimeout(r, ms * 1000);
 });
 
-function commitDocs(URI) {
+function commitDocs(solrURL, URI) {
   return axios({
-    url: solrUpdate + URI,
+    url: solrURL + URI,
     method: 'get',
     responseType: 'json',
     headers: {
@@ -37,9 +36,9 @@ function commitDocs(URI) {
   });
 }
 
-function updateDocs(coreObjects) {
+function updateDocs(solrURL, coreObjects) {
   return axios({
-    url: solrUpdate + '/docs',
+    url: solrURL + '/docs',
     method: 'post',
     data: coreObjects,
     responseType: 'json',
@@ -69,7 +68,22 @@ function recordsArray(sourcePath) {
   return records;
 }
 
-function createCatalogSolr(ca) {
+function entries(basePath, dirs) {
+  const records = [];
+  _.each(dirs, (d) => {
+    const entryPath = path.join(basePath, `${d}/CATALOG.json`);
+    if (fs.existsSync(entryPath)) {
+      let entryJson = fs.readFileSync(entryPath).toString();
+      entryJson = JSON.parse(entryJson);
+      records.push(entryJson);
+      entryJson = null;
+    }
+  });
+  return records;
+}
+
+function createCatalogSolr(catalog, ca) {
+
   //Peter's idea is to convert everything into an array then it is safer to work to convert
   const graph = _.each(ca['@graph'], (g) => {
     return catalog.ensureObjArray(g);
@@ -94,18 +108,12 @@ function createCatalogSolr(ca) {
   return catalogSolr;
 }
 
-let records = [];
-if (fs.existsSync(sourcePath)) {
-  records = recordsArray(sourcePath);
-} else {
-  console.error(`Source path doesn't exist: ${sourcePath}`);
-  process.exit(1);
-}
-
 function catalogToArray(recs) {
+  let catalog = new CatalogSolr();
+  catalog.setConfig(fieldConfig);
   const catalogs = [];
   recs.forEach((rec) => {
-    const solrObj = createCatalogSolr(rec);
+    const solrObj = createCatalogSolr(catalog, rec);
     if (solrObj) {
       if (solrObj.Dataset) {
         solrObj.Dataset.forEach((c) => {
@@ -119,28 +127,76 @@ function catalogToArray(recs) {
       }
     }
   });
+  catalog = null;
   return catalogs;
 }
 
-const batch = _.chunk(records, batchNum);
-
-batch.reduce((promise, p, index) => {
-  return promise.then(() => {
-    const catalogs = catalogToArray(records);
-    return updateDocs(catalogs).then(async () => {
+function batchIt(b) {
+  b.map(async (p, index) => {
+    try {
+      if (logLevel >= 4) console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
+      records = entries(sourcePath, p);
+      catalogs = catalogToArray(records);
+      records = null;
+      let update = await updateDocs(solrUpdate, catalogs);
+      catalogs = null;
+      p = null;
+      console.log(`batch ${index} of ${batch.length} : Update docs`);
       if (waitPeriod) {
         const waited = await sleep(waitPeriod);
       }
-      console.log('Update docs');
-      if (index >= batch.length - 1) {
-        console.log('run commit');
-        return commitDocs('?commit=true&overwrite=true').then(() => {
-          return Promise.resolve();
-        });
-      }
-      return Promise.resolve();
-    });
-  }).catch((e) => {
-    console.log(e);
-  })
-}, Promise.resolve());
+    } catch (e) {
+      console.log(e);
+    }
+  });
+  commitDocs(solrUpdate, '?commit=true&overwrite=true').then(() => {
+    console.log('solr commit');
+    return Promise.resolve();
+  }).catch((err) => {
+    return Promise.reject(err);
+  });
+}
+
+function reduceIt(b){
+  b.reduce((promise, p, index) => {
+    return promise.then(() => {
+      if (logLevel >= 4) console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
+      const records = entries(sourcePath, p);
+      const catalogs = catalogToArray(records);
+      return updateDocs(solrUpdate, catalogs).then(async () => {
+        if (waitPeriod) {
+          const waited = await sleep(waitPeriod);
+        }
+        console.log(`batch ${index} of ${batch.length} : Update docs`);
+        if (index >= b.length - 1) {
+          console.log('run commit');
+          return commitDocs(solrUpdate,'?commit=true&overwrite=true').then(() => {
+            return Promise.resolve();
+          });
+        }
+        return Promise.resolve();
+      });
+    }).catch((e) => {
+      console.log(e);
+    })
+  }, Promise.resolve());
+}
+
+let dirs = null;
+if (fs.existsSync(sourcePath)) {
+  dirs = fs.readdirSync(sourcePath).filter(f => fs.statSync(path.join(sourcePath, f)).isDirectory());
+} else {
+  console.error(`Source path doesn't exist: ${sourcePath}`);
+  process.exit(1);
+}
+
+const batch = _.chunk(dirs, batchNum);
+dirs = null;
+let records = [];
+let catalogs = [];
+
+//batchIt(batch);
+reduceIt(batch);
+
+if (logLevel >= 4) console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
+

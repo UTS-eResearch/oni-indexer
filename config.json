@@ -2,8 +2,8 @@
   "source": "/Users/moises/source/peppermint/publication/public/",
   "ocfl": "/Users/moises/source/peppermint/publication/ocfl/",
   "solrUpdate": "http://localhost:8983/solr/dataset/update/json",
-  "logLevel": 3,
-  "waitPeriod": 1,
+  "logLevel": 4,
+  "waitPeriod": 0,
   "fields": "./fields.json",
   "batch": 1000
 }

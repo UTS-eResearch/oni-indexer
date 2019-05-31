@@ -31,8 +31,8 @@ async function createDatacrates(dest, n) {
 try {
   fs.ensureDirSync(datacrateDirPath);
   createDatacrates(datacrateDirPath, numberOfDatacrates)
-      .then((res) => {
-        console.log(res);
+      .then(() => {
+        console.log(numberOfDatacrates + ' datacrates generated in ' + datacrateDirPath);
       })
       .catch((err) => {
         throw new Error(err);
