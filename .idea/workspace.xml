@@ -182,7 +182,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Mocha.catalog.lib.spec.js">
+  <component name="RunManager" selected="Mocha.catalog.create.spec.js">
     <configuration name="commit-to-solr" type="NodeJSConfigurationType" path-to-js-file="commit-to-solr.js" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
