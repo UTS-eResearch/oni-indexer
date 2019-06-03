@@ -47,24 +47,6 @@ const entryPath = path.join('test-data','CATALOG.json');
 let entryJson = fs.readFileSync(entryPath).toString();
 entryJson = JSON.parse(entryJson);
 
-const graph = _.each(ca['@graph'], (g) => {
-return catalog.ensureObjArray(g);
-});
-  
-const solrObject = {};
-_.each(fieldConfig, (field, name) => {
-let graphElement = _.filter(graph, (g) => {
-  return _.find(g['@type'], (gg) => gg === name) ? g : undefined;
-});
-if (graphElement) {
-  _.each(graphElement, (ge) => {
-    if (Array.isArray(solrObject[name])) {
-      solrObject[name].push(catalog.getGraphElement(fieldConfig[name], graph, ge));
-    } else {
-      solrObject[name] = [catalog.getGraphElement(fieldConfig[name], graph, ge)];
-    }
-  });
-}
-});
+const solrObject = catalog.createSolrObject(entryJson, '@graph');
 ```
 
