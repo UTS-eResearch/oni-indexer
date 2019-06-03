@@ -4,9 +4,6 @@
     <list default="true" id="ad75bb9b-12db-4cad-af64-4c68cecdb87b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commit-to-solr.js" beforeDir="false" afterPath="$PROJECT_DIR$/commit-to-solr.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/CatalogSolr.js" beforeDir="false" afterPath="$PROJECT_DIR$/lib/CatalogSolr.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/catalog.lib.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/test/catalog.lib.spec.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -42,8 +39,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="632">
-                <caret line="54" selection-start-line="54" selection-end-line="54" />
+              <first_editor relative-caret-position="60">
+                <caret line="4" column="1" selection-start-line="4" selection-start-column="1" selection-end-line="4" selection-end-column="1" />
               </first_editor>
               <second_editor />
             </state>
@@ -210,10 +207,10 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Mocha.catalog.create.spec.js" />
-      <item itemvalue="Mocha.catalog.lib.spec.js" />
       <item itemvalue="Node.js.commit-to-solr" />
       <item itemvalue="Node.js.generate-datacrates" />
+      <item itemvalue="Mocha.catalog.create.spec.js" />
+      <item itemvalue="Mocha.catalog.lib.spec.js" />
     </list>
   </component>
   <component name="SvnConfiguration">
@@ -265,7 +262,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="120649000" />
+    <option name="totallyTimeSpent" value="121863000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1440" y="-277" width="1920" height="1177" extended-state="6" />
@@ -408,8 +405,8 @@
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="632">
-            <caret line="54" selection-start-line="54" selection-end-line="54" />
+          <first_editor relative-caret-position="60">
+            <caret line="4" column="1" selection-start-line="4" selection-start-column="1" selection-end-line="4" selection-end-column="1" />
           </first_editor>
           <second_editor />
         </state>

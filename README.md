@@ -1,14 +1,15 @@
 ## JSON LD Solr Indexer
 
 ---
-**NOTES:** 
-    
-    - Currently spec'd to work only with Datacrate JSON-LD.
-    TODO: 
-    - build schema of solr with config file
-    - Generalise to use any json-ld
-    - Make createCatalogSolr as part of the library
-    - Test with other types of json-ld's
+>**NOTES:** 
+>   
+>    - Currently spec'd to work only with Datacrate JSON-LD.
+>
+>    TODO: 
+>    - build schema of solr with config file
+>    - Generalise to use any json-ld
+>    - Make createCatalogSolr as part of the library
+>    - Test with other types of json-ld's
 ---
 
 Example implementation:
