@@ -62,38 +62,12 @@ function jsonRecords(basePath, dirs) {
   return records;
 }
 
-function createCatalogSolr(catalog, ca) {
-
-  //Peter's idea is to convert everything into an array then it is safer to work to convert
-  const graph = _.each(ca['@graph'], (g) => {
-    return catalog.ensureObjArray(g);
-  });
-
-  const catalogSolr = {};
-  _.each(fieldConfig, (field, name) => {
-    let graphElement = _.filter(graph, (g) => {
-      return _.find(g['@type'], (gg) => gg === name) ? g : undefined;
-    });
-    if (graphElement) {
-      _.each(graphElement, (ge) => {
-        if (Array.isArray(catalogSolr[name])) {
-          catalogSolr[name].push(catalog.getGraphElement(fieldConfig[name], graph, ge));
-        } else {
-          catalogSolr[name] = [catalog.getGraphElement(fieldConfig[name], graph, ge)];
-        }
-      });
-    }
-  });
-
-  return catalogSolr;
-}
-
 function solrObjects(recs) {
   let catalog = new CatalogSolr();
   catalog.setConfig(fieldConfig);
   const catalogs = [];
-  recs.forEach((rec) => {
-    const solrObj = createCatalogSolr(catalog, rec);
+  recs.forEach((record) => {
+    const solrObj = catalog.createSolrObject(record, '@graph');
     if (solrObj) {
       if (solrObj.Dataset) {
         solrObj.Dataset.forEach((c) => {

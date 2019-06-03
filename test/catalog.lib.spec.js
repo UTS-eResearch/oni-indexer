@@ -27,7 +27,7 @@ describe('create solr object', function () {
   it('should use library to create a solr object', function () {
     const ca = jsonRecord(process.cwd(), path.join('test-data', 'FARMTOFREEWAYS_CATALOG.json'));
 
-    const solrObject = catalog.createSolrObject(catalog, ca, '@graph', fields);
+    const solrObject = catalog.createSolrObject(ca, '@graph');
 
     assert.strictEqual(solrObject['Dataset'][0]['record_format_s'], 'Dataset','Dataset not loaded');
   });
