@@ -1,7 +1,9 @@
 {
-  "source": "/Users/moises/source/peppermint/publication/public/",
-  "ocfl": "/Users/moises/source/peppermint/publication/ocfl/",
-  "solrUpdate": "http://localhost:8983/solr/dataset/update/json",
+  "source": "/Users/mike/working/redbox/ocfl-nginx/test_repos/rocrate_ocfl",
+  "ocfl": 1,
+  "dry-run": 1,
+  "catalogFilename": "ro-crate-metadata.jsonld",
+  "solrUpdate": "http://localhost:8983/solr/ocflcore/update/json",
   "logLevel": 4,
   "waitPeriod": 0,
   "fields": "./fields.json",
