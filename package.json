@@ -16,10 +16,13 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "axios": "^0.18.1",
+    "chai": "^4.2.0",
     "datacrate": "git+https://code.research.uts.edu.au/eresearch/datacrate.git#random_as_library",
     "fs-extra": "^8.0.1",
     "lodash": "^4.17.15",
     "ocfl": "^1.0.3",
+    "random-word": "^2.0.0",
+    "ro-crate": "^1.0.1",
     "yargs": "^13.2.4"
   },
   "devDependencies": {

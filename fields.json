@@ -1,5 +1,8 @@
 {
   "Dataset": {
+    "filter": [
+      { "match_exact": [ "path", "./" ] }
+    ],
     "core": "dataset",
     "format": "jsonld",
     "recordTypeName": "dataset",

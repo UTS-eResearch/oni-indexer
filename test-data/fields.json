@@ -1,65 +1,66 @@
 {
-  "Dataset": {
-    "core": "dataset",
-    "format": "jsonld",
-    "recordTypeName": "dataset",
-    "skip": ["hasPart"],
-    "flatten": {
-      "creator": {
-        "obj": "array"
+  "map_all": {
+    "@id": [ "id", "id_orig" ],
+    "@type": [ "record_type_s", "type_label" ]
+  },
+
+  "types": {
+    "Dataset": {
+      "filter": { "path": { "re": "^\\./|data/$"} },
+      "recordTypeName": "dataset",
+      "flatten": {
+        "creator": "array",
+        "GeoCoordinates": {}
       },
-      "GeoCoordinates": {}
-    },
-    "facets": {
-      "datePublished": {
-        "field_suffix": "_Dataset_facet",
-        "trim": true
-      },
-      "keywords": {
-        "trim": true,
-        "field_suffix": "_Dataset_facetmulti",
-        "tokenize": {
-          "delim": ","
+      "facets": {
+        "datePublished": {
+          "field_suffix": "_Dataset_facet",
+          "trim": true
+        },
+        "keywords": {
+          "trim": true,
+          "field_suffix": "_Dataset_facetmulti",
+          "tokenize": {
+            "delim": ","
+          }
+        },
+        "creator": {
+          "trim": true,
+          "fieldName": "name",
+          "field_suffix": "_Dataset_facetmulti"
+        },
+        "publisher": {
+          "trim": true,
+          "fieldName": "@id",
+          "field_suffix": "_Dataset_facet"
+        },
+        "type": {
+          "trim": true,
+          "field_suffix": "facetmulti",
+          "skip_entry_type_suffix": true,
+          "escape_value": "solr_field"
         }
       },
-      "creator": {
-        "trim": true,
-        "fieldName": "name",
-        "field_suffix": "_Dataset_facetmulti"
-      },
-      "publisher": {
-        "trim": true,
-        "fieldName": "@id",
-        "field_suffix": "_Dataset_facet"
-      },
-      "type": {
-        "trim": true,
-        "field_suffix": "facetmulti",
-        "skip_entry_type_suffix": true,
-        "escape_value": "solr_field"
+      "oai-pmh": {
+        "core": "dataset",
+        "set": "datasource:ReDBox"
       }
     },
-    "oai-pmh": {
+    "Person": {
+      "reverse": "in the reverse jsonld pointer",
       "core": "dataset",
-      "set": "datasource:ReDBox"
-    }
-  },
-  "Person": {
-    "reverse": "in the reverse jsonld pointer",
-    "core": "dataset",
-    "format": "jsonld",
-    "recordTypeName": "person",
-    "flatten": {
-      "affiliation": {
-        "obj": "array"
-      }
-    },
-    "facets": {
-      "type": {
-        "trim": true,
-        "field_suffix": "facetmulti",
-        "skip_entry_type_suffix": true,
-        "escape_value": "solr_field"
+      "format": "jsonld",
+      "recordTypeName": "person",
+      "flatten": {
+        "affiliation": "array"
+      },
+      "facets": {
+        "type": {
+          "trim": true,
+          "field_suffix": "facetmulti",
+          "skip_entry_type_suffix": true,
+          "escape_value": "solr_field"
+        }
       }
     }
   }

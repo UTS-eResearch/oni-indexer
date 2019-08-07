@@ -27,7 +27,7 @@ const catalogFilename = configJson['catalogFilename'] || 'CATALOG.json';
 const sourcePath = _.endsWith(configJson['source'], '/') ? configJson['source'] : `${configJson['source']}/`;
 
 const ocflMode = configJson['ocfl'] || false;
-
+const dryRun = configJson['dry-run'] || false;
 
 const sleep = ms => new Promise((r, j) => {
   console.log('Waiting for ' + ms + ' seconds');
@@ -80,22 +80,40 @@ function solrObjects(recs) {
   catalog.setConfig(fieldConfig);
   const catalogs = [];
   recs.forEach((record) => {
-    const solrObj = catalog.createSolrObject(record, '@graph');
-    if (solrObj) {
-      if (solrObj.Dataset) {
-        solrObj.Dataset.forEach((c) => {
-          catalogs.push(c);
-        });
+    try {
+      const solrObj = catalog.createSolrObject(record, '@graph');
+      if (solrObj) {
+        if (solrObj.Dataset) {
+          solrObj.Dataset.forEach((c) => {
+            catalogs.push(c);
+          });
+        }
+        if (solrObj.Person) {
+          solrObj.Person.forEach((c) => {
+            catalogs.push(c);
+          });
+        }
       }
-      if (solrObj.Person) {
-        solrObj.Person.forEach((c) => {
-          catalogs.push(c);
-        });
-      }
+    } catch(e) {
+      console.log("Error converting ro-crate to solr");
+      console.log(e);
+      console.log("ro-crate id: " + get_ro_id(record));
     }
+
   });
   catalog = null;
   return catalogs;
+}
+
+
+function get_ro_id(jsonld) {
+  const graph = jsonld['@graph'];
+  const root = graph.filter( item => {return item['path'] && item['path'].length > 0 && item['path'][0] === './'});
+  if( root.length < 1 ) {
+    return "[couldn't find path = ./]";
+  }
+
+  return root[0]['@id'];
 }
 
 
@@ -158,7 +176,10 @@ async function commitBatches (records) {
     return promise.then(() => {
       if (logLevel >= 4) console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
       const catalogs = solrObjects(records);
-      console.log(catalogs);
+      if( dryRun ) {
+        console.log("Dry-run mode, not committing");
+        return Promise.resolve();
+      }
       return updateDocs(solrUpdate, catalogs).then(async () => {
         if (waitPeriod) {
           const waited = await sleep(waitPeriod);
