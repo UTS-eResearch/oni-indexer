@@ -4,16 +4,19 @@ const _ = require('lodash');
 const randomWord = require('random-word');
 const CatalogSolr = require('../lib/CatalogSolr');
 
-const REPEATS = 10000;
+const REPEATS = 100;
+const TIMEOUT = 5000;
 
 // tests for the item filtering code - which we should probably roll back
 // into ro-crate itself
 
 
-function randomGraph(n, type, fields) {
+function randomGraph(n, type, fields, value_callback) {
+  const default_cb = () => randomWord();
+  const cb = value_callback || default_cb;
   return Array(n).fill(null).map(() => {
     const item = { '@type': type };
-    _.each(fields, (field) => item[field] = randomWord());
+    _.each(fields, (field) => item[field] = cb());
     return item;
   });
 }
@@ -43,7 +46,7 @@ function randomSubstring(word) {
 
 
 describe('single filters', function () {
-  this.timeout(5000);
+  this.timeout(TIMEOUT);
   it('can pick items by exact matching a single field', function () {
     _.times(REPEATS, () => {
       const graph = randomGraph(100, 'Dataset', ['path']);
@@ -72,6 +75,22 @@ describe('single filters', function () {
       });
     });
   });
+
+  it('can pick items by the standard DataCrate path regexp', function () {
+    _.times(REPEATS, () => {
+      const graph = randomGraph(100, 'Dataset', ['path'], () => _.sample(['./', 'data/']));
+      const lookfor = "^\\./|data/$";
+      const catalog = makeCatalog({path: { re: lookfor } } );
+      const matches = graph.filter(catalog.filters['Dataset']);
+      expect(matches).to.be.an('array').and.to.have.lengthOf(100);
+      const lookfor_re = new RegExp(lookfor);
+      _.each(matches, (match) => {
+        expect(match).to.have.property('path').match(lookfor_re)
+      });
+    });
+  });
+
+
 });
 
 
@@ -98,7 +117,7 @@ function randomFilter(fields, item) {
 }
 
 describe('multiple filters', function () {
-  this.timeout(5000);
+  this.timeout(TIMEOUT);
 
   it('can pick items by multiple filters', function () {
      _.times(REPEATS, () => {
