@@ -4,15 +4,18 @@ const _ = require('lodash');
 const randomWord = require('random-word');
 const CatalogSolr = require('../lib/CatalogSolr');
 
-const REPEATS = 100;
+const GRAPH = 20;
+const REPEATS = 1000;
 const TIMEOUT = 5000;
 
 // tests for the item filtering code - which we should probably roll back
 // into ro-crate itself
 
 
+// this now puts values in arrays by default
+
 function randomGraph(n, type, fields, value_callback) {
-  const default_cb = () => randomWord();
+  const default_cb = () => [ randomWord() ];
   const cb = value_callback || default_cb;
   return Array(n).fill(null).map(() => {
     const item = { '@type': type };
@@ -49,50 +52,85 @@ describe('single filters', function () {
   this.timeout(TIMEOUT);
   it('can pick items by exact matching a single field', function () {
     _.times(REPEATS, () => {
-      const graph = randomGraph(100, 'Dataset', ['path']);
+      const graph = randomGraph(GRAPH, 'Dataset', ['path']);
       const item = _.sample(graph);
-      const lookfor = item['path'];
+      const lookfor = item['path'][0];
       const catalog = makeCatalog({path: lookfor});
       const matches = graph.filter(catalog.filters['Dataset']);
       expect(matches).to.be.an('array').and.to.not.be.empty;
       _.each(matches, (match) => {
-        expect(match).to.have.property('path', lookfor)
+        expect(match).to.have.property('path');
+        expect(match['path'][0]).to.equal(lookfor);
       });
     });
   });
 
   it('can pick items by regexps on a single field', function () {
     _.times(REPEATS, () => {
-      const graph = randomGraph(100, 'Dataset', ['path']);
+      const graph = randomGraph(GRAPH, 'Dataset', ['path']);
       const item = _.sample(graph);
-      const lookfor = randomSubstring(item['path']);
-      const catalog = makeCatalog({path: { re: lookfor } } );
+      const lookfor = randomSubstring(item['path'][0]);
+      const catalog = makeCatalog({ path: { re: lookfor } } );
       const matches = graph.filter(catalog.filters['Dataset']);
       expect(matches).to.be.an('array').and.to.not.be.empty;
       const lookfor_re = new RegExp(lookfor);
       _.each(matches, (match) => {
-        expect(match).to.have.property('path').match(lookfor_re)
+        expect(match).to.have.property('path');
+        expect(match['path'][0]).to.match(lookfor_re);
       });
     });
   });
 
   it('can pick items by the standard DataCrate path regexp', function () {
     _.times(REPEATS, () => {
-      const graph = randomGraph(100, 'Dataset', ['path'], () => _.sample(['./', 'data/']));
+      const graph = randomGraph(GRAPH, 'Dataset', ['path'], () => [ _.sample(['./', 'data/'])] );
       const lookfor = "^\\./|data/$";
       const catalog = makeCatalog({path: { re: lookfor } } );
       const matches = graph.filter(catalog.filters['Dataset']);
-      expect(matches).to.be.an('array').and.to.have.lengthOf(100);
+      expect(matches).to.be.an('array').and.to.have.lengthOf(GRAPH);
       const lookfor_re = new RegExp(lookfor);
       _.each(matches, (match) => {
-        expect(match).to.have.property('path').match(lookfor_re)
+        expect(match).to.have.property('path');
+        expect(match['path'][0]).to.match(lookfor_re);
+      });
+    });
+  });
+
+  it('can cope when filtering on a field which is not present in all items', function () {
+    _.times(REPEATS, () => {
+      const graph = randomGraph(GRAPH, 'Dataset', ['path']);
+      const item = _.sample(graph);
+      const lookfor = item['path'][0];
+      // add more items without a path
+      const graph2 = graph.concat(randomGraph(GRAPH, 'Dataset', ['name']));
+      const catalog = makeCatalog({path: { re: lookfor } } );
+      const matches = graph2.filter(catalog.filters['Dataset']);
+      const lookfor_re = new RegExp(lookfor);
+      _.each(matches, (match) => {
+        expect(match).to.have.property('path');
+        expect(match['path'][0]).to.match(lookfor_re);
       });
     });
   });
 
 
-});
+  it('can filter values whether or not they are in arrays', function () {
+    const values = [ [ 'one' ], [ 'two' ], 'one', 'two' ];
+    const graph = values.map((v) => { return { '@type': 'Dataset', 'path': v }});
+    const catalog = makeCatalog({path: 'one' });
+    const matches = graph.filter(catalog.filters['Dataset']);
+    expect(matches).to.have.lengthOf(2);
+    _.each(matches, (match) => {
+      expect(match).to.have.property('path');
+      if( Array.isArray(match['path']) ) {
+        expect(match['path'][0]).to.equal('one');
+      } else {
+        expect(match['path']).to.equal('one');
+      }
+    })
+  });
 
+});
 
 
 
@@ -108,9 +146,9 @@ function randomFilter(fields, item) {
   const filter = {};
   _.each(ffields, (ff) => {
     if( _.random(1) === 0 ) {
-      filter[ff] = item[ff]
+      filter[ff] = item[ff][0]
     } else {
-      filter[ff] = { re: randomSubstring(item[ff]) }
+      filter[ff] = { re: randomSubstring(item[ff][0]) }
     }
   });
   return filter;
@@ -122,7 +160,7 @@ describe('multiple filters', function () {
   it('can pick items by multiple filters', function () {
      _.times(REPEATS, () => {
       const fields = [ 'path', 'name', 'description', 'id', 'colour', 'weight' ];
-      const graph = randomGraph(100, 'Dataset', fields);
+      const graph = randomGraph(GRAPH, 'Dataset', fields);
       const item = _.sample(graph);
       const filterspec = randomFilter(fields, item);
       const catalog = makeCatalog(filterspec);
@@ -138,10 +176,11 @@ describe('multiple filters', function () {
 
       _.each(matches, (match) => {
         _.each(filterspec, ( filter, field ) => {
+          expect(match).to.have.property(field);
           if( typeof filter === 'object' ) {
-            expect(match).to.have.property(field).match(res[field])
+            expect(match[field][0]).to.match(res[field]);
           } else {
-            expect(match).to.have.property(field, filter);
+            expect(match[field][0]).to.equal(filter);
           }
         })
       });
