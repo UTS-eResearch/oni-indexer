@@ -1,5 +1,5 @@
 {
-  "source": "/Users/mike/working/redbox/ocfl-nginx/test_repos/rocrate_ocfl",
+  "source": "/Users/mike/working/ocfl-nginx/test_repos/rocrate_ocfl",
   "ocfl": 1,
   "dry-run": 1,
   "catalogFilename": "ro-crate-metadata.jsonld",

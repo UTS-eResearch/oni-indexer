@@ -2,6 +2,7 @@ const axios = require('axios');
 const _ = require('lodash');
 const yargs = require('yargs');
 const CatalogSolr = require('./lib/CatalogSolr');
+const ROCrate = require('ro-crate').ROCrate;
 const fs = require('fs-extra');
 const path = require('path');
 const OCFLRepository = require('ocfl').Repository;
@@ -81,7 +82,7 @@ function solrObjects(recs) {
   const catalogs = [];
   recs.forEach((record) => {
     try {
-      const solrObj = catalog.createSolrObject(record, '@graph');
+      const solrObj = catalog.createSolrDocument(record);
       if (solrObj) {
         if (solrObj.Dataset) {
           solrObj.Dataset.forEach((c) => {
@@ -97,7 +98,7 @@ function solrObjects(recs) {
     } catch(e) {
       console.log("Error converting ro-crate to solr");
       console.log(e);
-      console.log("ro-crate id: " + get_ro_id(record));
+      console.log(JSON.stringify(record).substr(0, 160));
     }
 
   });
@@ -105,16 +106,6 @@ function solrObjects(recs) {
   return catalogs;
 }
 
-
-function get_ro_id(jsonld) {
-  const graph = jsonld['@graph'];
-  const root = graph.filter( item => {return item['path'] && item['path'].length > 0 && item['path'][0] === './'});
-  if( root.length < 1 ) {
-    return "[couldn't find path = ./]";
-  }
-
-  return root[0]['@id'];
-}
 
 
 async function loadFromDirs(root) {

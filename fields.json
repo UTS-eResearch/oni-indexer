@@ -1,68 +1,44 @@
 {
-  "Dataset": {
-    "filter": [
-      { "match_exact": [ "path", "./" ] }
-    ],
-    "core": "dataset",
-    "format": "jsonld",
-    "recordTypeName": "dataset",
-    "skip": ["hasPart"],
-    "flatten": {
-      "creator": {
-        "obj": "array"
+  "map_all": {
+    "@id": [ "id", "id_orig" ],
+    "@type": [ "record_type_s", "type_label" ]
+  },
+
+  "types": {
+
+    "Dataset": {
+      "path": {
+        "filter": { "re": "^\\./|data/$" }
       },
-      "GeoCoordinates": {}
-    },
-    "facets": {
-      "datePublished": {
-        "field_suffix": "_Dataset_facet",
-        "trim": true
+
+      "hasPart": {"skip": true},
+
+      "creator": {
+        "resolve": "multi",
+        "facet": true
       },
       "keywords": {
-        "trim": true,
-        "field_suffix": "_Dataset_facetmulti",
-        "tokenize": {
-          "delim": ","
+        "facet": {
+          "tokenize": ","
         }
       },
-      "creator": {
-        "trim": true,
-        "fieldName": "name",
-        "field_suffix": "_Dataset_facetmulti"
+      "datePublished": {
+        "facet": true
       },
       "publisher": {
-        "trim": true,
-        "fieldName": "@id",
-        "field_suffix": "_Dataset_facet"
-      },
-      "type": {
-        "trim": true,
-        "field_suffix": "facetmulti",
-        "skip_entry_type_suffix": true,
-        "escape_value": "solr_field"
+        "resolve": "single",
+        "facet": {
+          "field": "@id"
+        }
       }
     },
-    "oai-pmh": {
-      "core": "dataset",
-      "set": "datasource:ReDBox"
-    }
-  },
-  "Person": {
-    "core": "dataset",
-    "format": "jsonld",
-    "recordTypeName": "person",
-    "flatten": {
+
+    "Person": {
+
       "affiliation": {
-        "obj": "array"
+        "resolve": "multi"
       }
-    },
-    "facets": {
-      "type": {
-        "trim": true,
-        "field_suffix": "_Dataset_facetmulti",
-        "skip_entry_type_suffix": true,
-        "escape_value": "solr_field"
-      }
+
     }
   }
 }
