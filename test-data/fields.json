@@ -5,63 +5,40 @@
   },
 
   "types": {
+
     "Dataset": {
-      "filter": { "path": { "re": "^\\./|data/$"} },
-      "recordTypeName": "dataset",
-      "flatten": {
-        "creator": "array",
-        "GeoCoordinates": {}
+      "path": {
+        "filter": { "re": "^\\./|data/$" }
       },
-      "facets": {
-        "datePublished": {
-          "field_suffix": "_Dataset_facet",
-          "trim": true
-        },
-        "keywords": {
-          "trim": true,
-          "field_suffix": "_Dataset_facetmulti",
-          "tokenize": {
-            "delim": ","
-          }
-        },
-        "creator": {
-          "trim": true,
-          "fieldName": "name",
-          "field_suffix": "_Dataset_facetmulti"
-        },
-        "publisher": {
-          "trim": true,
-          "fieldName": "@id",
-          "field_suffix": "_Dataset_facet"
-        },
-        "type": {
-          "trim": true,
-          "field_suffix": "facetmulti",
-          "skip_entry_type_suffix": true,
-          "escape_value": "solr_field"
+
+      "hasPart": "skip",
+
+      "creator": {
+        "resolve": "multi",
+        "facet": true
+      },
+      "keywords": {
+        "facet": {
+          "tokenize": ","
         }
       },
-      "oai-pmh": {
-        "core": "dataset",
-        "set": "datasource:ReDBox"
+      "datePublished": {
+        "facet": true
+      },
+      "publisher": {
+        "resolve": "single",
+        "facet": {
+          "field": "@id"
+        }
       }
     },
+
     "Person": {
-      "reverse": "in the reverse jsonld pointer",
-      "core": "dataset",
-      "format": "jsonld",
-      "recordTypeName": "person",
-      "flatten": {
-        "affiliation": "array"
+
+      "affiliation": {
+        "resolve": "multi"
       },
-      "facets": {
-        "type": {
-          "trim": true,
-          "field_suffix": "facetmulti",
-          "skip_entry_type_suffix": true,
-          "escape_value": "solr_field"
-        }
-      }
+
     }
   }
 }

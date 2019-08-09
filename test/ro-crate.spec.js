@@ -1,4 +1,5 @@
 const assert = require('assert');
+const expect = require('chai').expect;
 const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
@@ -18,6 +19,8 @@ function jsonRecord(basePath, fileName) {
   }
 }
 
+// TODO: have this actually test a dataset and some people
+
 describe('create solr object', function () {
   const test_data = path.join(process.cwd(), 'test-data');
   const fieldsPath = path.join(test_data, 'fields.json');
@@ -33,6 +36,6 @@ describe('create solr object', function () {
 
     fs.writeFileSync(path.join(test_data, "solr_output.json"), JSON.stringify(solrObject, null, 2));
 
-    assert.strictEqual(solrObject['Dataset'][0]['record_format_s'], 'Dataset','Dataset not loaded');
+    expect(solrObject['Dataset'][0]['record_type_s']).to.equal('Dataset');
   });
 });

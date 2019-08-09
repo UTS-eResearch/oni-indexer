@@ -24,14 +24,12 @@ function randomGraph(n, type, fields, value_callback) {
   });
 }
 
-function makeCatalog(spec) {
+function makeCatalog(fieldcf) {
   const catalog = new CatalogSolr();
   
   catalog.setConfig({
     types: {
-      Dataset: {
-        filter: spec
-      }
+      Dataset: fieldcf
     }
   });
 
@@ -50,12 +48,23 @@ function randomSubstring(word) {
 
 describe('single filters', function () {
   this.timeout(TIMEOUT);
+
+  it('matches everything when filter is empty', function () {
+    const graph = randomGraph(GRAPH, 'Dataset', ['path']);
+    const catalog = makeCatalog({path: {} });
+    const matches = graph.filter(catalog.filters['Dataset']);
+    expect(matches).to.be.an('array').and.to.have.lengthOf(GRAPH);
+  });
+
+
+
+
   it('can pick items by exact matching a single field', function () {
     _.times(REPEATS, () => {
       const graph = randomGraph(GRAPH, 'Dataset', ['path']);
       const item = _.sample(graph);
       const lookfor = item['path'][0];
-      const catalog = makeCatalog({path: lookfor});
+      const catalog = makeCatalog({path: {filter: lookfor} });
       const matches = graph.filter(catalog.filters['Dataset']);
       expect(matches).to.be.an('array').and.to.not.be.empty;
       _.each(matches, (match) => {
@@ -70,7 +79,7 @@ describe('single filters', function () {
       const graph = randomGraph(GRAPH, 'Dataset', ['path']);
       const item = _.sample(graph);
       const lookfor = randomSubstring(item['path'][0]);
-      const catalog = makeCatalog({ path: { re: lookfor } } );
+      const catalog = makeCatalog({ path: { filter: { re: lookfor } } });
       const matches = graph.filter(catalog.filters['Dataset']);
       expect(matches).to.be.an('array').and.to.not.be.empty;
       const lookfor_re = new RegExp(lookfor);
@@ -85,7 +94,7 @@ describe('single filters', function () {
     _.times(REPEATS, () => {
       const graph = randomGraph(GRAPH, 'Dataset', ['path'], () => [ _.sample(['./', 'data/'])] );
       const lookfor = "^\\./|data/$";
-      const catalog = makeCatalog({path: { re: lookfor } } );
+      const catalog = makeCatalog({path: { filter: { re: lookfor } } } );
       const matches = graph.filter(catalog.filters['Dataset']);
       expect(matches).to.be.an('array').and.to.have.lengthOf(GRAPH);
       const lookfor_re = new RegExp(lookfor);
@@ -103,7 +112,7 @@ describe('single filters', function () {
       const lookfor = item['path'][0];
       // add more items without a path
       const graph2 = graph.concat(randomGraph(GRAPH, 'Dataset', ['name']));
-      const catalog = makeCatalog({path: { re: lookfor } } );
+      const catalog = makeCatalog({path: {filter: { re: lookfor } }});
       const matches = graph2.filter(catalog.filters['Dataset']);
       const lookfor_re = new RegExp(lookfor);
       _.each(matches, (match) => {
@@ -117,7 +126,7 @@ describe('single filters', function () {
   it('can filter values whether or not they are in arrays', function () {
     const values = [ [ 'one' ], [ 'two' ], 'one', 'two' ];
     const graph = values.map((v) => { return { '@type': 'Dataset', 'path': v }});
-    const catalog = makeCatalog({path: 'one' });
+    const catalog = makeCatalog({path: {filter: 'one' }});
     const matches = graph.filter(catalog.filters['Dataset']);
     expect(matches).to.have.lengthOf(2);
     _.each(matches, (match) => {
@@ -143,15 +152,15 @@ describe('single filters', function () {
 function randomFilter(fields, item) {
   const n = _.random(2, fields.length);
   const ffields =_.sampleSize(fields, n);
-  const filter = {};
+  const filters = {};
   _.each(ffields, (ff) => {
     if( _.random(1) === 0 ) {
-      filter[ff] = item[ff][0]
+      filters[ff] = { filter: item[ff][0] }
     } else {
-      filter[ff] = { re: randomSubstring(item[ff][0]) }
+      filters[ff] = { filter: { re: randomSubstring(item[ff][0]) } }
     }
   });
-  return filter;
+  return filters;
 }
 
 describe('multiple filters', function () {
