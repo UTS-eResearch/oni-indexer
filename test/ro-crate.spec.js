@@ -29,7 +29,7 @@ describe('create solr object', function () {
   const fields = require(fieldsPath);
   catalog.setConfig(fields);
 
-  it('should use library to create a solr object', function () {
+  it('convert an RO-crate to a solr document with facets', function () {
     const ca = jsonRecord(test_data, 'FARMTOFREEWAYS_CATALOG.json');
 
     const solrObject = catalog.createSolrDocument(ca, '@graph');
@@ -37,5 +37,9 @@ describe('create solr object', function () {
     fs.writeFileSync(path.join(test_data, "solr_output.json"), JSON.stringify(solrObject, null, 2));
 
     expect(solrObject['Dataset'][0]['record_type_s']).to.equal('Dataset');
+    const dsSolr = solrObject['Dataset'][0];
+    expect(dsSolr).to.have.property("Dataset_publisher_facet");
+    expect(dsSolr).to.have.property("Dataset_creator_facetmulti");
+    expect(dsSolr).to.have.property("Dataset_datePublished_facet");
   });
 });
