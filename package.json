@@ -8,6 +8,10 @@
     "commit": "node ./commit-to-solr.js --config ./config.json",
     "generate": "node generate-datacrates.js -d ./test-data/generated/ -n 100"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://code.research.uts.edu.au/eresearch/solr-catalog.git"
+  },
   "keywords": [
     "solr",
     "datacrate"
