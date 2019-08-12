@@ -6,7 +6,7 @@ const ROCrate = require('ro-crate').ROCrate;
 const fs = require('fs-extra');
 const path = require('path');
 const OCFLRepository = require('ocfl').Repository;
-
+const uuidv1 = require('uuid/v1');
 
 
 const argv = yargs['argv'];
@@ -28,7 +28,7 @@ const catalogFilename = configJson['catalogFilename'] || 'CATALOG.json';
 const sourcePath = _.endsWith(configJson['source'], '/') ? configJson['source'] : `${configJson['source']}/`;
 
 const ocflMode = configJson['ocfl'] || false;
-const dryRun = configJson['dry-run'] || false;
+const dryRun = configJson['dryRun'] || false;
 
 const sleep = ms => new Promise((r, j) => {
   console.log('Waiting for ' + ms + ' seconds');
@@ -165,8 +165,11 @@ async function commitBatches (records) {
 
   batch.reduce((promise, records, index) => {
     return promise.then(() => {
-      if (logLevel >= 4) console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
+      if (logLevel >= 4) {
+        reportMemUsage();
+      }
       const catalogs = solrObjects(records);
+      dumpSolrSync(catalogs);
       if( dryRun ) {
         console.log("Dry-run mode, not committing");
         return Promise.resolve();
@@ -184,10 +187,23 @@ async function commitBatches (records) {
         return Promise.resolve();
       });
     }).catch((e) => {
-      console.log(e);
+      console.log("Update failed");
+      console.log(String(e));
+      //fs.writeFileSync(path.join('test-data', 'error.log'), e);
     })
   }, Promise.resolve());
 
+}
+
+
+function reportMemUsage() {
+   console.log(`Using: ${Math.round(process.memoryUsage().rss / 1024 / 1024 * 100) / 100} MBs`);
+}
+
+async function dumpSolrSync(solr) {
+  const uuname = path.join('test-data', uuidv1() + '.json');
+  fs.writeJsonSync(uuname, solr, { spaces: 2 });
+  console.log(`Wrote solr docs to ${uuname}`); 
 }
 
 

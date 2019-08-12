@@ -23,7 +23,8 @@
         }
       },
       "datePublished": {
-        "facet": true
+        "facet": true,
+        "validate": "date"
       },
       "publisher": {
         "resolve": "single",

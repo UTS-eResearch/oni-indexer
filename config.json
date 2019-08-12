@@ -1,7 +1,7 @@
 {
   "source": "/Users/mike/working/ocfl-nginx/test_repos/rocrate_ocfl",
   "ocfl": 1,
-  "dry-run": 1,
+  "dryRun": 0, 
   "catalogFilename": "ro-crate-metadata.jsonld",
   "solrUpdate": "http://localhost:8983/solr/ocflcore/update/json",
   "logLevel": 4,
