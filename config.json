@@ -1,9 +1,9 @@
 {
-  "source": "/Users/mike/working/ocfl-nginx/test_repos/rocrate_ocfl",
-  "ocfl": 1,
-  "dryRun": 0, 
+  "ocfl": "/Users/mike/working/ocfl-nginx/test_repos/repo_ocfl",
+  "dryRun": false,
   "catalogFilename": "ro-crate-metadata.jsonld",
-  "solrUpdate": "http://localhost:8983/solr/ocflcore/update/json",
+  "solrUpdate": "http://localhost:8983/solr/ocfl/update/json",
+  "hashAlgorithm": "md5",
   "logLevel": 4,
   "waitPeriod": 0,
   "fields": "./fields.json",

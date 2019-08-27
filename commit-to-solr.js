@@ -7,6 +7,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const OCFLRepository = require('ocfl').Repository;
 const uuidv1 = require('uuid/v1');
+const hasha = require('hasha');
 
 
 const argv = yargs['argv'];
@@ -17,17 +18,16 @@ if (!fs.existsSync(configPath)) {
   process.exit(1);
 }
 
-const configJson = require(configPath);
+const configJson = fs.readJsonSync(configPath);
 const solrUpdate = configJson['solrUpdate'] || '';
-const fieldConfig = require(configJson['fields']);
+const fieldConfig = fs.readJsonSync(configJson['fields']);
 const logLevel = configJson['logLevel'] || 4;
 const waitPeriod = configJson['waitPeriod'] || 0;
 const batchNum = configJson['batch'] || 1000;
 const catalogFilename = configJson['catalogFilename'] || 'CATALOG.json';
-      
-const sourcePath = _.endsWith(configJson['source'], '/') ? configJson['source'] : `${configJson['source']}/`;
+const hashAlgorithm = configJson['hashAlgorithm'] || 'md5';      
+const sourcePath = configJson['ocfl'];
 
-const ocflMode = configJson['ocfl'] || false;
 const dryRun = configJson['dryRun'] || false;
 
 const sleep = ms => new Promise((r, j) => {
@@ -59,80 +59,8 @@ function updateDocs(solrURL, coreObjects) {
   });
 }
 
-// needs to be replaced because OCFL 
 
-function jsonRecords(basePath, dirs) {
-  const records = [];
-  _.each(dirs, (d) => {
-    const entryPath = path.join(basePath, `${d}/CATALOG.json`);
-    if (fs.existsSync(entryPath)) {
-      let entryJson = fs.readFileSync(entryPath).toString();
-      entryJson = JSON.parse(entryJson);
-      records.push(entryJson);
-      entryJson = null;
-    }
-  });
-  return records;
-}
-
-
-function solrObjects(recs) {
-  let catalog = new CatalogSolr();
-  catalog.setConfig(fieldConfig);
-  const catalogs = [];
-  recs.forEach((record) => {
-    try {
-      const solrObj = catalog.createSolrDocument(record);
-      if (solrObj) {
-        if (solrObj.Dataset) {
-          solrObj.Dataset.forEach((c) => {
-            catalogs.push(c);
-          });
-        }
-        if (solrObj.Person) {
-          solrObj.Person.forEach((c) => {
-            catalogs.push(c);
-          });
-        }
-      }
-    } catch(e) {
-      console.log("Error converting ro-crate to solr");
-      console.log(e);
-      console.log(JSON.stringify(record).substr(0, 160));
-    }
-
-  });
-  catalog = null;
-  return catalogs;
-}
-
-
-
-async function loadFromDirs(root) {
-  const e = await fs.stat(root);
-  if( !e ) {
-    console.error(`Source path doesn't exist: ${sourcePath}`);
-    process.exit(1);
-  } else {
-    console.log(e);
-  }
-
-  const paths = await fs.readdir(sourcePath);
-  const dirs = [];
-
-  for( const p of paths ) {
-    var s = await fs.stat(p);
-    if( s.isDirectory() ) {
-      dirs.push(p);
-    }
-  }
-  return dirs;
-}
-
-
-
-
-async function loadFromOcfl(repoPath) {
+async function loadFromOcfl(repoPath, hash_algorithm) {
   const repo = new OCFLRepository();
 
   await repo.load(repoPath);
@@ -147,7 +75,11 @@ async function loadFromOcfl(repoPath) {
       if (headState[hash].includes(catalogFilename)) {
         const jsonfile = path.join(object.path, inv.manifest[hash][0]);
         const json = await fs.readJson(jsonfile);
-        records.push(json);
+        records.push({
+          path: object.path,
+          uri_id: hasha(object.path, { algorithm: hashAlgorithm }),
+          jsonld: json
+        });
       }
     }
   }
@@ -155,6 +87,44 @@ async function loadFromOcfl(repoPath) {
   
 }
 
+
+
+// 
+
+
+function solrObjects(recs) {
+  let indexer = new CatalogSolr();
+  indexer.setConfig(fieldConfig);
+  const solrDocs = [];
+  recs.forEach((record) => {
+    try {
+      const jsonld = record['jsonld'];
+      const docs = indexer.createSolrDocument(jsonld);
+      if (docs) {
+        if (docs.Dataset) {
+          docs.Dataset.forEach((dataset) => {
+            dataset['path'] = record['path'];
+            dataset['uri_id'] = record['uri_id'];
+            solrDocs.push(dataset);
+            console.log(`Dataset URI id ${dataset['uri_id']}`);
+          });
+        }
+        if (docs.Person) {
+          docs.Person.forEach((person) => {
+            solrDocs.push(person);
+          });
+        }
+      }
+    } catch(e) {
+      console.log("Error converting ro-crate to solr");
+      console.log(e);
+      console.log(JSON.stringify(jsonld).substr(0, 160));
+    }
+
+  });
+  indexer = null;
+  return solrDocs;
+}
 
 
 
@@ -168,13 +138,13 @@ async function commitBatches (records) {
       if (logLevel >= 4) {
         reportMemUsage();
       }
-      const catalogs = solrObjects(records);
-      dumpSolrSync(catalogs);
+      const solrDocs = solrObjects(records);
+      dumpSolrSync(solrDocs);
       if( dryRun ) {
         console.log("Dry-run mode, not committing");
         return Promise.resolve();
       }
-      return updateDocs(solrUpdate, catalogs).then(async () => {
+      return updateDocs(solrUpdate, solrDocs).then(async () => {
         if (waitPeriod) {
           const waited = await sleep(waitPeriod);
         }
@@ -208,12 +178,7 @@ async function dumpSolrSync(solr) {
 
 
 async function main () {
-  var records = null;
-  if( ocflMode ) {
-    records = await loadFromOcfl(sourcePath);
-  } else {
-    records = await loadFromDirs(sourcePath);
-  }
+  const records = await loadFromOcfl(sourcePath);
 
   console.log("Got " + records.length + " records from " + sourcePath);
   

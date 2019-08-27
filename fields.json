@@ -11,7 +11,12 @@
         "filter": { "re": "^\\./|data/$" }
       },
 
-      "hasPart": {"skip": true},
+      "hasPart": { "skip": true },
+
+      "license": {
+        "resolve": "multi",
+        "facet": "true"
+      },
 
       "creator": {
         "resolve": "multi",
