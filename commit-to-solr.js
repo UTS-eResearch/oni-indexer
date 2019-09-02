@@ -76,7 +76,7 @@ async function loadFromOcfl(repoPath, hash_algorithm) {
         const jsonfile = path.join(object.path, inv.manifest[hash][0]);
         const json = await fs.readJson(jsonfile);
         records.push({
-          path: object.path,
+          path: path.relative(repoPath, object.path),
           uri_id: hasha(object.path, { algorithm: hashAlgorithm }),
           jsonld: json
         });
@@ -108,6 +108,8 @@ function solrObjects(recs) {
             solrDocs.push(dataset);
             console.log(`Dataset URI id ${dataset['uri_id']}`);
           });
+        } else {
+          console.log(`Warning: no Datasets created for record ${record['path']} ${record['uri_id']}`);
         }
         if (docs.Person) {
           docs.Person.forEach((person) => {
@@ -117,8 +119,9 @@ function solrObjects(recs) {
       }
     } catch(e) {
       console.log("Error converting ro-crate to solr");
+      console.log(`path: ${record['path']}`);
+      console.log(`uri_id: ${record['uri_id']}`);
       console.log(e);
-      console.log(JSON.stringify(jsonld).substr(0, 160));
     }
 
   });
@@ -158,8 +161,7 @@ async function commitBatches (records) {
       });
     }).catch((e) => {
       console.log("Update failed");
-      console.log(String(e));
-      //fs.writeFileSync(path.join('test-data', 'error.log'), e);
+      console.log(e);
     })
   }, Promise.resolve());
 

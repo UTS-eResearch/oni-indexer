@@ -1,4 +1,5 @@
 {
+
   "map_all": {
     "@id": [ "id", "id_orig" ],
     "@type": [ "record_type_s", "type_label" ]
@@ -7,8 +8,10 @@
   "types": {
 
     "Dataset": {
-      "path": {
-        "filter": { "re": "^\\./|data/$" }
+    
+      "@id": { 
+        "name": "ocfl_demo",
+        "filter": { "is_root": true }
       },
 
       "hasPart": { "skip": true },
@@ -22,15 +25,18 @@
         "resolve": "multi",
         "facet": true
       },
+
       "keywords": {
         "facet": {
           "tokenize": ","
         }
       },
+
       "datePublished": {
         "facet": true,
         "validate": "date"
       },
+      
       "publisher": {
         "resolve": "single",
         "facet": {
