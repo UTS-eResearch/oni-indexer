@@ -22,8 +22,8 @@
       "hasPart": { "skip": true },
 
       "license": {
-        "resolve": "multi",
-        "facet": "true"
+        "multi": true,
+        "facet": true
       },
 
       "creator": {
