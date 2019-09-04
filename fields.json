@@ -5,6 +5,11 @@
     "@type": [ "record_type_s", "type_label" ]
   },
 
+  "licenses": {
+    "^https://creativecommons.org/": "public",
+    "__default__": "internal"
+  },
+
   "types": {
 
     "Dataset": {

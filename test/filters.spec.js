@@ -1,4 +1,6 @@
 
+// FIXME - needs to use ro-crate- style root dataset identification
+
 const expect = require('chai').expect;
 const _ = require('lodash');
 const randomWord = require('random-word');

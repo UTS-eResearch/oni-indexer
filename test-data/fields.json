@@ -13,6 +13,10 @@
 
       "hasPart": {"skip": true},
 
+      "license": {
+        "facet": true
+      },
+
       "creator": {
         "resolve": "multi",
         "facet": true
