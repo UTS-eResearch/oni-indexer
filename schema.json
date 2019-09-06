@@ -1,0 +1,87 @@
+{
+    "field": [
+        {
+            "name": "name",
+            "type": "text_general",
+            "stored": true
+        },
+        {
+            "name": "type",
+            "type": "strings",
+            "stored": true
+        },
+        {
+            "name": "description",
+            "type": "text_en",
+            "stored": true
+        },
+        {
+            "name": "main_search",
+            "type": "text_en",
+            "stored": true,
+            "multiValued": true
+        }
+    ],
+    "dynamic-field": [
+        {
+            "name": "*_name",
+            "type": "text_en",
+            "stored": true
+        },
+        {
+            "name": "*_description",
+            "type": "text_en",
+            "stored": true
+        },
+        {
+            "name": "*_date",
+            "type": "text_en",
+            "stored": true
+        },
+        {
+            "name": "*_datePublished",
+            "type": "text_en",
+            "stored": true
+        },
+        {
+            "name": "*_dateCreated",
+            "type": "text_en",
+            "stored": true
+        },
+        {
+            "name": "*_birthDate",
+            "type": "text_en",
+            "stored": true
+        },
+        {
+            "name": "*_facetmulti",
+            "type": "strings",
+            "stored": true
+        },
+        {
+            "name": "*_facet",
+            "type": "string",
+            "stored": true
+        }
+    ],
+    "copy-field": [
+        {
+            "source": "name",
+            "dest": [
+                "main_search"
+            ]
+        },
+        {
+            "source": "description",
+            "dest": [
+                "main_search"
+            ]
+        },
+        {
+            "source": "id",
+            "dest": [
+                "main_search"
+            ]
+        }
+    ]
+}
