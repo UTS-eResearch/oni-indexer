@@ -1,12 +1,14 @@
 {
   "ocfl": "/Users/mike/working/ocfl-nginx/test_repos/repo_ocfl",
   "identifierNamespace": "ocfl_demo",
+  "updateSchema": true,
   "dryRun": false,
   "catalogFilename": "ro-crate-metadata.jsonld",
-  "solrUpdate": "http://localhost:8983/solr/ocflcore/update/json",
+  "solrBase": "http://localhost:8983/solr/ocflcore",
   "hashAlgorithm": "md5",
   "logLevel": 4,
   "waitPeriod": 0,
+  "schema": "./schema.json",
   "fields": "./fields.json",
   "batch": 1000
 }

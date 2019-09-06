@@ -13,13 +13,16 @@ const hasha = require('hasha');
 const argv = yargs['argv'];
 const configPath = argv.config || './config.json';
 
+
 if (!fs.existsSync(configPath)) {
   console.error(`Please provide a valid config file path: ${configPath}`);
   process.exit(1);
 }
 
 const configJson = fs.readJsonSync(configPath);
-const solrUpdate = configJson['solrUpdate'] || '';
+const solrBase = configJson['solrBase'] || '';
+const solrUpdate = solrBase + '/update/json';
+const solrSchema = solrBase + '/schema';
 const fieldConfig = fs.readJsonSync(configJson['fields']);
 const logLevel = configJson['logLevel'] || 4;
 const waitPeriod = configJson['waitPeriod'] || 0;
@@ -35,9 +38,9 @@ const sleep = ms => new Promise((r, j) => {
   setTimeout(r, ms * 1000);
 });
 
-function commitDocs(solrURL, URI) {
+function commitDocs(solrURL, args) {
   return axios({
-    url: solrURL + URI,
+    url: solrURL + args,
     method: 'get',
     responseType: 'json',
     headers: {
@@ -57,6 +60,74 @@ function updateDocs(solrURL, coreObjects) {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
+}
+
+
+async function updateSchema(solrURL, schemaFile) {
+  const schemaConf = await fs.readJson(schemaFile);
+
+  for( const type of Object.keys(schemaConf) ) {
+    for( const field of schemaConf[type] ) {
+      //console.log(`Setting schema field ${type} ${JSON.stringify(field)}`);
+      await setSchemaField(solrURL, type, field);
+    }
+  }
+}
+
+
+async function setSchemaField(solrURL, fieldtype, schemaJson) {
+  const url = solrURL + '/fields';
+  const schemaAPIJson = {};
+  if( fieldtype !== 'copy-field' ) {
+    const name = schemaJson['name'];
+    if( await schemaFieldExists(solrURL, name) ) {
+      console.log("replacing it");
+      schemaAPIJson['replace-' + fieldtype] = schemaJson;
+    } else {    
+      console.log("adding it");
+      schemaAPIJson['add-' + fieldtype] = schemaJson;
+    }
+  } else {
+    schemaAPIJson['add-copy-field'] = schemaJson;
+  }
+
+  try {
+    console.log(`Posting to schema API ${url} ${JSON.stringify(schemaAPIJson)}`);
+    const response = await axios({
+      url: url,
+      method: 'post',
+      data: schemaAPIJson,
+      responseType: 'json',
+      headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+      }
+    });
+    console.log("Response: " + response.status);
+  } catch(e) {
+    console.log("Error updating schema");
+  }
+}
+
+async function schemaFieldExists(solrURL, field) {
+  const url = solrURL + '/fields/' + field;
+  try {
+    const resp = await axios ({
+      url: url,
+      method: 'get',
+      responseType: 'json', 
+    });
+    console.log("Schema field " + field + " already exists");
+    return true;
+  } catch(e) {
+    if( e.response.status === 404 ) {
+      console.log("Schema field " + field + " not found");
+      return false;
+    } else {
+      console.log("unknown error " + e);
+      throw(e);
+      return false;
+    } 
+  }
 }
 
 
@@ -180,14 +251,15 @@ async function dumpSolrSync(solr) {
 
 
 async function main () {
-  const records = await loadFromOcfl(sourcePath);
 
-  console.log("Got " + records.length + " records from " + sourcePath);
-  
+  if( configJson['updateSchema'] ) {
+    await updateSchema(solrSchema, configJson['schema']);
+  }
+
+  const records = await loadFromOcfl(sourcePath);  
   await commitBatches(records);
 }
 
-  
 
 main();
 
