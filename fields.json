@@ -15,7 +15,7 @@
     "Dataset": {
     
       "@id": { 
-        "name": "ocfl_demo",
+        "name": "staging_ocfl",
         "filter": { "is_root": true }
       },
 

@@ -1,6 +1,6 @@
 {
-  "ocfl": "/Users/mike/working/ocfl-nginx/test_repos/repo_ocfl",
-  "identifierNamespace": "ocfl_demo",
+  "ocfl": "/Users/moises/backup/publication/staging_ocfl",
+  "identifierNamespace": "staging_ocfl",
   "updateSchema": true,
   "dryRun": false,
   "catalogFilename": "ro-crate-metadata.jsonld",

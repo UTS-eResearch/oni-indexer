@@ -2,3 +2,4 @@
 node_modules
 test-data/datacrates/
 test-data/generated/
+test-data/*.json
