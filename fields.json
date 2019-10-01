@@ -15,18 +15,20 @@
     "Dataset": {
     
       "@id": { 
-        "name": "staging_ocfl",
+        "name": "ocfl_demo",
         "filter": { "is_root": true }
       },
 
       "hasPart": { "skip": true },
+      "hasFile": { "skip": true },
+      "temporalCoverage": { "skip": true },
 
       "license": {
         "multi": true,
         "facet": true
       },
 
-      "creator": {
+      "author": {
         "resolve": "multi",
         "facet": true
       },
@@ -51,7 +53,6 @@
     },
 
     "Person": {
-
       "affiliation": {
         "resolve": "multi"
       }

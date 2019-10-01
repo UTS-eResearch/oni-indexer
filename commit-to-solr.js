@@ -68,7 +68,7 @@ async function updateSchema(solrURL, schemaFile) {
 
   for( const type of Object.keys(schemaConf) ) {
     for( const field of schemaConf[type] ) {
-      //console.log(`Setting schema field ${type} ${JSON.stringify(field)}`);
+      console.log(`Setting schema field ${type} ${JSON.stringify(field)}`);
       await setSchemaField(solrURL, type, field);
     }
   }
@@ -232,7 +232,7 @@ async function commitBatches (records) {
       });
     }).catch((e) => {
       console.log("Update failed");
-      console.log(e);
+      console.log(e.response.status);
     })
   }, Promise.resolve());
 
@@ -254,6 +254,7 @@ async function main () {
 
   if( configJson['updateSchema'] ) {
     await updateSchema(solrSchema, configJson['schema']);
+
   }
 
   const records = await loadFromOcfl(sourcePath);  
