@@ -18,7 +18,7 @@
         "name": "ocfl_demo",
         "filter": { "is_root": true }
       },
-
+      "@reverse": { "skip": true },
       "hasPart": { "skip": true },
       "hasFile": { "skip": true },
       "temporalCoverage": { "skip": true },
@@ -53,10 +53,19 @@
     },
 
     "Person": {
+      "@id" : {
+        "filter" : { "re" : ".*$"}
+      },
+      "@reverse": { "skip": true },
+
       "affiliation": {
         "resolve": "multi"
-      }
+      },
 
+      "birthDate": {
+        "facet": true,
+        "validate": "date"
+      }
     }
   }
 }

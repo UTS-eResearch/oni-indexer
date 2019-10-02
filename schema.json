@@ -20,6 +20,12 @@
             "type": "text_en",
             "stored": true,
             "multiValued": true
+        },
+        {
+            "name": "author_id",
+            "type": "text_en",
+            "stored": true,
+            "multiValued": true
         }
     ],
     "dynamic-field": [
@@ -27,6 +33,12 @@
             "name": "*_name",
             "type": "text_en",
             "stored": true
+        },
+        {
+            "name": "*_id",
+            "type": "text_en",
+            "stored": true,
+            "multiValued": true
         },
         {
             "name": "*_description",
