@@ -10,5 +10,5 @@
   "waitPeriod": 0,
   "schema": "./schema.json",
   "fields": "./fields.json",
-  "batch": 1
+  "batch": 100
 }
