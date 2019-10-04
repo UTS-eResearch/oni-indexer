@@ -65,7 +65,7 @@
 
     "Person": {
       "@id" : {
-        "filter" : { "re" : ".*$"}
+        "filter" : { "re" : "NOMATCH"}
       },
       "@reverse": { "skip": true },
 
@@ -81,7 +81,7 @@
 
     "Organization": {
       "@id" : {
-        "filter" : { "re" : "DOES_NOT_MATCH"}
+        "filter" : { "re" : "NOMATCH"}
       },
       "@reverse": { "skip": true },
       "contactPoint" : {

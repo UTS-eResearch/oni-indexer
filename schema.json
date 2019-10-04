@@ -22,7 +22,19 @@
             "multiValued": true
         },
         {
+            "name": "yearPublished",
+            "type": "text_en",
+            "stored": true,
+            "multiValued": true
+        },
+        {
             "name": "author_id",
+            "type": "text_en",
+            "stored": true,
+            "multiValued": true
+        },    
+        {
+            "name": "affiliation_id",
             "type": "text_en",
             "stored": true,
             "multiValued": true
@@ -81,6 +93,13 @@
             "source": "name",
             "dest": [
                 "main_search"
+            ]
+        },
+        {
+            "source": "datePublished",
+            "maxChars": 4,
+            "dest": [
+                "yearPublished"
             ]
         },
         {
