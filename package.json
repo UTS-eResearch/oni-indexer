@@ -6,8 +6,11 @@
   "scripts": {
     "test": "./node_modules/.bin/_mocha",
     "commit": "node ./commit-to-solr.js --config ./config.json",
-    "generate": "node random.js -n 100",
-    "deposit": "node ro-crate-deposit.js --repo ../ocfl-nginx/test_repos/repo_ocfl  --name ocfl_demo output/*"
+    "generate": "node random.js",
+    "deposit": "node ro-crate-deposit.js --repo ../ocfl-nginx/test_repos/repo_ocfl  --name ocfl_demo output/*",
+    "clean": 	"rm -rf ./output",
+    "clean-repo": "rm -rf ../ocfl-nginx/test_repos/repo_ocfl"
+
   },
   "repository": {
     "type": "git",
