@@ -18,8 +18,10 @@
         "name": "ocfl_demo",
         "filter": { "is_root": true }
       },
-
+      "@reverse": { "skip": true },
       "hasPart": { "skip": true },
+      "hasFile": { "skip": true },
+      "temporalCoverage": { "skip": true },
 
       "license": {
         "multi": true,
@@ -37,13 +39,24 @@
         }
       },
 
+      "contactPoint" : {
+        "multi": "true",
+        "escapedJSON": true
+      },
+
+
+      "geo" : {
+        "multi": "true",
+        "escapedJSON": true
+      },
+
       "datePublished": {
         "facet": true,
         "validate": "date"
       },
       
       "publisher": {
-        "resolve": "single",
+        "resolve": "multi",
         "facet": {
           "field": "@id"
         }
@@ -51,11 +64,40 @@
     },
 
     "Person": {
+      "@id" : {
+        "filter" : { "re" : "NOMATCH"}
+      },
+      "@reverse": { "skip": true },
 
       "affiliation": {
         "resolve": "multi"
-      }
+      },
 
+      "birthDate": {
+        "facet": true,
+        "validate": "date"
+      }
+    },
+
+    "Organization": {
+      "@id" : {
+        "filter" : { "re" : "NOMATCH"}
+      },
+      "@reverse": { "skip": true },
+      "contactPoint" : {
+        "multi": "true",
+        "escapedJSON": true
+      },
+      "geo" : {
+        "multi": "true",
+        "escapedJSON": true
+      },
+      "address" : {
+        "multi": "true"
+      },
+      "description" : {
+        "multi": "true"
+      }
     }
   }
 }

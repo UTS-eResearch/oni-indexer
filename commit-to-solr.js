@@ -68,7 +68,7 @@ async function updateSchema(solrURL, schemaFile) {
 
   for( const type of Object.keys(schemaConf) ) {
     for( const field of schemaConf[type] ) {
-      //console.log(`Setting schema field ${type} ${JSON.stringify(field)}`);
+      console.log(`Setting schema field ${type} ${JSON.stringify(field)}`);
       await setSchemaField(solrURL, type, field);
     }
   }
@@ -172,21 +172,21 @@ function solrObjects(recs) {
       const jsonld = record['jsonld'];
       const docs = indexer.createSolrDocument(jsonld);
       if (docs) {
-        if (docs.Dataset) {
-          docs.Dataset.forEach((dataset) => {
-            dataset['path'] = record['path'];
-            dataset['uri_id'] = record['uri_id'];
-            solrDocs.push(dataset);
-            console.log(`Dataset URI id ${dataset['uri_id']}`);
-          });
-        } else {
-          console.log(`Warning: no Datasets created for record ${record['path']} ${record['uri_id']}`);
-        }
-        if (docs.Person) {
-          docs.Person.forEach((person) => {
-            solrDocs.push(person);
-          });
-        }
+        for (let t of  Object.keys(docs)){
+          if (t  === "Dataset") {
+            docs.Dataset.forEach((dataset) => {
+              dataset['path'] = record['path'];
+              dataset['uri_id'] = record['uri_id'];
+              solrDocs.push(dataset);
+              console.log(`Dataset URI id ${dataset['uri_id']}`);
+            });
+          }  else {
+            docs[t].forEach((item) => {
+              solrDocs.push(item);
+            });
+          }
+      }
+      
       }
     } catch(e) {
       console.log("Error converting ro-crate to solr");
@@ -232,7 +232,7 @@ async function commitBatches (records) {
       });
     }).catch((e) => {
       console.log("Update failed");
-      console.log(e);
+      console.log(e.response.status);
     })
   }, Promise.resolve());
 
@@ -254,6 +254,7 @@ async function main () {
 
   if( configJson['updateSchema'] ) {
     await updateSchema(solrSchema, configJson['schema']);
+
   }
 
   const records = await loadFromOcfl(sourcePath);  
