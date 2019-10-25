@@ -26,7 +26,7 @@
         "facet": true
       },
 
-      "creator": {
+      "author": {
         "resolve": "multi",
         "facet": true
       },
