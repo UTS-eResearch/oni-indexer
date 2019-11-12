@@ -76,7 +76,12 @@
       "birthDate": {
         "facet": true,
         "validate": "date"
-      }
+      },
+
+      "license": {
+        "multi": true,
+        "inherit": true
+      } 
     },
 
     "Organization": {
@@ -97,7 +102,13 @@
       },
       "description" : {
         "multi": "true"
-      }
+      },
+      
+      "license": {
+        "multi": true,
+        "inherit": true
+      } 
+
     }
   }
 }

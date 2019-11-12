@@ -1,6 +1,5 @@
 const axios = require('axios');
 const _ = require('lodash');
-const yargs = require('yargs');
 const CatalogSolr = require('./lib/CatalogSolr');
 const ROCrate = require('ro-crate').ROCrate;
 const fs = require('fs-extra');
@@ -8,10 +7,27 @@ const path = require('path');
 const OCFLRepository = require('ocfl').Repository;
 const uuidv1 = require('uuid/v1');
 const hasha = require('hasha');
+const prompts = require('prompts');
+
+const DEFAULT_CONFIG = './config.json';
+
+const yargs = require('yargs');
+
+var argv = require('yargs')
+    .usage('Usage: $0 [options]')
+    .describe('c', 'Config file')
+    .alias('c', 'config')
+    .default('c', DEFAULT_CONFIG)
+    .alias('p', 'purge')
+    .describe('p', 'Purge solr')
+    .boolean('p')
+    .default('p', true)
+    .help('h')
+    .alias('h', 'help')
+    .argv;
 
 
-const argv = yargs['argv'];
-const configPath = argv.config || './config.json';
+const configPath = argv.config;
 
 
 if (!fs.existsSync(configPath)) {
@@ -61,6 +77,9 @@ function updateDocs(solrURL, coreObjects) {
     }
   });
 }
+
+
+
 
 
 async function updateSchema(solrURL, schemaFile) {
@@ -131,6 +150,31 @@ async function schemaFieldExists(solrURL, field) {
 }
 
 
+async function purgeSolr() {
+
+  try {
+    const response = await axios({
+      url: solrUpdate + '?commit=true',
+      method: 'post',
+      data: '{ "delete": { "query": "*:*"} }',
+      responseType: 'json',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      }
+    });
+    console.log("All solr documents deleted.");
+    return true
+  } catch(e) {
+    console.log("Solr error");
+    console.log(e.response.status);
+    return false;
+  }
+}
+
+
+
+
+
 async function loadFromOcfl(repoPath, hash_algorithm) {
   const repo = new OCFLRepository();
 
@@ -165,7 +209,10 @@ async function loadFromOcfl(repoPath, hash_algorithm) {
 
 function solrObjects(recs) {
   let indexer = new CatalogSolr();
-  indexer.setConfig(fieldConfig);
+  if( !indexer.setConfig(fieldConfig) ) {
+    console.log("Solr config error");
+    return [];
+  }
   const solrDocs = [];
   recs.forEach((record) => {
     try {
@@ -252,9 +299,28 @@ async function dumpSolrSync(solr) {
 
 async function main () {
 
+  let indexer = new CatalogSolr();
+  if( !indexer.setConfig(fieldConfig) ) {
+    return;
+  }
+
+
+  if( argv.purge ) {
+    const response = await prompts({
+      name: 'purge',
+      type: 'confirm',
+      message: 'Are you sure that you want to purge all Solr documents before reindexing?'
+    });
+    if( response['purge'] ) {
+      await purgeSolr();
+    } else {
+      console.log("Cancelled.");
+      return;
+    }
+  }
+
   if( configJson['updateSchema'] ) {
     await updateSchema(solrSchema, configJson['schema']);
-
   }
 
   const records = await loadFromOcfl(sourcePath);  
