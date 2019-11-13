@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const axios = require('axios');
 const _ = require('lodash');
 const CatalogSolr = require('./lib/CatalogSolr');

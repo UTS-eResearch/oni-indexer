@@ -28,6 +28,10 @@
         "facet": true
       },
 
+      "licenseOriginal": {
+        "multi": true
+      },
+
       "author": {
         "resolve": "multi",
         "facet": true
