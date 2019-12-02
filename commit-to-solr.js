@@ -46,6 +46,7 @@ const logLevel = configJson['logLevel'] || 4;
 const waitPeriod = configJson['waitPeriod'] || 0;
 const batchNum = configJson['batch'] || 1000;
 const catalogFilename = configJson['catalogFilename'] || 'CATALOG.json';
+const uriIds = configJson['uriIds'] || 'hashpaths';
 const hashAlgorithm = configJson['hashAlgorithm'] || 'md5';      
 const sourcePath = configJson['ocfl'];
 
@@ -177,15 +178,17 @@ async function purgeSolr() {
 
 
 
-async function loadFromOcfl(repoPath, hash_algorithm) {
+async function loadFromOcfl(repoPath) {
   const repo = new OCFLRepository();
+
+  console.log(">>> OCFL " + repoPath);
 
   await repo.load(repoPath);
 
   const objects = await repo.objects();
   const records = [];
-  for ( const oid of  Object.keys(objects)) {
-    const object = objects[oid];
+
+  for ( let object of objects ) {
     const inv = await object.getInventory();
     var headState = inv.versions[inv.head].state;
     for (let hash of Object.keys(headState)){
@@ -194,9 +197,11 @@ async function loadFromOcfl(repoPath, hash_algorithm) {
         const json = await fs.readJson(jsonfile);
         records.push({
           path: path.relative(repoPath, object.path),
-          uri_id: hasha(object.path, { algorithm: hashAlgorithm }),
+          hash_path: hasha(object.path, { algorithm: hashAlgorithm }),
           jsonld: json
         });
+      } else {
+        console.log(`No ${catalogFilename} found in ${object['path']}`);
       }
     }
   }
@@ -221,11 +226,21 @@ function solrObjects(recs) {
       const jsonld = record['jsonld'];
       const docs = indexer.createSolrDocument(jsonld);
       if (docs) {
-        for (let t of  Object.keys(docs)){
+        for (let t of Object.keys(docs)){
           if (t  === "Dataset") {
             docs.Dataset.forEach((dataset) => {
+              console.log("Dataset (a) = " + JSON.stringify(dataset));              
               dataset['path'] = record['path'];
-              dataset['uri_id'] = record['uri_id'];
+              if( uriIds === 'hashpaths' ) {
+                dataset['uri_id'] = record['hash_path'];
+              } else {
+                if( dataset['id'] && Array.isArray(dataset['id']) ) {
+                  dataset['uri_id'] = dataset['id'][0];
+                } else {
+                  console.log("Warning: couldn't find id for uri_id");
+                }
+              };
+              console.log("Dataset (b) = " + JSON.stringify(dataset));
               solrDocs.push(dataset);
               console.log(`Dataset URI id ${dataset['uri_id']}`);
             });
@@ -262,7 +277,6 @@ async function commitBatches (records) {
         reportMemUsage();
       }
       const solrDocs = solrObjects(records);
-      dumpSolrSync(solrDocs);
       if( dryRun ) {
         console.log("Dry-run mode, not committing");
         return Promise.resolve();
@@ -315,10 +329,7 @@ async function main () {
     });
     if( response['purge'] ) {
       await purgeSolr();
-    } else {
-      console.log("Cancelled.");
-      return;
-    }
+    } 
   }
 
   if( configJson['updateSchema'] ) {

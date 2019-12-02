@@ -6,8 +6,7 @@
   },
 
   "licenses": {
-    "^https://creativecommons.org/": "public",
-    "__default__": "internal"
+    "__default__": "public"
   },
 
   "types": {
@@ -15,7 +14,7 @@
     "Dataset": {
     
       "@id": { 
-        "name": "ocfl_demo",
+        "name": "public_ocfl",
         "filter": { "is_root": true }
       },
       "@reverse": { "skip": true },
