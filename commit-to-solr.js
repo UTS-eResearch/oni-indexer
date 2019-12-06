@@ -212,9 +212,16 @@ async function purgeSolr() {
     console.log("All solr documents deleted.");
     return true
   } catch(e) {
-    console.log("Solr error");
-    console.log(e.response.status);
-    return false;
+    if( e.response ) {
+      console.log("Solr error");
+
+      console.log(e.response.status);
+      return false;
+    } else {
+      console.log("General error");
+      console.log(e);
+      process.exit(-1);
+    }
   }
 }
 
@@ -245,7 +252,7 @@ async function loadFromOcfl(repoPath) {
           jsonld: json
         });
       } else {
-        console.log(`No ${catalogFilename} found in ${object['path']}`);
+       // console.log(`No ${catalogFilename} found in ${object['path']}`);
       }
     }
   }
@@ -378,7 +385,6 @@ async function main () {
     await updateSchema(solrSchema, configJson['schema']);
   }
 
-  return;
 
   const records = await loadFromOcfl(sourcePath);  
   await commitBatches(records);
