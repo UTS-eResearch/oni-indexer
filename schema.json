@@ -40,7 +40,7 @@
             "multiValued": true
         }
     ],
-    "dynamic-field": [
+    "dynamicfield": [
         {
             "name": "*_name",
             "type": "text_en",
@@ -89,7 +89,7 @@
             "stored": true
         }
     ],
-    "copy-field": [
+    "copyfield": [
         {
             "source": "name",
             "dest": [
@@ -97,7 +97,7 @@
             ]
         },
         {
-            "source": "datePublished",
+            "source": "*_datePublished",
             "maxChars": 4,
             "dest": [
                 "yearPublished"

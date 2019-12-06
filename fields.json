@@ -85,33 +85,6 @@
         "multi": true,
         "inherit": true
       } 
-    },
-
-    "Organization": {
-      "@id" : {
-        "filter" : { "re" : "NOMATCH"}
-      },
-      "@reverse": { "skip": true },
-      "contactPoint" : {
-        "multi": "true",
-        "escapedJSON": true
-      },
-      "geo" : {
-        "multi": "true",
-        "escapedJSON": true
-      },
-      "address" : {
-        "multi": "true"
-      },
-      "description" : {
-        "multi": "true"
-      },
-      
-      "license": {
-        "multi": true,
-        "inherit": true
-      } 
-
     }
   }
 }

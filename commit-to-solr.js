@@ -90,7 +90,7 @@ async function updateSchema(solrURL, schemaFile) {
 
   for( const type of Object.keys(schemaConf) ) {
     for( const field of schemaConf[type] ) {
-      console.log(`Setting schema field ${type} ${JSON.stringify(field)}`);
+      //console.log(`Setting schema field ${type} ${JSON.stringify(field)}`);
       await setSchemaField(solrURL, type, field);
     }
   }
@@ -98,25 +98,32 @@ async function updateSchema(solrURL, schemaFile) {
 
 
 async function setSchemaField(solrURL, fieldtype, schemaJson) {
-  const url = solrURL + '/fields';
+  const url = solrURL + '/' + fieldtype + 's';
   const schemaAPIJson = {};
-  if( fieldtype !== 'copy-field' ) {
-    const name = schemaJson['name'];
-    if( await schemaFieldExists(solrURL, name) ) {
-      console.log("replacing it");
-      schemaAPIJson['replace-' + fieldtype] = schemaJson;
-    } else {    
-      console.log("adding it");
-      schemaAPIJson['add-' + fieldtype] = schemaJson;
-    }
-  } else {
+  const name = schemaJson['name'];
+
+  // solr copyfields are annoying because they don't have a name and
+  // can't be replaced, so I'm trying to delete them and ignoring errors.
+
+  if( fieldtype === 'copyfield' ) {
+    console.log(`Deleting copyfield ${JSON.stringify(schemaJson)}`);
+    await tryDeleteCopyField(solrURL, schemaJson);
     schemaAPIJson['add-copy-field'] = schemaJson;
+  } else {
+    const apifield = ( fieldtype === 'field' ) ? 'field' : 'dynamic-field';
+    if( await schemaFieldExists(url, name) ) {
+      console.log(`Schema: replacing ${fieldtype} ${name}`);
+      schemaAPIJson['replace-' + apifield] = schemaJson;
+    } else {    
+      console.log(`Schema: adding ${fieldtype} ${name}`);
+      schemaAPIJson['add-' + apifield] = schemaJson;
+    }
   }
 
   try {
     console.log(`Posting to schema API ${url} ${JSON.stringify(schemaAPIJson)}`);
     const response = await axios({
-      url: url,
+      url: solrURL,
       method: 'post',
       data: schemaAPIJson,
       responseType: 'json',
@@ -124,14 +131,21 @@ async function setSchemaField(solrURL, fieldtype, schemaJson) {
       'Content-Type': 'application/json; charset=utf-8'
       }
     });
-    console.log("Response: " + response.status);
+    //console.log("Response: " + response.status);
   } catch(e) {
     console.log("Error updating schema");
+    console.log(`URL: ${url}`);
+    console.log(`schemaAPIJson: ${JSON.stringify(schemaAPIJson)}`);
+    if( e.response ) {
+      console.log(`${e.response.status} ${e.response.statusText}`);
+    } else {
+      console.log(e);
+    }
   }
 }
 
 async function schemaFieldExists(solrURL, field) {
-  const url = solrURL + '/fields/' + field;
+  const url = solrURL + '/' + field;
   try {
     const resp = await axios ({
       url: url,
@@ -145,6 +159,36 @@ async function schemaFieldExists(solrURL, field) {
       console.log("Schema field " + field + " not found");
       return false;
     } else {
+      console.log("unknown error " + e);
+      throw(e);
+      return false;
+    } 
+  }
+}
+
+async function tryDeleteCopyField(solrURL, copyFieldJson) {
+  try {
+    const resp = await axios ({
+      url: solrURL,
+      method: 'post',
+      data: { "delete-copy-field": { source: copyFieldJson['source'], dest: copyFieldJson['dest'] } },
+      responseType: 'json',
+      headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+      }
+    });
+    console.log("copyfield removed");
+    return true;
+  } catch(e) {
+    if( e.response ) {
+      if( e.response.status === 404 ) {
+        console.log("Schema field " + field + " not found");
+        return false;
+      } else {
+        console.log("copy field delete error " + e.response.status);
+        return false;
+      }
+    } else { 
       console.log("unknown error " + e);
       throw(e);
       return false;
@@ -226,10 +270,10 @@ function solrObjects(recs) {
       const jsonld = record['jsonld'];
       const docs = indexer.createSolrDocument(jsonld);
       if (docs) {
+        console.log(`Got solr docs of type: ${Object.keys(docs)}`);
         for (let t of Object.keys(docs)){
           if (t  === "Dataset") {
             docs.Dataset.forEach((dataset) => {
-              console.log("Dataset (a) = " + JSON.stringify(dataset));              
               dataset['path'] = record['path'];
               if( uriIds === 'hashpaths' ) {
                 dataset['uri_id'] = record['hash_path'];
@@ -240,9 +284,7 @@ function solrObjects(recs) {
                   console.log("Warning: couldn't find id for uri_id");
                 }
               };
-              console.log("Dataset (b) = " + JSON.stringify(dataset));
               solrDocs.push(dataset);
-              console.log(`Dataset URI id ${dataset['uri_id']}`);
             });
           }  else {
             docs[t].forEach((item) => {
@@ -335,6 +377,8 @@ async function main () {
   if( configJson['updateSchema'] ) {
     await updateSchema(solrSchema, configJson['schema']);
   }
+
+  return;
 
   const records = await loadFromOcfl(sourcePath);  
   await commitBatches(records);
