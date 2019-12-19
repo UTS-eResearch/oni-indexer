@@ -23,7 +23,7 @@ var argv = require('yargs')
     .alias('p', 'purge')
     .describe('p', 'Purge solr')
     .boolean('p')
-    .default('p', true)
+    .default('p', false)
     .help('h')
     .alias('h', 'help')
     .argv;
