@@ -18,7 +18,7 @@
     "axios": "^0.18.0",
     "datacrate": "git+https://code.research.uts.edu.au/eresearch/datacrate.git#random_as_library",
     "fs-extra": "^8.0.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "yargs": "^13.2.4"
   },
   "devDependencies": {
