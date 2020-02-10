@@ -6,33 +6,25 @@ const fs = require('fs-extra');
 const CatalogSolr = require('../lib/CatalogSolr');
 
 
-function jsonRecord(basePath, fileName) {
-  try {
-    const entryPath = path.join(basePath, fileName);
-    if (fs.existsSync(entryPath)) {
-      let entryJson = fs.readFileSync(entryPath).toString();
-      return JSON.parse(entryJson);
-    }
-  } catch (e) {
-    console.error(e.message);
-    process.exit(-1);
-  }
+async function initIndexer(configFile) {
+  const cf = await fs.readJson(configFile);
+  const indexer = new CatalogSolr();
+  indexer.setConfig(cf);
+  return indexer;
 }
+
 
 // TODO: have this actually test a dataset and some people
 
 describe('create solr object', function () {
   const test_data = path.join(process.cwd(), 'test-data');
-  const fieldsPath = path.join(test_data, 'fields.json');
+  const cf_file = path.join(test_data, 'fields.json');
 
-  let catalog = new CatalogSolr();
-  const fields = require(fieldsPath);
-  catalog.setConfig(fields);
+  it('converts an RO-crate to a solr document with facets', async function () {
+    const ca = await fs.readJson(path.join(test_data, 'vic-arch-ro-crate-metadata.jsonld'));
+    const indexer = await initIndexer(cf_file);
 
-  it('convert an RO-crate to a solr document with facets', function () {
-    const ca = jsonRecord(test_data, 'vic-arch-ro-crate-metadata.jsonld');
-
-    const solrObject = catalog.createSolrDocument(ca, '@graph');
+    const solrObject = indexer.createSolrDocument(ca, '@graph');
 
     fs.writeFileSync(path.join(test_data, "solr_output.json"), JSON.stringify(solrObject, null, 2));
 
@@ -42,3 +34,10 @@ describe('create solr object', function () {
     expect(dsSolr).to.have.property("Dataset_datePublished_facet");
   });
 });
+
+
+// describe('indexes a RO-Crate with FOR codes', function () {
+//   const roc = 
+
+
+// })
