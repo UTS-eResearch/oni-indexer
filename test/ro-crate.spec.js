@@ -30,16 +30,15 @@ describe('create solr object', function () {
   catalog.setConfig(fields);
 
   it('convert an RO-crate to a solr document with facets', function () {
-    const ca = jsonRecord(test_data, 'FARMTOFREEWAYS_CATALOG.json');
+    const ca = jsonRecord(test_data, 'vic-arch-ro-crate-metadata.jsonld');
 
     const solrObject = catalog.createSolrDocument(ca, '@graph');
 
     fs.writeFileSync(path.join(test_data, "solr_output.json"), JSON.stringify(solrObject, null, 2));
 
-    expect(solrObject['Dataset'][0]['record_type_s']).to.equal('Dataset');
+    expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
     const dsSolr = solrObject['Dataset'][0];
     expect(dsSolr).to.have.property("Dataset_publisher_facet");
-    expect(dsSolr).to.have.property("Dataset_creator_facetmulti");
     expect(dsSolr).to.have.property("Dataset_datePublished_facet");
   });
 });

@@ -3,7 +3,7 @@ const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
 const CatalogSolr = require('../lib/CatalogSolr');
-
+const expect = require('chai').expect;
 
 function jsonRecord(basePath, fileName) {
   try {
@@ -25,10 +25,11 @@ describe('create solr object', function () {
   catalog.setConfig(fields);
 
   it('should use library to create a solr object', function () {
-    const ca = jsonRecord(process.cwd(), path.join('test-data', 'FARMTOFREEWAYS_CATALOG.json'));
+    const ca = jsonRecord(process.cwd(), path.join('test-data', 'vic-arch-ro-crate-metadata.jsonld'));
 
-    const solrObject = catalog.createSolrObject(ca, '@graph');
+    const solrDoc = catalog.createSolrDocument(ca, '@graph');
 
-    assert.strictEqual(solrObject['Dataset'][0]['record_format_s'], 'Dataset','Dataset not loaded');
+    expect(solrDoc['Dataset'][0]['record_type_s'][0]).to.equal('Dataset')
+
   });
 });

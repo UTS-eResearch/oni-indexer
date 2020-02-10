@@ -18,7 +18,7 @@ before(async () => {
 
 let catalogjson = null;
 
-describe('get random datcrates', function () {
+describe.skip('get random datcrates', function () {
   it('randomize 1 datacrate', async function () {
     datapubs = randomize.randdatapubs(1, sourcedata);
     const id = await randomize.makedir(datacrateDirPath);
@@ -29,7 +29,7 @@ describe('get random datcrates', function () {
   });
 });
 
-describe('catalog', function () {
+describe.skip('catalog', function () {
   let catalog = {};
 
   before(function () {
