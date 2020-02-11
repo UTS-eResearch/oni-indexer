@@ -4,7 +4,7 @@ const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
 const CatalogSolr = require('../lib/CatalogSolr');
-
+const rocrate = require('ro-crate');
 
 async function initIndexer(configFile) {
   const cf = await fs.readJson(configFile);
@@ -26,18 +26,37 @@ describe('create solr object', function () {
 
     const solrObject = indexer.createSolrDocument(ca, '@graph');
 
-    fs.writeFileSync(path.join(test_data, "solr_output.json"), JSON.stringify(solrObject, null, 2));
-
     expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
     const dsSolr = solrObject['Dataset'][0];
     expect(dsSolr).to.have.property("Dataset_publisher_facet");
     expect(dsSolr).to.have.property("Dataset_datePublished_facet");
   });
+
+
+  it('indexes FOR codes', async function () {
+    const jsonld = await fs.readJson(path.join(test_data, 'FOR-codes-ro-crate-metadata.jsonld'));
+    const indexer = await initIndexer(cf_file);
+
+    const crate = new rocrate.ROCrate(jsonld);
+    crate.index();
+
+    const root = crate.getRootDataset();
+
+    // get a list of the FOR ids from the original ro-crate
+    const orig_fors = root['about'].map((i) => i['@id']).filter((i) => i.match(/anzsrc-for/));
+
+    const solrObject = indexer.createSolrDocument(jsonld, '@graph');
+
+    expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
+    const dsSolr = solrObject['Dataset'][0];
+
+    expect(dsSolr).to.have.property("Dataset_about_facet");
+    expect(dsSolr).to.have.property("about");
+    console.log("about: " + dsSolr['about']);
+    const for_index = JSON.parse(dsSolr['about']);
+    console.log(for_index);
+    expect(for_index).to.be.an('array');
+    expect(for_index).to.have.lengthOf(orig_fors.length);
+
+  });
 });
-
-
-// describe('indexes a RO-Crate with FOR codes', function () {
-//   const roc = 
-
-
-// })
