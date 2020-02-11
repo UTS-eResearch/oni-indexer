@@ -50,11 +50,9 @@ describe('create solr object', function () {
     expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
     const dsSolr = solrObject['Dataset'][0];
 
-    expect(dsSolr).to.have.property("Dataset_about_facet");
+    expect(dsSolr).to.have.property("Dataset_about_facetmulti");
     expect(dsSolr).to.have.property("about");
-    console.log("about: " + dsSolr['about']);
-    const for_index = JSON.parse(dsSolr['about']);
-    console.log(for_index);
+    const for_index = JSON.parse('[' + dsSolr['about'] + ']');
     expect(for_index).to.be.an('array');
     expect(for_index).to.have.lengthOf(orig_fors.length);
 

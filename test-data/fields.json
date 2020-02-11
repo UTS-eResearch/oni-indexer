@@ -18,6 +18,13 @@
         "multi": true
       },
 
+      "about": {
+        "filter": { "re": "anzsrc-for" },
+        "multi": true,
+        "resolve": "multi",
+        "facet": true
+      },
+
       "creator": {
         "resolve": "multi",
         "facet": true
