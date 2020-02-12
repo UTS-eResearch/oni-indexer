@@ -111,7 +111,8 @@
         },
         {
           "@id": "http://purl.org/au-research/vocabulary/anzsrc-seo/2008/890202"
-        }
+        },
+        "Will this break"
       ],
       "@reverse": {
         "about": [
