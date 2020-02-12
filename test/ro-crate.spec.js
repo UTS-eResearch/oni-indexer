@@ -16,7 +16,7 @@ async function initIndexer(configFile) {
 
 // TODO: have this actually test a dataset and some people
 
-describe('create solr object', function () {
+describe('converting ro-crates to solr documents', function () {
   const test_data = path.join(process.cwd(), 'test-data');
   const cf_file = path.join(test_data, 'fields.json');
 

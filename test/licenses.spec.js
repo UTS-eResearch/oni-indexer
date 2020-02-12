@@ -115,8 +115,6 @@ describe('mapping licenses', function () {
     const jsonld = makeGraph([ PREFIXES['uts'] + '/' + randomWord(), PREFIXES['cc'] + '/' + randomWord() ]);
     const solrDocs = indexer.createSolrDocument(jsonld);
 
-    console.log(JSON.stringify(solrDocs));
-
     const solrDoc = getDataset(solrDocs);
 
     expect(solrDoc).to.not.be.undefined;
