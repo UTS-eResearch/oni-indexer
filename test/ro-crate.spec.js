@@ -51,11 +51,10 @@ describe('converting ro-crates to solr documents', function () {
     const dsSolr = solrObject['Dataset'][0];
 
     // expect(dsSolr).to.have.property("Dataset_about_facetmulti");
-    expect(dsSolr).to.have.property("about");
-    console.log(dsSolr['about']);
-    const for_index = JSON.parse('[' + dsSolr['about'] + ']');
-    expect(for_index).to.be.an('array');
-    expect(for_index).to.have.lengthOf(orig_fors.length);
+    expect(dsSolr).to.have.property("FOR");
+    console.log(dsSolr['FOR']);
+    //expect(for_index).to.be.an('array');
+    //expect(for_index).to.have.lengthOf(orig_fors.length);
 
   });
 });
