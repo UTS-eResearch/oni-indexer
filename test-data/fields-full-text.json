@@ -7,9 +7,9 @@
   "types": {
 
     "File": {
-      "path": {
+      "@id": {
         "filter": {
-          "re": ".*\\.txt$"
+          "re": "\\.txt$"
         }
       }
     },
@@ -49,9 +49,7 @@
       },
 
       "keywords": {
-        "facet": {
-          "tokenize": ","
-        }
+        "facet": true
       },
 
       "datePublished": {
