@@ -231,9 +231,6 @@ async function purgeSolr() {
 
 async function loadFromOcfl(repoPath) {
   const repo = new OCFLRepository();
-
-  console.log(">>> OCFL " + repoPath);
-
   await repo.load(repoPath);
 
   const objects = await repo.objects();
