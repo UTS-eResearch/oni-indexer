@@ -18,9 +18,9 @@ async function initIndexer(configFile) {
 
 describe('converting ro-crates to solr documents', function () {
   const test_data = path.join(process.cwd(), 'test-data');
-  const cf_file = path.join(test_data, 'fields.json');
 
   it('converts an RO-crate to a solr document with facets', async function () {
+    const cf_file = path.join(test_data, 'fields.json');
     const ca = await fs.readJson(path.join(test_data, 'vic-arch-ro-crate-metadata.jsonld'));
     const indexer = await initIndexer(cf_file);
 
@@ -34,6 +34,7 @@ describe('converting ro-crates to solr documents', function () {
 
 
   it('indexes an "about" relation split by FOR and SEO codes', async function () {
+    const cf_file = path.join(test_data, 'fields-index-matching.json');
     const jsonld = await fs.readJson(path.join(test_data, 'FOR-codes-ro-crate-metadata.jsonld'));
     const indexer = await initIndexer(cf_file);
 
@@ -64,6 +65,7 @@ describe('converting ro-crates to solr documents', function () {
   });
 
   it('facets on FOR and SEO codes', async function () {
+    const cf_file = path.join(test_data, 'fields-index-matching.json');
     const jsonld = await fs.readJson(path.join(test_data, 'FOR-codes-ro-crate-metadata.jsonld'));
     const indexer = await initIndexer(cf_file);
 
