@@ -1,15 +1,15 @@
 {
-  "ocfl": "/Users/mike/working/ocfl-nginx/test_repos/migrate_ocfl",
-  "identifierNamespace": "migrate_ocfl",
+  "ocfl": "/Users/mike/working/oni-indexer/working/grants_ocfl/",
+  "identifierNamespace": "SuccessfulGrantsRepository",
   "uriIds": "identifiers",
   "updateSchema": true,
   "dryRun": false,
   "catalogFilename": "ro-crate-metadata.jsonld",
-  "solrBase": "http://localhost:8983/solr/migrate_ocfl",
+  "solrBase": "http://localhost:8983/solr/grants",
   "hashAlgorithm": "md5",
   "logLevel": 4,
   "waitPeriod": 0,
   "schema": "./schema.json",
-  "fields": "./fields.json",
+  "fields": "./working/successful-grants-fields.json",
   "batch": 100
 }
