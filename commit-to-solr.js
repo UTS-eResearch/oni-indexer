@@ -348,7 +348,7 @@ async function commitBatches (records) {
         if (waitPeriod) {
           const waited = await sleep(waitPeriod);
         }
-        console.log(`batch ${index} of ${batch.length} : Update docs`);
+        console.log(`batch ${index + 1} of ${batch.length} : Update docs`);
         if (index >= batch.length - 1) {
           return commitDocs(solrUpdate, '?commit=true&overwrite=true').then(() => {
             return Promise.resolve();
@@ -400,7 +400,7 @@ async function main () {
   }
 
 
-  const records = await loadFromOcfl(sourcePath);  
+  const records = await loadFromOcfl(sourcePath);
   await commitBatches(records);
 }
 
