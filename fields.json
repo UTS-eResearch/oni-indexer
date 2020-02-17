@@ -18,7 +18,13 @@
         "filter": { "is_root": true }
       },
       "@reverse": { "skip": true },
-      "hasPart": { "skip": true },
+ 
+      "hasPart": {
+        "match": { "re": "\\.txt$" },
+        "read_file": true,
+        "index_as": "full_text"
+      },
+
       "hasFile": { "skip": true },
       "temporalCoverage": { "skip": true },
 

@@ -49,6 +49,7 @@ const catalogFilename = configJson['catalogFilename'] || 'CATALOG.json';
 const uriIds = configJson['uriIds'] || 'hashpaths';
 const hashAlgorithm = configJson['hashAlgorithm'] || 'md5';      
 const sourcePath = configJson['ocfl'];
+const dumpDir = configJson['dump'];
 
 const dryRun = configJson['dryRun'] || false;
 
@@ -246,7 +247,8 @@ async function loadFromOcfl(repoPath) {
         records.push({
           path: path.relative(repoPath, object.path),
           hash_path: hasha(object.path, { algorithm: hashAlgorithm }),
-          jsonld: json
+          jsonld: json,
+          ocflObject: object
         });
       } else {
        // console.log(`No ${catalogFilename} found in ${object['path']}`);
@@ -258,23 +260,35 @@ async function loadFromOcfl(repoPath) {
 }
 
 
+async function dumpDocs(jsonld, solrDocs) {
+  const id = jsonld['hash_path'];
+  await fs.writeJson(path.join(dumpDir, `${id}.json`), solrDocs, { spaces: 2});
+}
 
-// 
+
+// making this async so that the indexer can do async operations like
+// load a payload file for full-text search 
 
 
-function solrObjects(recs) {
+async function solrObjects(records) {
   let indexer = new CatalogSolr();
   if( !indexer.setConfig(fieldConfig) ) {
     console.log("Solr config error");
     return [];
   }
   const solrDocs = [];
-  recs.forEach((record) => {
+  for( record of records ) {
     try {
       const jsonld = record['jsonld'];
-      const docs = indexer.createSolrDocument(jsonld);
+      const docs = await indexer.createSolrDocument(record['jsonld'], async (fpath) => {
+        const relpath = await record['ocflObject'].getFilePath(fpath);
+        return path.join(sourcePath, record['path'], relpath);
+      });
       if (docs) {
         console.log(`Got solr docs of type: ${Object.keys(docs)}`);
+        if( dumpDir ) {
+          await dumpDocs(record, docs);
+        }
         for (let t of Object.keys(docs)){
           if (t  === "Dataset") {
             docs.Dataset.forEach((dataset) => {
@@ -305,12 +319,15 @@ function solrObjects(recs) {
       console.log(e);
     }
 
-  });
+  }
   indexer = null;
   return solrDocs;
 }
 
 
+
+// Note: I think this could use a rewrite to put it into a more easy-to-understand
+// async/await style rather than relying on explicit Promise operations
 
 
 async function commitBatches (records) {
@@ -318,11 +335,11 @@ async function commitBatches (records) {
   const batch = _.chunk(records, batchNum);
 
   batch.reduce((promise, records, index) => {
-    return promise.then(() => {
+    return promise.then(async () => {
       if (logLevel >= 4) {
         reportMemUsage();
       }
-      const solrDocs = solrObjects(records);
+      const solrDocs = await solrObjects(records);
       if( dryRun ) {
         console.log("Dry-run mode, not committing");
         return Promise.resolve();

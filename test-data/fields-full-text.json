@@ -6,20 +6,16 @@
 
   "types": {
 
-    "File": {
-      "@id": {
-        "filter": {
-          "re": "\\.txt$"
-        }
-      }
-    },
-
     "Dataset": {
       "path": {
         "filter": { "re": "^\\./|data/$" }
       },
 
-      "hasPart": {"skip": true},
+      "hasPart": {
+        "match": { "re": "\\.txt$" },
+        "read_file": true,
+        "index_as": "full_text"
+      },
 
       "license": {
         "facet": true,
