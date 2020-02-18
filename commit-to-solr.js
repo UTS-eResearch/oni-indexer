@@ -58,6 +58,7 @@ const sleep = ms => new Promise((r, j) => {
   setTimeout(r, ms * 1000);
 });
 
+
 function commitDocs(solrURL, args) {
   return axios({
     url: solrURL + args,
@@ -357,11 +358,38 @@ async function commitBatches (records) {
         return Promise.resolve();
       });
     }).catch((e) => {
-      console.log("Update failed");
-      console.log(e.response.status);
+      console.log("Update failed: " + e);
+      if( e.response ) {
+        console.log(e.response.status);
+      } else {
+        console.log(JSON.stringify(e));
+      }
     })
   }, Promise.resolve());
 
+}
+
+// this is a basic version which loops through the record, indexes and commits
+// them one at a time, so a single bad record won't prevent an entire indexing
+// run
+
+
+
+async function indexRecords(records) {
+  const solrDocs = await solrObjects(records);
+
+  for( const doc of solrDocs ) {
+    try {
+      await updateDocs(solrUpdate, [ doc ]);
+      await commitDocs(solrUpdate, '?commit=true&overwrite=true');
+      console.log(`Indexed ${doc['record_type_s']} ${doc['id']}`);
+    } catch(e) {
+      console.log("Update failed: " + e);
+      if( e.response ) {
+        console.log(e.response.status);
+      }      
+    }
+  }
 }
 
 
@@ -401,7 +429,8 @@ async function main () {
 
 
   const records = await loadFromOcfl(sourcePath);
-  await commitBatches(records);
+  await indexRecords(records);
+  //await commitBatches(records);
 }
 
 
