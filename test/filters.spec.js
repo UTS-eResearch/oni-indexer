@@ -13,7 +13,6 @@ const TIMEOUT = 5000;
 // tests for the item filtering code - which we should probably roll back
 // into ro-crate itself
 
-
 // this now puts values in arrays by default
 
 function randomGraph(n, type, fields, value_callback) {
@@ -48,7 +47,29 @@ function randomSubstring(word) {
 
 
 
-describe('single filters', function () {
+// Given a list of fields, and an item with a value for each of those
+// fields, returns a random filter over two or more of those fields, 
+// with a mix of regexps and exact matches, which is guaranteed to
+// match the item
+
+function randomFilter(fields, item) {
+  const n = _.random(2, fields.length);
+  const ffields =_.sampleSize(fields, n);
+  const filters = {};
+  _.each(ffields, (ff) => {
+    if( _.random(1) === 0 ) {
+      filters[ff] = { filter: item[ff][0] }
+    } else {
+      filters[ff] = { filter: { re: randomSubstring(item[ff][0]) } }
+    }
+  });
+  return filters;
+}
+
+
+
+
+describe('type selection filters - simple', function () {
   this.timeout(TIMEOUT);
 
   it('matches everything when filter is empty', function () {
@@ -143,29 +164,7 @@ describe('single filters', function () {
 
 });
 
-
-
-
-// Given a list of fields, and an item with a value for each of those
-// fields, returns a random filter over two or more of those fields, 
-// with a mix of regexps and exact matches, which is guaranteed to
-// match the item
-
-function randomFilter(fields, item) {
-  const n = _.random(2, fields.length);
-  const ffields =_.sampleSize(fields, n);
-  const filters = {};
-  _.each(ffields, (ff) => {
-    if( _.random(1) === 0 ) {
-      filters[ff] = { filter: item[ff][0] }
-    } else {
-      filters[ff] = { filter: { re: randomSubstring(item[ff][0]) } }
-    }
-  });
-  return filters;
-}
-
-describe('multiple filters', function () {
+describe('type selection filters - complex', function () {
   this.timeout(TIMEOUT);
 
   it('can pick items by multiple filters', function () {
@@ -198,3 +197,71 @@ describe('multiple filters', function () {
     });
   });
 });
+
+
+
+describe('field match filters', function () {
+  this.timeout(TIMEOUT);
+
+
+  it('can filter plaintext values by exact match', function () {
+    const matchval = "Some plaintext value";
+    const values = [ 
+      matchval,
+      { '@id': "some_link_1" },
+      { '@id': "some_link_2" }
+    ];
+    const matchcf = {
+      'match': matchval
+    };
+
+    const catalog = makeCatalog({});
+
+    expect(catalog).to.not.be.empty;
+
+    const matcher = catalog.compileFilter(matchcf['match']);
+    expect(matcher).to.be.a('function');
+
+    const matches = values.filter(matcher);
+
+    expect(matches).to.be.an('array');
+    expect(matches).to.have.lengthOf(1);
+
+    expect(matches[0]).to.equal(matchval);
+
+  });
+
+  it('can filter plaintext values by regexp', function () {
+    const matchval = "Something that matches a regexp";
+    const values = [ 
+      matchval,
+      { '@id': "some_link_1" },
+      { '@id': "some_link_2" }
+    ];
+    const matchcf = {
+      'match': { re: '.*' }
+    };
+
+    const catalog = makeCatalog({});
+
+    expect(catalog).to.not.be.empty;
+
+    const matcher = catalog.compileFilter(matchcf['match']);
+    expect(matcher).to.be.a('function');
+
+    const matches = values.filter(matcher);
+
+    expect(matches).to.be.an('array');
+    expect(matches).to.have.lengthOf(1);
+
+    expect(matches[0]).to.equal(matchval);
+
+  })
+
+
+
+});
+
+
+
+

@@ -9,7 +9,7 @@
   "hashAlgorithm": "md5",
   "logLevel": 4,
   "waitPeriod": 0,
-  "schema": "./schema.json",
+  "schema": "./working/schema.json",
   "fields": "./working/successful-grants-fields.json",
   "dump": "./dump/",
   "batch": 100
