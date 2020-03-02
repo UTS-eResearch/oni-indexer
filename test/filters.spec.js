@@ -215,18 +215,10 @@ describe('field match filters', function () {
       'match': matchval
     };
 
-    const catalog = makeCatalog({});
-
-    expect(catalog).to.not.be.empty;
-
-    const matcher = catalog.compileFilter(matchcf['match']);
+    const matcher = makeCatalog({}).compileFilter(matchcf['match']);
     expect(matcher).to.be.a('function');
-
     const matches = values.filter(matcher);
-
-    expect(matches).to.be.an('array');
-    expect(matches).to.have.lengthOf(1);
-
+    expect(matches).to.be.an('array').and.to.have.lengthOf(1);
     expect(matches[0]).to.equal(matchval);
 
   });
@@ -242,21 +234,47 @@ describe('field match filters', function () {
       'match': { re: '.*' }
     };
 
-    const catalog = makeCatalog({});
-
-    expect(catalog).to.not.be.empty;
-
-    const matcher = catalog.compileFilter(matchcf['match']);
+    const matcher = makeCatalog({}).compileFilter(matchcf['match']);
     expect(matcher).to.be.a('function');
-
     const matches = values.filter(matcher);
-
-    expect(matches).to.be.an('array');
-    expect(matches).to.have.lengthOf(1);
-
+    expect(matches).to.be.an('array').and.to.have.lengthOf(1);
     expect(matches[0]).to.equal(matchval);
 
-  })
+  });
+
+  it('can partition values by id and plaintext matching', function () {
+    const match_text = { re: '.*' };
+    const match_for = { '@id': { "re": "anzsrc-for" } };
+    const text_values = [
+      "A text value",
+      "Another text value"
+    ];
+    const for_values = [
+      {
+        "@id": "http://purl.org/au-research/vocabulary/anzsrc-for/2008/080302"
+      },
+      {
+        "@id": "http://purl.org/au-research/vocabulary/anzsrc-for/2008/090609"
+      }
+    ];
+    const seo_values = [
+      {
+        "@id": "http://purl.org/au-research/vocabulary/anzsrc-seo/2008/890102"
+      }
+    ];
+    const values = text_values.concat(for_values, seo_values);
+
+    const cat = makeCatalog({});
+    const text_filter = cat.compileFilter(match_text);
+    const for_filter = cat.compileFilter(match_for);
+
+    const filtered_text = values.filter(text_filter);
+    const filtered_fors = values.filter(for_filter);
+
+    expect(filtered_text).to.be.an('array').and.to.eql(text_values);
+    expect(filtered_fors).to.be.an('array').and.to.eql(for_values);
+
+  });
 
 
 
