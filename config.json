@@ -1,16 +1,16 @@
 {
-  "ocfl": "/Users/mike/working/oni-indexer/working/grants_ocfl/",
-  "identifierNamespace": "SuccessfulGrantsRepository",
+  "ocfl": "/Users/mike/working/ocfl-cm/ocfl/public_ocfl",
+  "identifierNamespace": "ocfl",
   "uriIds": "identifiers",
   "updateSchema": true,
   "dryRun": false,
   "catalogFilename": "ro-crate-metadata.jsonld",
-  "solrBase": "http://localhost:8983/solr/grants",
+  "solrBase": "http://localhost:8983/solr/public",
   "hashAlgorithm": "md5",
   "logLevel": 4,
   "waitPeriod": 0,
-  "schema": "./working/schema.json",
-  "fields": "./working/successful-grants-fields.json",
-  "dump": "./dump/",
+  "schema": "/Users/mike/working/ocfl-cm/config/schema.json",
+  "fields": "/Users/mike/working/ocfl-cm/config/fields.json",
+  "dump": "/Users/mike/working/ocfl-cm/dump/",
   "batch": 100
 }
