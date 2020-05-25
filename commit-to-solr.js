@@ -29,6 +29,9 @@ var argv = require('yargs')
     .argv;
 
 
+// FIXME - do this with an async file read and don't make a bunch
+// of global variables
+
 const configPath = argv.config;
 
 
@@ -37,10 +40,15 @@ if (!fs.existsSync(configPath)) {
   process.exit(1);
 }
 
+
+
 const configJson = fs.readJsonSync(configPath);
+const retry = configJson['retry'] || 10;
+const retryInterval = configJson['retryInterval'] || 10;
 const solrBase = configJson['solrBase'] || '';
 const solrUpdate = solrBase + '/update/json';
 const solrSchema = solrBase + '/schema';
+const solrPing = solrBase + '/admin/ping';
 const fieldConfig = fs.readJsonSync(configJson['fields']);
 const logLevel = configJson['logLevel'] || 4;
 const waitPeriod = configJson['waitPeriod'] || 0;
@@ -197,6 +205,34 @@ async function tryDeleteCopyField(solrURL, copyFieldJson) {
     } 
   }
 }
+
+
+async function checkSolr() {
+  for( let i = 0; i < retry; i++ ) {
+    console.log(`Pinging Solr - attempt ${0} of ${retry}`)  
+    try {
+      const response = await axios({
+        url: solrPing,
+        method: 'get',
+        responseType: 'json'
+      });
+      if( response.status == 200 ) {
+        if( response.data['status'] === 'OK' ) {
+          return true;
+        }
+      }
+    } catch(e) {
+      console.log(`Solr ping failed`);
+    }
+    await sleep(retryInterval);
+  }
+  console.log(`Maximum connection attempts ${retry}`);
+  return false;
+}
+
+
+
+
 
 
 async function purgeSolr() {
@@ -411,26 +447,25 @@ async function main () {
     return;
   }
 
+  const solrUp = await checkSolr();
 
-  if( argv.purge ) {
-    const response = await prompts({
-      name: 'purge',
-      type: 'confirm',
-      message: 'Are you sure that you want to purge all Solr documents before reindexing?'
-    });
-    if( response['purge'] ) {
+  if( solrUp ) {
+    console.log("Solr is responding to pings");
+    if( configJson['purge'] ) {
       await purgeSolr();
-    } 
+    }
+
+
+    if( configJson['updateSchema'] ) {
+      await updateSchema(solrSchema, configJson['schema']);
+    }
+
+
+    const records = await loadFromOcfl(sourcePath);
+    await indexRecords(records);
+  } else {
+    console.log("Couldn't connect to Solr");
   }
-
-  if( configJson['updateSchema'] ) {
-    await updateSchema(solrSchema, configJson['schema']);
-  }
-
-
-  const records = await loadFromOcfl(sourcePath);
-  await indexRecords(records);
-  //await commitBatches(records);
 }
 
 
