@@ -13,17 +13,14 @@ const prompts = require('prompts');
 
 const DEFAULT_CONFIG = './config.json';
 
-const yargs = require('yargs');
-
 var argv = require('yargs')
     .usage('Usage: $0 [options]')
     .describe('c', 'Config file')
     .alias('c', 'config')
     .default('c', DEFAULT_CONFIG)
-    .alias('p', 'purge')
-    .describe('p', 'Purge solr')
-    .boolean('p')
-    .default('p', false)
+    .alias('i', 'item')
+    .describe('i', 'Index a single item')
+    .string('i')
     .help('h')
     .alias('h', 'help')
     .argv;
@@ -65,6 +62,50 @@ const sleep = ms => new Promise((r, j) => {
   console.log('Waiting for ' + ms + ' seconds');
   setTimeout(r, ms * 1000);
 });
+
+
+main();
+
+
+
+async function main () {
+
+
+
+  let indexer = new CatalogSolr();
+  if( !indexer.setConfig(fieldConfig) ) {
+    return;
+  }
+
+  const solrUp = await checkSolr();
+
+  if( solrUp ) {
+    console.log("Solr is responding to pings");
+    if( configJson['purge'] ) {
+      await purgeSolr();
+    }
+
+
+    if( configJson['updateSchema'] ) {
+      await updateSchema(solrSchema, configJson['schema']);
+    }
+
+
+    const records = await loadFromOcfl(sourcePath);
+    await indexRecords(records);
+  } else {
+    console.log("Couldn't connect to Solr");
+  }
+}
+
+
+
+
+
+
+
+
+
 
 
 function commitDocs(solrURL, args) {
@@ -438,38 +479,5 @@ async function dumpSolrSync(solr) {
   fs.writeJsonSync(uuname, solr, { spaces: 2 });
   console.log(`Wrote solr docs to ${uuname}`); 
 }
-
-
-async function main () {
-
-  let indexer = new CatalogSolr();
-  if( !indexer.setConfig(fieldConfig) ) {
-    return;
-  }
-
-  const solrUp = await checkSolr();
-
-  if( solrUp ) {
-    console.log("Solr is responding to pings");
-    if( configJson['purge'] ) {
-      await purgeSolr();
-    }
-
-
-    if( configJson['updateSchema'] ) {
-      await updateSchema(solrSchema, configJson['schema']);
-    }
-
-
-    const records = await loadFromOcfl(sourcePath);
-    await indexRecords(records);
-  } else {
-    console.log("Couldn't connect to Solr");
-  }
-}
-
-
-main();
-
 
 
