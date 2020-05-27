@@ -98,11 +98,27 @@ async function main (argv) {
     }
 
 
-    const records = await loadFromOcfl(sourcePath);
-    await indexRecords(records);
+    const records = await loadFromOcfl(cf['ocfl'], cf['catalogFilename'], cf['hashAlgorithm']);
 
+    const solrDocs = await indexRecords(
+      indexer, cf['dump'], cf['uriIds'], cf['ocfl'], records
+    );
+
+    for( const doc of solrDocs ) {
+      try {
+        await updateDocs(solrUpdate, [ doc ]);
+        await commitDocs(solrUpdate, '?commit=true&overwrite=true');
+        logger.info(`Indexed ${doc['record_type_s']} ${doc['id']}`);
+      } catch(e) {
+        logger.error("Update failed: " + e);
+        if( e.response ) {
+          logger.error(e.response.status);
+        }      
+      }
+    }
     // TODO; write out the facets config 
     // from indexer.facets() (or keep that logic in this script rather than the library)
+
 
   } else {
     logger.error("Couldn't connect to Solr");
@@ -113,9 +129,9 @@ async function main (argv) {
 
 
 
-async function checkSolr(solrPing) {
-  for( let i = 0; i < retry; i++ ) {
-    logger.info(`Pinging Solr - attempt ${0} of ${retry}`)  
+async function checkSolr(solrPing, retries, retryInterval) {
+  for( let i = 0; i < retries; i++ ) {
+    logger.info(`Pinging Solr ${solrPing} - attempt ${i + 1} of ${retries}`)  
     try {
       const response = await axios({
         url: solrPing,
@@ -124,6 +140,7 @@ async function checkSolr(solrPing) {
       });
       if( response.status == 200 ) {
         if( response.data['status'] === 'OK' ) {
+          logger.info("Solr is up!");
           return true;
         }
       }
@@ -132,7 +149,7 @@ async function checkSolr(solrPing) {
     }
     await sleep(retryInterval);
   }
-  logger.info(`Maximum connection attempts ${retry}`);
+  logger.info(`Maximum connection attempts ${retries}`);
   return false;
 }
 
@@ -317,7 +334,7 @@ async function purgeSolr(solrUpdate) {
 
 
 
-async function loadFromOcfl(repoPath) {
+async function loadFromOcfl(repoPath, catalogFilename, hashAlgorithm) {
   const repo = new OCFLRepository();
   await repo.load(repoPath);
 
@@ -337,8 +354,6 @@ async function loadFromOcfl(repoPath) {
           jsonld: json,
           ocflObject: object
         });
-      } else {
-       logger.error(`No ${catalogFilename} found in ${object['path']}`);
       }
     }
   }
@@ -357,19 +372,15 @@ async function dumpDocs(jsonld, solrDocs) {
 // load a payload file for full-text search 
 
 
-async function solrObjects(records) {
-  let indexer = new CatalogSolr();
-  if( !indexer.setConfig(fieldConfig) ) {
-    logger.error("Solr config error");
-    return [];
-  }
+async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
+
   const solrDocs = [];
   for( record of records ) {
     try {
       const jsonld = record['jsonld'];
       const docs = await indexer.createSolrDocument(record['jsonld'], async (fpath) => {
         const relpath = await record['ocflObject'].getFilePath(fpath);
-        return path.join(sourcePath, record['path'], relpath);
+        return path.join(ocflPath, record['path'], relpath);
       });
       if (docs) {
         if( dumpDir ) {
@@ -399,9 +410,7 @@ async function solrObjects(records) {
       
       }
     } catch(e) {
-      logger.error("Error converting ro-crate to solr");
-      logger.error(`path: ${record['path']}`);
-      logger.error(`uri_id: ${record['uri_id']}`);
+      logger.error(`Error creating solr doc from ${record['path']}`);
       logger.error(e);
     }
 
@@ -418,22 +427,22 @@ async function solrObjects(records) {
 
 
 
-async function indexRecords(records) {
-  const solrDocs = await solrObjects(records);
+// async function indexRecords(indexer, dumpDir, ocflPath, records) {
+//   const solrDocs = await solrObjects(indexer, dumpDir, ocflPath, records);
 
-  for( const doc of solrDocs ) {
-    try {
-      await updateDocs(solrUpdate, [ doc ]);
-      await commitDocs(solrUpdate, '?commit=true&overwrite=true');
-      logger.info(`Indexed ${doc['record_type_s']} ${doc['id']}`);
-    } catch(e) {
-      logger.error("Update failed: " + e);
-      if( e.response ) {
-        logger.error(e.response.status);
-      }      
-    }
-  }
-}
+//   for( const doc of solrDocs ) {
+//     try {
+//       await updateDocs(solrUpdate, [ doc ]);
+//       await commitDocs(solrUpdate, '?commit=true&overwrite=true');
+//       logger.info(`Indexed ${doc['record_type_s']} ${doc['id']}`);
+//     } catch(e) {
+//       logger.error("Update failed: " + e);
+//       if( e.response ) {
+//         logger.error(e.response.status);
+//       }      
+//     }
+//   }
+// }
 
 
 

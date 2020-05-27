@@ -1,5 +1,5 @@
 {
-  "ocfl": "/etc/share/ocfl",
+  "ocfl": "../oni-express/ocfl",
   "identifierNamespace": "public_ocfl",
   "uriIds": "identifiers",
   "retries": 10,
@@ -8,12 +8,12 @@
   "updateSchema": true,
   "dryRun": false,
   "catalogFilename": "ro-crate-metadata.jsonld",
-  "solrBase": "http://solr:8983/solr/ocfl",
+  "solrBase": "http://localhost:8983/solr/ocfl",
   "hashAlgorithm": "md5",
   "waitPeriod": 0,
   "log": {
     "filename": "./logs/oni-indexer.log",
-    "level": "silly"
+    "level": "error"
   },
 
 
