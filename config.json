@@ -27,6 +27,10 @@
       "__default__": "public"
     },
 
+    "main_search": [
+      "name", "description", "author", "id"
+    ],
+
     "types": {
 
       "Dataset": {

@@ -24,10 +24,12 @@ logger.info("Logging has started");
 
 const DEFAULTS = {
   'config': './config.json',
+  'schemaBase': './config/schema_base.json',
   'retries': 10,
   'retryInterval': 10,
   'catalogFilename': 'ro-crate-metadata.jsonld',
   'uriIds': 'hashpaths',
+  'updateSchema': true,
   'hashAlgorithm': 'md5'
 };
 
@@ -93,9 +95,12 @@ async function main (argv) {
     }
 
     if( cf['updateSchema'] ) {
-      //TODO
-      //await updateSchema(cf['solrBase'] + '/schema', indexer.schema());
+      const schema = await buildSchema(cf);
+      await updateSchema(cf['solrBase'] + '/schema', schema);
     }
+
+
+
 
 
     const records = await loadFromOcfl(cf['ocfl'], cf['catalogFilename'], cf['hashAlgorithm']);
@@ -186,11 +191,22 @@ function updateDocs(solrURL, coreObjects) {
 }
 
 
+async function buildSchema(cf) {
+  const schema = await fs.readJson(cf['schemaBase']);
+  schema['copyfield'] = [];
+  for( let ms_field of cf['fields']['main_search'] ) {
+    schema['copyfield'].push({
+      "source": ms_field,
+      "dest": [ "main_search" ]
+    });
+  }
+  return schema;
+}
 
 
 
-async function updateSchema(solrURL, schemaFile) {
-  const schemaConf = await fs.readJson(schemaFile);
+
+async function updateSchema(solrURL, schemaConf) {
 
   for( const type of Object.keys(schemaConf) ) {
     for( const field of schemaConf[type] ) {
@@ -210,7 +226,7 @@ async function setSchemaField(solrURL, fieldtype, schemaJson) {
   // can't be replaced, so I'm trying to delete them and ignoring errors.
 
   if( fieldtype === 'copyfield' ) {
-    logger.info(`Deleting copyfield ${JSON.stringify(schemaJson)}`);
+    logger.info(`Schema: deleting copyfield ${JSON.stringify(schemaJson)}`);
     await tryDeleteCopyField(solrURL, schemaJson);
     schemaAPIJson['add-copy-field'] = schemaJson;
   } else {
