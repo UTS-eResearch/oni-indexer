@@ -6,4 +6,4 @@ RUN npm install
 COPY . .
 EXPOSE 8090
 
-ENTRYPOINT [ "/usr/src/app/oni-indexer.js", "-c", "/etc/share/config/indexer/config.json" ]
+ENTRYPOINT [ "/usr/src/app/oni-indexer.js", "-c", "/etc/share/config/indexer.json" ]
