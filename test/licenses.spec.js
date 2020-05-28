@@ -91,9 +91,11 @@ describe('mapping licenses', function () {
     const indexer = makeIndexer(true);
 
     const jsonld = makeGraph([]);
+    logger.info("Input json " + JSON.stringify(jsonld));
+
     const solrDocs = indexer.createSolrDocument(jsonld);
 
-    logger.info(JSON.stringify(solrDocs));
+    logger.info("Results from indexer: " + JSON.stringify(solrDocs));
 
     const solrDoc = getDataset(solrDocs);
 
@@ -103,11 +105,11 @@ describe('mapping licenses', function () {
 
   });
 
-  it('maps a crate with one known license', function () {
+  it('maps a crate with one known license', async function () {
     const indexer = makeIndexer(true);
 
     const jsonld = makeGraph([ PREFIXES['uts'] + '/' + randomWord() ]);
-    const solrDocs = indexer.createSolrDocument(jsonld);
+    const solrDocs = await indexer.createSolrDocument(jsonld);
 
     const solrDoc = getDataset(solrDocs);
 
