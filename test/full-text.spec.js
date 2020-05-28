@@ -34,7 +34,9 @@ describe('full text search', function () {
     const ca = await fs.readJson(path.join(test_data, 'successful-grant-example.jsonld'));
     const indexer = await initIndexer(cf_file);
 
-    const solrObject = indexer.createSolrDocument(ca, '@graph');
+    const solrObject = await indexer.createSolrDocument(ca, '@graph');
+
+    logger.info(JSON.stringify(solrObject));
 
     expect(solrObject).to.have.property('File');
 

@@ -87,16 +87,12 @@ function getDataset(solrDocs) {
 
 describe('mapping licenses', function () {
 
-  it('gives the default license to a crate with no license', function () {
+  it('gives the default license to a crate with no license', async function () {
     const indexer = makeIndexer(true);
 
     const jsonld = makeGraph([]);
-    logger.info("Input json " + JSON.stringify(jsonld));
 
-    const solrDocs = indexer.createSolrDocument(jsonld);
-
-    logger.info("Results from indexer: " + JSON.stringify(solrDocs));
-
+    const solrDocs = await indexer.createSolrDocument(jsonld);
     const solrDoc = getDataset(solrDocs);
 
     expect(solrDoc).to.not.be.undefined;
@@ -121,11 +117,11 @@ describe('mapping licenses', function () {
 
 
 
-  it.skip('maps a crate with two known licenses', function () {
+  it.skip('maps a crate with two known licenses', async function () {
     const indexer = makeIndexer(true);
 
     const jsonld = makeGraph([ PREFIXES['uts'] + '/' + randomWord(), PREFIXES['cc'] + '/' + randomWord() ]);
-    const solrDocs = indexer.createSolrDocument(jsonld);
+    const solrDocs = await indexer.createSolrDocument(jsonld);
 
     const solrDoc = getDataset(solrDocs);
 

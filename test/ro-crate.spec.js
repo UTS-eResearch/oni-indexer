@@ -32,7 +32,7 @@ describe('converting ro-crates to solr documents', function () {
     const ca = await fs.readJson(path.join(test_data, 'vic-arch-ro-crate-metadata.jsonld'));
     const indexer = await initIndexer(cf_file);
 
-    const solrObject = indexer.createSolrDocument(ca, '@graph');
+    const solrObject = await indexer.createSolrDocument(ca, '@graph');
 
     expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
     const dsSolr = solrObject['Dataset'][0];
@@ -55,7 +55,7 @@ describe('converting ro-crates to solr documents', function () {
     const orig_fors = root['about'].map((i) => i['@id']).filter((i) => i ? i.match(/anzsrc-for/) : false);
     const orig_seos = root['about'].map((i) => i['@id']).filter((i) => i ? i.match(/anzsrc-seo/) : false);
 
-    const solrObject = indexer.createSolrDocument(jsonld, '@graph');
+    const solrObject = await indexer.createSolrDocument(jsonld, '@graph');
 
     expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
     const dsSolr = solrObject['Dataset'][0];
@@ -82,7 +82,7 @@ describe('converting ro-crates to solr documents', function () {
 
     const root = crate.getRootDataset();
 
-    const solrObject = indexer.createSolrDocument(jsonld, '@graph');
+    const solrObject = await indexer.createSolrDocument(jsonld, '@graph');
 
     expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
     const dsSolr = solrObject['Dataset'][0];
