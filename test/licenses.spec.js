@@ -5,6 +5,14 @@ const randomWord = require('random-word');
 const CatalogSolr = require('../lib/CatalogSolr');
 const ROCrate = require('ro-crate').ROCrate;
 
+const winston = require('winston');
+
+const logger = winston.createLogger({
+  format: winston.format.simple(),
+  transports: [
+    new winston.transports.Console()
+  ]
+});
 
 // tests for license remapping
 
@@ -26,7 +34,7 @@ function makeLicenseCf(hasDefault) {
 
 
 function makeIndexer(hasDefault) {
-  const catalog = new CatalogSolr();
+  const catalog = new CatalogSolr(logger);
   
   catalog.setConfig({
     licenses: makeLicenseCf(hasDefault),
@@ -84,6 +92,8 @@ describe('mapping licenses', function () {
 
     const jsonld = makeGraph([]);
     const solrDocs = indexer.createSolrDocument(jsonld);
+
+    logger.info(JSON.stringify(solrDocs));
 
     const solrDoc = getDataset(solrDocs);
 

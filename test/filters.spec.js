@@ -6,6 +6,16 @@ const _ = require('lodash');
 const randomWord = require('random-word');
 const CatalogSolr = require('../lib/CatalogSolr');
 
+const winston = require('winston');
+
+const logger = winston.createLogger({
+  format: winston.format.simple(),
+  transports: [
+    new winston.transports.Console()
+  ]
+});
+
+
 const GRAPH = 20;
 const REPEATS = 1000;
 const TIMEOUT = 5000;
@@ -26,7 +36,7 @@ function randomGraph(n, type, fields, value_callback) {
 }
 
 function makeCatalog(fieldcf) {
-  const catalog = new CatalogSolr();
+  const catalog = new CatalogSolr(logger);
   
   catalog.setConfig({
     types: {
