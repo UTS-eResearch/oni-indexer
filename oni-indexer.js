@@ -20,8 +20,6 @@ const logger = winston.createLogger({
   ]
 });
 
-logger.info("Logging has started");
-
 const DEFAULTS = {
   'config': './config.json',
   'schemaBase': './config/schema_base.json',
@@ -79,7 +77,7 @@ async function main (argv) {
     logger.info(`Added log file: ${JSON.stringify(cf['log'])}`);
   }
 
-  const indexer = new CatalogSolr();
+  const indexer = new CatalogSolr(logger);
 
   if( !indexer.setConfig(cf['fields']) ) {
     return;
@@ -96,7 +94,11 @@ async function main (argv) {
 
     if( cf['updateSchema'] ) {
       const schema = await buildSchema(cf);
-      await updateSchema(cf['solrBase'] + '/schema', schema);
+      if( schema ) {
+        await updateSchema(cf['solrBase'] + '/schema', schema);
+      } else {
+        return;
+      }
     }
 
 
@@ -192,15 +194,21 @@ function updateDocs(solrURL, coreObjects) {
 
 
 async function buildSchema(cf) {
-  const schema = await fs.readJson(cf['schemaBase']);
-  schema['copyfield'] = [];
-  for( let ms_field of cf['fields']['main_search'] ) {
-    schema['copyfield'].push({
-      "source": ms_field,
-      "dest": [ "main_search" ]
-    });
+  try {
+    const schema = await fs.readJson(cf['schemaBase']);
+    logger.info(`Building Solr schema on ${cf['schemaBase']}`);
+    schema['copyfield'] = [];
+    for( let ms_field of cf['fields']['main_search'] ) {
+      schema['copyfield'].push({
+        "source": ms_field,
+        "dest": [ "main_search" ]
+      });
+    }
+    return schema;
+  } catch(e) {
+    logger.error(`Error building Solr schema: ${e}`);
+    return null;
   }
-  return schema;
 }
 
 
