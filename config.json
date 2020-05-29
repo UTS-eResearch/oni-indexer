@@ -11,10 +11,15 @@
   "solrBase": "http://localhost:8983/solr/ocfl",
   "hashAlgorithm": "md5",
   "waitPeriod": 0,
+  "logLevel": "info",
   "log": {
     "filename": "./logs/oni-indexer.log",
-    "level": "info"
+    "level": "debug"
   },
+
+  "dump": "./dump",
+
+  "debug": [ "dataPublished" ],
 
 
   "fields": {

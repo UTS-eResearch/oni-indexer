@@ -13,11 +13,10 @@ const hasha = require('hasha');
 const prompts = require('prompts');
 const winston = require('winston');
 
+const consoleLog = new winston.transports.Console();
 const logger = winston.createLogger({
   format: winston.format.simple(),
-  transports: [
-    new winston.transports.Console()
-  ]
+  transports: [ consoleLog ]
 });
 
 const DEFAULTS = {
@@ -28,7 +27,8 @@ const DEFAULTS = {
   'catalogFilename': 'ro-crate-metadata.jsonld',
   'uriIds': 'hashpaths',
   'updateSchema': true,
-  'hashAlgorithm': 'md5'
+  'hashAlgorithm': 'md5',
+  'logLevel': 'warn'
 };
 
 var argv = require('yargs')
@@ -52,8 +52,6 @@ const sleep = ms => new Promise((r, j) => {
 
 main(argv);
 
-
-
 async function main (argv) {
   let cf;
   
@@ -72,12 +70,20 @@ async function main (argv) {
     }
   }
 
-  if( cf['log'] ) {
-    logger.add(new winston.transports.File(cf['log']));
-    logger.info(`Added log file: ${JSON.stringify(cf['log'])}`);
+  if( cf['debug'] && cf['logLevel'] !== 'debug' ) {
+    logger.info(`Log level changed from ${cf['logLevel']} to debug because the config has a debug section`);
+    cf['logLevel'] = 'debug';
   }
 
-  const indexer = new CatalogSolr(logger);
+  consoleLog.level = cf['logLevel'];
+
+  if( cf['log'] ) {
+    logger.add(new winston.transports.File(cf['log']));
+    logger.debug(`Logging to file: ${JSON.stringify(cf['log'])}`);
+  }
+
+
+  const indexer = new CatalogSolr(logger, cf['debug']);
 
   if( !indexer.setConfig(cf['fields']) ) {
     return;
@@ -101,10 +107,6 @@ async function main (argv) {
       }
     }
 
-
-
-
-
     const records = await loadFromOcfl(cf['ocfl'], cf['catalogFilename'], cf['hashAlgorithm']);
 
     const solrDocs = await indexRecords(
@@ -115,7 +117,7 @@ async function main (argv) {
       try {
         await updateDocs(solrUpdate, [ doc ]);
         await commitDocs(solrUpdate, '?commit=true&overwrite=true');
-        logger.info(`Indexed ${doc['record_type_s']} ${doc['id']}`);
+        logger.debug(`Indexed ${doc['record_type_s']} ${doc['id']}`);
       } catch(e) {
         logger.error("Update failed: " + e);
         if( e.response ) {
@@ -180,7 +182,6 @@ function commitDocs(solrURL, args) {
 }
 
 function updateDocs(solrURL, coreObjects) {
-  logger.info('updateDocs: ' + solrURL);
   return axios({
     url: solrURL + '/docs',
     method: 'post',
@@ -196,7 +197,7 @@ function updateDocs(solrURL, coreObjects) {
 async function buildSchema(cf) {
   try {
     const schema = await fs.readJson(cf['schemaBase']);
-    logger.info(`Building Solr schema on ${cf['schemaBase']}`);
+    logger.silly(`Building Solr schema on ${cf['schemaBase']}`);
     schema['copyfield'] = [];
     for( let ms_field of cf['fields']['main_search'] ) {
       schema['copyfield'].push({
@@ -218,7 +219,7 @@ async function updateSchema(solrURL, schemaConf) {
 
   for( const type of Object.keys(schemaConf) ) {
     for( const field of schemaConf[type] ) {
-      logger.info(`Setting schema field ${type} ${JSON.stringify(field)}`);
+      logger.silly(`Setting schema field ${type} ${JSON.stringify(field)}`);
       await setSchemaField(solrURL, type, field);
     }
   }
@@ -234,22 +235,22 @@ async function setSchemaField(solrURL, fieldtype, schemaJson) {
   // can't be replaced, so I'm trying to delete them and ignoring errors.
 
   if( fieldtype === 'copyfield' ) {
-    logger.info(`Schema: deleting copyfield ${JSON.stringify(schemaJson)}`);
+    logger.silly(`Schema: deleting copyfield ${JSON.stringify(schemaJson)}`);
     await tryDeleteCopyField(solrURL, schemaJson);
     schemaAPIJson['add-copy-field'] = schemaJson;
   } else {
     const apifield = ( fieldtype === 'field' ) ? 'field' : 'dynamic-field';
     if( await schemaFieldExists(url, name) ) {
-      logger.info(`Schema: replacing ${fieldtype} ${name}`);
+      logger.silly(`Schema: replacing ${fieldtype} ${name}`);
       schemaAPIJson['replace-' + apifield] = schemaJson;
     } else {    
-      logger.info(`Schema: adding ${fieldtype} ${name}`);
+      logger.silly(`Schema: adding ${fieldtype} ${name}`);
       schemaAPIJson['add-' + apifield] = schemaJson;
     }
   }
 
   try {
-    logger.info(`Posting to schema API ${url} ${JSON.stringify(schemaAPIJson)}`);
+    logger.silly(`Posting to schema API ${url} ${JSON.stringify(schemaAPIJson)}`);
     const response = await axios({
       url: solrURL,
       method: 'post',
@@ -279,7 +280,7 @@ async function schemaFieldExists(solrURL, field) {
       method: 'get',
       responseType: 'json', 
     });
-    logger.info("Schema field " + field + " already exists");
+    logger.silly("Schema field " + field + " already exists");
     return true;
   } catch(e) {
     if( e.response.status === 404 ) {
@@ -304,7 +305,7 @@ async function tryDeleteCopyField(solrURL, copyFieldJson) {
       'Content-Type': 'application/json; charset=utf-8'
       }
     });
-    logger.info("copyfield removed");
+    logger.silly("copyfield removed");
     return true;
   } catch(e) {
     if( e.response ) {
@@ -386,9 +387,11 @@ async function loadFromOcfl(repoPath, catalogFilename, hashAlgorithm) {
 }
 
 
-async function dumpDocs(jsonld, solrDocs) {
+async function dumpDocs(dumpDir, jsonld, solrDocs) {
   const id = jsonld['hash_path'];
-  await fs.writeJson(path.join(dumpDir, `${id}.json`), solrDocs, { spaces: 2});
+  const jsonDump = path.join(dumpDir, `${id}.json`);
+  logger.silly(`Dumping solr ${jsonDump}`);
+  await fs.writeJson(jsonDump, solrDocs, { spaces: 2});
 }
 
 
@@ -408,7 +411,7 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
       });
       if (docs) {
         if( dumpDir ) {
-          await dumpDocs(record, docs);
+          await dumpDocs(dumpDir, record, docs);
         }
         for (let t of Object.keys(docs)){
           if (t  === "Dataset") {
