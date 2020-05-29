@@ -125,9 +125,10 @@ async function main (argv) {
         }      
       }
     }
-    // TODO; write out the facets config 
-    // from indexer.facets() (or keep that logic in this script rather than the library)
 
+    await fs.writeJson(cf['portalFacets'], indexer.facets, { spaces:2 });
+
+    logger.info(`Wrote portal facet config to ${cf['portalFacets']}`);
 
   } else {
     logger.error("Couldn't connect to Solr");

@@ -12,7 +12,7 @@
   "hashAlgorithm": "md5",
   "waitPeriod": 0,
 
-  "logLevel": "info",
+  "logLevel": "debug",
   "log": {
     "filename": "./logs/indexer.log",
     "level": "debug"
@@ -20,6 +20,7 @@
 
   "dump": "./dump",
 
+  "portalFacets": "./facets.json",
 
   "fields": {
     "map_all": {
@@ -66,6 +67,7 @@
         },
 
         "keywords": {
+          "multi": true,
           "facet": {
             "tokenize": { "delim": "[,;]\\s*" }
           }
@@ -82,12 +84,12 @@
         ],
 
         "contactPoint" : {
-          "multi": "true",
+          "multi": true,
           "escapedJSON": true
         },
 
         "geo" : {
-          "multi": "true",
+          "multi": true,
           "escapedJSON": true
         },
 
