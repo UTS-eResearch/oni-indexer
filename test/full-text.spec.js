@@ -6,9 +6,19 @@ const fs = require('fs-extra');
 const CatalogSolr = require('../lib/CatalogSolr');
 const rocrate = require('ro-crate');
 
+const winston = require('winston');
+
+const logger = winston.createLogger({
+  format: winston.format.simple(),
+  transports: [
+    new winston.transports.Console()
+  ]
+});
+
+
 async function initIndexer(configFile) {
   const cf = await fs.readJson(configFile);
-  const indexer = new CatalogSolr();
+  const indexer = new CatalogSolr(logger);
   indexer.setConfig(cf);
   return indexer;
 }
@@ -24,7 +34,9 @@ describe('full text search', function () {
     const ca = await fs.readJson(path.join(test_data, 'successful-grant-example.jsonld'));
     const indexer = await initIndexer(cf_file);
 
-    const solrObject = indexer.createSolrDocument(ca, '@graph');
+    const solrObject = await indexer.createSolrDocument(ca, '@graph');
+
+    logger.info(JSON.stringify(solrObject));
 
     expect(solrObject).to.have.property('File');
 

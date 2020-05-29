@@ -5,6 +5,14 @@ const randomWord = require('random-word');
 const CatalogSolr = require('../lib/CatalogSolr');
 const ROCrate = require('ro-crate').ROCrate;
 
+const winston = require('winston');
+
+const logger = winston.createLogger({
+  format: winston.format.simple(),
+  transports: [
+    new winston.transports.Console()
+  ]
+});
 
 // tests for license remapping
 
@@ -26,7 +34,7 @@ function makeLicenseCf(hasDefault) {
 
 
 function makeIndexer(hasDefault) {
-  const catalog = new CatalogSolr();
+  const catalog = new CatalogSolr(logger);
   
   catalog.setConfig({
     licenses: makeLicenseCf(hasDefault),
@@ -79,12 +87,12 @@ function getDataset(solrDocs) {
 
 describe('mapping licenses', function () {
 
-  it('gives the default license to a crate with no license', function () {
+  it('gives the default license to a crate with no license', async function () {
     const indexer = makeIndexer(true);
 
     const jsonld = makeGraph([]);
-    const solrDocs = indexer.createSolrDocument(jsonld);
 
+    const solrDocs = await indexer.createSolrDocument(jsonld);
     const solrDoc = getDataset(solrDocs);
 
     expect(solrDoc).to.not.be.undefined;
@@ -93,11 +101,11 @@ describe('mapping licenses', function () {
 
   });
 
-  it('maps a crate with one known license', function () {
+  it('maps a crate with one known license', async function () {
     const indexer = makeIndexer(true);
 
     const jsonld = makeGraph([ PREFIXES['uts'] + '/' + randomWord() ]);
-    const solrDocs = indexer.createSolrDocument(jsonld);
+    const solrDocs = await indexer.createSolrDocument(jsonld);
 
     const solrDoc = getDataset(solrDocs);
 
@@ -109,11 +117,11 @@ describe('mapping licenses', function () {
 
 
 
-  it.skip('maps a crate with two known licenses', function () {
+  it.skip('maps a crate with two known licenses', async function () {
     const indexer = makeIndexer(true);
 
     const jsonld = makeGraph([ PREFIXES['uts'] + '/' + randomWord(), PREFIXES['cc'] + '/' + randomWord() ]);
-    const solrDocs = indexer.createSolrDocument(jsonld);
+    const solrDocs = await indexer.createSolrDocument(jsonld);
 
     const solrDoc = getDataset(solrDocs);
 

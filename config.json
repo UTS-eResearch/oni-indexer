@@ -1,16 +1,110 @@
 {
-  "ocfl": "/Users/mike/working/ocfl-cm/ocfl/public_ocfl",
-  "identifierNamespace": "ocfl",
+  "ocfl": "../oni-express/ocfl",
+  "identifierNamespace": "public_ocfl",
   "uriIds": "identifiers",
+  "retries": 10,
+  "retryInterval": 10,
+  "purge": true,
   "updateSchema": true,
   "dryRun": false,
   "catalogFilename": "ro-crate-metadata.jsonld",
-  "solrBase": "http://localhost:8983/solr/public",
+  "solrBase": "http://localhost:8983/solr/ocfl",
   "hashAlgorithm": "md5",
-  "logLevel": 4,
   "waitPeriod": 0,
-  "schema": "/Users/mike/working/ocfl-cm/config/schema.json",
-  "fields": "/Users/mike/working/ocfl-cm/config/fields.json",
-  "dump": "/Users/mike/working/ocfl-cm/dump/",
-  "batch": 100
+
+  "logLevel": "info",
+  "log": {
+    "filename": "./logs/indexer.log",
+    "level": "debug"
+  },
+
+  "dump": "./dump",
+
+
+  "fields": {
+    "map_all": {
+      "@id": [ "id", "id_orig" ],
+      "@type": [ "record_type_s", "type_label" ]
+    },
+
+    "licenses": {
+      "__default__": "public"
+    },
+
+    "main_search": [
+      "name", "description", "author", "id"
+    ],
+
+    "types": {
+
+      "Dataset": {
+    
+        "@id": { 
+          "name": "public_ocfl",
+          "filter": { "is_root": true }
+        },
+        "@reverse": { "skip": true },
+ 
+        "hasPart": { "skip": true },
+
+        "hasFile": { "skip": true },
+      
+        "temporalCoverage": { "skip": true },
+
+        "license": {
+          "multi": true,
+          "facet": true
+        },
+
+        "licenseOriginal": {
+          "multi": true
+        },
+
+        "author": {
+          "resolve": "multi",
+          "facet": true
+        },
+
+        "keywords": {
+          "facet": {
+            "tokenize": { "delim": "[,;]\\s*" }
+          }
+        },
+
+        "about": [
+          {
+            "match": { "@id": { "re": "anzsrc-for" } },
+            "index_as": "FOR",
+            "multi": true,
+            "resolve": "multi",
+            "facet": true
+          }
+        ],
+
+        "contactPoint" : {
+          "multi": "true",
+          "escapedJSON": true
+        },
+
+        "geo" : {
+          "multi": "true",
+          "escapedJSON": true
+        },
+
+        "datePublished": {
+          "facet": true,
+          "validate": {
+            "re": "^\\d\\d\\d\\d"
+          }
+        },
+      
+        "publisher": {
+          "resolve": "multi",
+          "facet": {
+            "field": "@id"
+          }
+        }
+      }
+    }
+  }
 }

@@ -2,8 +2,17 @@ const assert = require('assert');
 const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
-const randomize = require('datacrate/lib/randomize');
+//const randomize = require('datacrate/lib/randomize');
 const CatalogSolr = require('../lib/CatalogSolr');
+const winston = require('winston');
+
+const logger = winston.createLogger({
+  format: winston.format.simple(),
+  transports: [
+    new winston.transports.Console()
+  ]
+});
+
 
 let sourcedata = {};
 let datapubs = [];
@@ -13,7 +22,7 @@ const fieldsPath = path.join(process.cwd(), '/test-data/', 'fields.json');
 
 before(async () => {
   fs.ensureDirSync(datacrateDirPath);
-  sourcedata = await randomize.loadsourcedata('./node_modules/datacrate/vocabularies');
+  //sourcedata = await randomize.loadsourcedata('./node_modules/datacrate/vocabularies');
 });
 
 let catalogjson = null;
@@ -33,7 +42,7 @@ describe.skip('catalog', function () {
   let catalog = {};
 
   before(function () {
-    catalog = new CatalogSolr();
+    catalog = new CatalogSolr(logger);
   });
 
   describe('load config fields', function () {
