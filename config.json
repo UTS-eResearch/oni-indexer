@@ -20,7 +20,14 @@
 
   "dump": "./dump",
 
-  "portalFacets": "./facets.json",
+
+  "portal": {
+    "stub": "./portal_stub.json",
+    "config": "./portal.json",
+    "facetDefaults": {
+      "limit": 5
+    }
+  },
 
   "fields": {
     "map_all": {

@@ -126,9 +126,7 @@ async function main (argv) {
       }
     }
 
-    await fs.writeJson(cf['portalFacets'], indexer.facets, { spaces:2 });
-
-    logger.info(`Wrote portal facet config to ${cf['portalFacets']}`);
+    await makePortalFacets(cf, indexer.facets);
 
   } else {
     logger.error("Couldn't connect to Solr");
@@ -396,9 +394,6 @@ async function dumpDocs(dumpDir, jsonld, solrDocs) {
 }
 
 
-// making this async so that the indexer can do async operations like
-// load a payload file for full-text search 
-
 
 async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
 
@@ -447,30 +442,42 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
   return solrDocs;
 }
 
+// take the facets which have been configured for the index and
+// write out a version which the frontend/portal can use
 
+async function makePortalFacets(cf, facets) {
+  const portal = cf['portal'];
 
-// this is a basic version which loops through the record, indexes and commits
-// them one at a time, so a single bad record won't prevent an entire indexing
-// run
+  const facetcf = {};
 
+  for( let type in facets ) {
+    for( let field in facets[type] ) {
+      const facetField = facets[type][field]['facetField'];
+      if( portal['facetDefaults'] ) {
+        facetcf[facetField] = _.cloneDeep(portal['facetDefaults']);
+      } else {
+        facetcf[facetField] = {}; 
+      };
+      facetcf[facetField]['field'] = field;
+      facetcf[facetField]['label'] = field[0].toUpperCase() + field.substr(1);
+    }
+  }
 
+  const portalcf = await fs.readJson(portal['stub']);
 
-// async function indexRecords(indexer, dumpDir, ocflPath, records) {
-//   const solrDocs = await solrObjects(indexer, dumpDir, ocflPath, records);
+  portalcf['facets'] = facetcf;
+  const facetlist = Object.keys(facetcf);
+  portalcf['results']['searchFacets'] = facetlist;
+  portalcf['results']['resultFacets'] = facetlist;
 
-//   for( const doc of solrDocs ) {
-//     try {
-//       await updateDocs(solrUpdate, [ doc ]);
-//       await commitDocs(solrUpdate, '?commit=true&overwrite=true');
-//       logger.info(`Indexed ${doc['record_type_s']} ${doc['id']}`);
-//     } catch(e) {
-//       logger.error("Update failed: " + e);
-//       if( e.response ) {
-//         logger.error(e.response.status);
-//       }      
-//     }
-//   }
-// }
+  // TODO - deal with an already existing portal.json
+
+  await fs.writeJson(portal['config'], portalcf, { spaces:2 });
+
+  logger.info(`Wrote new portal config to ${portal['config']}`);
+
+}
+
 
 
 
