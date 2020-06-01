@@ -22,7 +22,7 @@
 
 
   "portal": {
-    "stub": "./portal_stub.json",
+    "base": "./portal_base.json",
     "config": "./portal.json",
     "facetDefaults": {
       "limit": 5

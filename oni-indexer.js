@@ -468,8 +468,8 @@ async function makePortalFacets(cf, facets) {
   if( portalcf ) {
     logger.info(`Updating facets in existing portal config ${portal['config']}`);
   } else {
-    logger.info(`Creating new portal config based on ${portal['stub']}`);
-    portalcf = await fs.readJson(portal['stub']);
+    logger.info(`Creating new portal config based on ${portal['base']}`);
+    portalcf = await fs.readJson(portal['base']);
   }
 
   for( let oldFacet in portalcf['facets'] ) {
