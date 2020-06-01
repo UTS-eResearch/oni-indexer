@@ -448,29 +448,54 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
 async function makePortalFacets(cf, facets) {
   const portal = cf['portal'];
 
-  const facetcf = {};
+  const newFacets = {};
 
   for( let type in facets ) {
     for( let field in facets[type] ) {
       const facetField = facets[type][field]['facetField'];
       if( portal['facetDefaults'] ) {
-        facetcf[facetField] = _.cloneDeep(portal['facetDefaults']);
+        newFacets[facetField] = _.cloneDeep(portal['facetDefaults']);
       } else {
-        facetcf[facetField] = {}; 
+        newFacets[facetField] = {}; 
       };
-      facetcf[facetField]['field'] = field;
-      facetcf[facetField]['label'] = field[0].toUpperCase() + field.substr(1);
+      newFacets[facetField]['field'] = field;
+      newFacets[facetField]['label'] = field[0].toUpperCase() + field.substr(1);
     }
   }
 
-  const portalcf = await fs.readJson(portal['stub']);
+  let portalcf = await readConf(portal['config']);
 
-  portalcf['facets'] = facetcf;
-  const facetlist = Object.keys(facetcf);
-  portalcf['results']['searchFacets'] = facetlist;
-  portalcf['results']['resultFacets'] = facetlist;
+  if( portalcf ) {
+    logger.info(`Updating facets in existing portal config ${portal['config']}`);
+  } else {
+    logger.info(`Creating new portal config based on ${portal['stub']}`);
+    portalcf = await fs.readJson(portal['stub']);
+  }
 
-  // TODO - deal with an already existing portal.json
+  for( let oldFacet in portalcf['facets'] ) {
+    if( ! newFacets[oldFacet] ) {
+      logger.info(`Removing facet ${oldFacet}`);
+      delete portalcf['facets'][oldFacet];
+      _.remove(portalcf['results']['resultFacets'], (f) => f === oldFacet);
+      _.remove(portalcf['results']['searchFacets'], (f) => f === oldFacet);
+    } else {
+      portalcf['facets'][oldFacet]['field'] = newFacets[oldFacet]['field'];
+      // update the JSON selector fields
+      // keep the rest of the config (sort order, limit, etc)
+      delete newFacets[oldFacet];
+    }
+  }
+
+  // Add facets which weren't in the original facet lst.
+  // These always get added to the search and result facet list.
+
+  for( let newFacet in newFacets ) {
+    logger.info(`Adding facet ${newFacet}`);
+    portalcf['facets'][newFacet] = newFacets[newFacet];
+    portalcf['results']['searchFacets'].push(newFacet);
+    portalcf['results']['resultFacets'].push(newFacet);
+  }
+
 
   await fs.writeJson(portal['config'], portalcf, { spaces:2 });
 
@@ -480,6 +505,14 @@ async function makePortalFacets(cf, facets) {
 
 
 
-
+async function readConf(portalcf) {
+  try {
+    const conf = await fs.readJson(portalcf);
+    return conf;
+  } catch(e) {
+    logger.info(`Portal conf ${portalcf} not found`);
+    return null;
+  }
+}
 
 

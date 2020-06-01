@@ -108,10 +108,7 @@
         },
       
         "publisher": {
-          "resolve": "multi",
-          "facet": {
-            "field": "@id"
-          }
+          "resolve": "multi"
         }
       }
     }
