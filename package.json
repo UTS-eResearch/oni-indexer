@@ -1,7 +1,7 @@
 {
-  "name": "solr-catalog",
-  "version": "1.0.1",
-  "description": "pushes catalog.json to solr via HTTP json",
+  "name": "oni-indexer",
+  "version": "1.0.0",
+  "description": "Builds a Solr index for an oni data repository",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/_mocha",
@@ -13,11 +13,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://code.research.uts.edu.au/eresearch/solr-catalog.git"
+    "url": "https://github.com/UTS-eResearch/oni-indexer/"
   },
   "keywords": [
     "solr",
-    "datacrate"
+    "ro-crate",
+    "data",
+    "oniß"
   ],
   "author": "Moises",
   "license": "GPL-3.0-or-later",

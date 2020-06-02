@@ -30,7 +30,7 @@ describe('full text search', function () {
   const test_data = path.join(process.cwd(), 'test-data');
   const cf_file = path.join(test_data, 'fields-full-text.json');
 
-  it('indexes the full text of a file in an ro-crate', async function () {
+  it.skip('indexes the full text of a file in an ro-crate', async function () {
     const ca = await fs.readJson(path.join(test_data, 'successful-grant-example.jsonld'));
     const indexer = await initIndexer(cf_file);
 

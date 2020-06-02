@@ -126,8 +126,6 @@ async function main (argv) {
       }
     }
 
-    await makePortalFacets(cf, indexer.facets);
-
   } else {
     logger.error("Couldn't connect to Solr");
   }

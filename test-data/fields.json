@@ -18,11 +18,24 @@
         "multi": true
       },
 
-      "about": {
-        "multi": true,
-        "resolve": "multi",
-        "facet": true
-      },
+      "about": [
+        {
+          "match": { "@id": { "re": "anzsrc-for" } },
+          "index_as": "FOR",
+          "multi": true,
+          "resolve": "multi",
+          "facet": true
+        },
+        {
+          "match": { "@id": { "re": "anzsrc-seo" } },
+          "index_as": "SEO",
+          "multi": true,
+          "resolve": "multi",
+          "facet": true
+        }
+      ],
+
+
 
       "creator": {
         "resolve": "multi",
