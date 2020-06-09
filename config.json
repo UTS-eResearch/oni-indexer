@@ -20,15 +20,6 @@
 
   "dump": "./dump",
 
-
-  "portal": {
-    "base": "./portal_base.json",
-    "config": "./portal.json",
-    "facetDefaults": {
-      "limit": 5
-    }
-  },
-
   "fields": {
     "map_all": {
       "@id": [ "id", "id_orig" ],
@@ -70,7 +61,10 @@
 
         "author": {
           "resolve": "multi",
-          "facet": true
+          "facet": {
+            "id": "@id",
+            "display": "name"
+          }
         },
 
         "keywords": {

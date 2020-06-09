@@ -23,22 +23,32 @@
           "match": { "@id": { "re": "anzsrc-for" } },
           "index_as": "FOR",
           "multi": true,
-          "resolve": "multi",
-          "facet": true
+          "facet": true,
+          "resolve": {
+            "search": "@id",
+            "display": "name"
+          }
         },
         {
           "match": { "@id": { "re": "anzsrc-seo" } },
           "index_as": "SEO",
           "multi": true,
-          "resolve": "multi",
-          "facet": true
+          "facet": true,
+          "resolve": {
+            "search": "@id",
+            "display": "name"
+          }
         }
       ],
 
 
 
-      "creator": {
-        "resolve": "multi",
+      "author": {
+        "multi": true,
+        "resolve": {
+          "search": "@id",
+          "display": "name"
+        },
         "facet": true
       },
 
@@ -54,7 +64,10 @@
       },
 
       "publisher": {
-        "resolve": "single",
+        "resolve": {
+          "search": "@id",
+          "display": "name"
+        },
         "facet": {
           "field": "@id"
         }
@@ -64,7 +77,10 @@
     "Person": {
 
       "affiliation": {
-        "resolve": "multi"
+        "resolve": {
+          "search": "@id", 
+          "display": "name"
+        }
       }
 
     }

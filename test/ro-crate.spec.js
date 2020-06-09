@@ -94,6 +94,44 @@ describe('converting ro-crates to solr documents', function () {
   });
 
 
+  it('normalises JSON facets to an id and a display value', async function () {
+    const cf_file = path.join(test_data, 'fields.json');
+    const jsonld = await fs.readJson(path.join(test_data, 'vic-arch-ro-crate-metadata.jsonld'));
+    const indexer = await initIndexer(cf_file);
 
+    const crate = new rocrate.ROCrate(jsonld);
+    crate.index();
+
+    const root = crate.getRootDataset();
+
+    const solrObject = await indexer.createSolrDocument(jsonld, '@graph');
+
+    expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
+    const dsSolr = solrObject['Dataset'][0];
+
+    expect(dsSolr).to.have.property("Dataset_author_facetmulti");
+
+    const authorFacets = dsSolr['Dataset_author_facetmulti'];
+
+    expect(authorFacets).to.have.lengthOf(root['author'].length);
+
+
+    for( let author of root['author'] ) {
+      const id = author['@id'];
+      const authorItem = crate.getItem(id);
+      const facets = authorFacets.filter((f) => {
+        const jfacet = JSON.parse(f);
+        return jfacet['@id'] === id
+      });
+      expect(facets).to.not.be.empty;
+      const resolved = {
+        "@id": authorItem['@id'],
+        "search": authorItem['@id'],
+        "display": authorItem['name']
+      }
+      expect(facets[0]).to.equal(JSON.stringify(resolved));
+    }
+
+  });
 
 });
