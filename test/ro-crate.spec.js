@@ -94,6 +94,21 @@ describe('converting ro-crates to solr documents', function () {
   });
 
 
+  // TODO: test this more thoroughly
+
+  it('sets the JSON flag against resolved facets based on config', async function () {
+    const cf_file = path.join(test_data, 'fields.json');
+
+    const indexer = await initIndexer(cf_file);
+
+    const facetcf = indexer.facets;
+
+    expect(facetcf['Dataset']['author']).to.have.property('JSON').that.is.true;
+    expect(facetcf['Dataset']['keywords']).to.have.property('JSON').that.is.false;
+
+  });
+
+
   it('normalises JSON facets to an id and a display value', async function () {
     const cf_file = path.join(test_data, 'fields.json');
     const jsonld = await fs.readJson(path.join(test_data, 'vic-arch-ro-crate-metadata.jsonld'));
@@ -133,5 +148,7 @@ describe('converting ro-crates to solr documents', function () {
     }
 
   });
+
+
 
 });
