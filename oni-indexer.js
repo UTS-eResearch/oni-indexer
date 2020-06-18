@@ -194,7 +194,7 @@ function updateDocs(solrURL, coreObjects) {
 async function buildSchema(cf) {
   try {
     const schema = await fs.readJson(cf['schemaBase']);
-    logger.silly(`Building Solr schema on ${cf['schemaBase']}`);
+    logger.debug(`Building Solr schema on ${cf['schemaBase']}`);
     schema['copyfield'] = [];
     for( let ms_field of cf['fields']['main_search'] ) {
       schema['copyfield'].push({
@@ -216,7 +216,7 @@ async function updateSchema(solrURL, schemaConf) {
 
   for( const type of Object.keys(schemaConf) ) {
     for( const field of schemaConf[type] ) {
-      logger.silly(`Setting schema field ${type} ${JSON.stringify(field)}`);
+      logger.debug(`Setting schema field ${type} ${JSON.stringify(field)}`);
       await setSchemaField(solrURL, type, field);
     }
   }
@@ -232,22 +232,22 @@ async function setSchemaField(solrURL, fieldtype, schemaJson) {
   // can't be replaced, so I'm trying to delete them and ignoring errors.
 
   if( fieldtype === 'copyfield' ) {
-    logger.silly(`Schema: deleting copyfield ${JSON.stringify(schemaJson)}`);
+    logger.debug(`Schema: deleting copyfield ${JSON.stringify(schemaJson)}`);
     await tryDeleteCopyField(solrURL, schemaJson);
     schemaAPIJson['add-copy-field'] = schemaJson;
   } else {
     const apifield = ( fieldtype === 'field' ) ? 'field' : 'dynamic-field';
     if( await schemaFieldExists(url, name) ) {
-      logger.silly(`Schema: replacing ${fieldtype} ${name}`);
+      logger.debug(`Schema: replacing ${fieldtype} ${name}`);
       schemaAPIJson['replace-' + apifield] = schemaJson;
     } else {    
-      logger.silly(`Schema: adding ${fieldtype} ${name}`);
+      logger.debug(`Schema: adding ${fieldtype} ${name}`);
       schemaAPIJson['add-' + apifield] = schemaJson;
     }
   }
 
   try {
-    logger.silly(`Posting to schema API ${url} ${JSON.stringify(schemaAPIJson)}`);
+    logger.debug(`Posting to schema API ${url} ${JSON.stringify(schemaAPIJson)}`);
     const response = await axios({
       url: solrURL,
       method: 'post',
@@ -260,7 +260,7 @@ async function setSchemaField(solrURL, fieldtype, schemaJson) {
   } catch(e) {
     logger.error("Error updating schema");
     logger.error(`URL: ${url}`);
-    logger.silly(`schemaAPIJson: ${JSON.stringify(schemaAPIJson)}`);
+    logger.debug(`schemaAPIJson: ${JSON.stringify(schemaAPIJson)}`);
     if( e.response ) {
       logger.error(`${e.response.status} ${e.response.statusText}`);
     } else {
@@ -268,6 +268,7 @@ async function setSchemaField(solrURL, fieldtype, schemaJson) {
     }
   }
 }
+
 
 async function schemaFieldExists(solrURL, field) {
   const url = solrURL + '/' + field;
@@ -277,11 +278,11 @@ async function schemaFieldExists(solrURL, field) {
       method: 'get',
       responseType: 'json', 
     });
-    logger.silly("Schema field " + field + " already exists");
+    logger.debug("Schema field " + field + " already exists");
     return true;
   } catch(e) {
     if( e.response.status === 404 ) {
-      logger.error("Schema field " + field + " not found");
+      logger.debug("Schema field " + field + " not found");
       return false;
     } else {
       logger.error("unknown error " + e);
@@ -302,7 +303,7 @@ async function tryDeleteCopyField(solrURL, copyFieldJson) {
       'Content-Type': 'application/json; charset=utf-8'
       }
     });
-    logger.silly("copyfield removed");
+    logger.debug("copyfield removed");
     return true;
   } catch(e) {
     if( e.response ) {
@@ -387,7 +388,7 @@ async function loadFromOcfl(repoPath, catalogFilename, hashAlgorithm) {
 async function dumpDocs(dumpDir, jsonld, solrDocs) {
   const id = jsonld['hash_path'];
   const jsonDump = path.join(dumpDir, `${id}.json`);
-  logger.silly(`Dumping solr ${jsonDump}`);
+  logger.debug(`Dumping solr ${jsonDump}`);
   await fs.writeJson(jsonDump, solrDocs, { spaces: 2});
 }
 
