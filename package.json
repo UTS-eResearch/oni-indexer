@@ -1,6 +1,6 @@
 {
   "name": "oni-indexer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Builds a Solr index for an oni data repository",
   "main": "index.js",
   "scripts": {
