@@ -109,6 +109,10 @@ async function main (argv) {
 
     const records = await loadFromOcfl(cf['ocfl'], cf['catalogFilename'], cf['hashAlgorithm']);
 
+    if( cf['limit'] ) {
+      records.length = cf['limit'];
+    }
+
     const solrDocs = await indexRecords(
       indexer, cf['dump'], cf['uriIds'], cf['ocfl'], records
     );
