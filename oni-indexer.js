@@ -365,6 +365,7 @@ async function loadFromOcfl(repoPath, catalogFilename, hashAlgorithm) {
   const records = [];
 
   for ( let object of objects ) {
+    logger.info(`Loading ocfl object at ${object.path}`);
     const inv = await object.getInventory();
     var headState = inv.versions[inv.head].state;
     for (let hash of Object.keys(headState)){
@@ -377,6 +378,8 @@ async function loadFromOcfl(repoPath, catalogFilename, hashAlgorithm) {
           jsonld: json,
           ocflObject: object
         });
+      } else {
+        logger.warn(`Couldn't find ${catalogFilename} in ${object.path}`);
       }
     }
   }
