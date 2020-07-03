@@ -403,7 +403,9 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
       const docs = await indexer.createSolrDocument(record['jsonld'], async (fpath) => {
         const relpath = await record['ocflObject'].getFilePath(fpath);
         return path.join(ocflPath, record['path'], relpath);
-      });
+      },
+      record['hash_path']
+      );
       if (docs) {
         if( dumpDir ) {
           await dumpDocs(dumpDir, record, docs);
