@@ -95,10 +95,12 @@ async function main (argv) {
 
   if( solrUp ) {
     if( cf['purge'] ) {
+      logger.info("Purging all records from solr");
       await purgeSolr(solrUpdate);
     }
 
     if( cf['updateSchema'] ) {
+      logger.info("Updating solr schema");
       const schema = await buildSchema(cf);
       if( schema ) {
         await updateSchema(cf['solrBase'] + '/schema', schema);
@@ -107,23 +109,32 @@ async function main (argv) {
       }
     }
 
+    logger.info(`Loading repo ${cf['ocfl']}`);
+
     const records = await loadFromOcfl(cf['ocfl'], cf['catalogFilename'], cf['hashAlgorithm']);
 
     if( cf['limit'] ) {
       records.length = cf['limit'];
     }
 
+    logger.info(`Got ${records.length} ro-crates`);
+
+    logger.info("Indexing");
+
     const solrDocs = await indexRecords(
       indexer, cf['dump'], cf['uriIds'], cf['ocfl'], records
     );
+
+    logger.info(`Committing ${solrDocs.length} solr docs`);
 
     for( const doc of solrDocs ) {
       try {
         await updateDocs(solrUpdate, [ doc ]);
         await commitDocs(solrUpdate, '?commit=true&overwrite=true');
-        logger.debug(`Indexed ${doc['record_type_s']} ${doc['id']}`);
+        logger.info(`Indexed ${doc['record_type_s']} ${doc['id']}`);
       } catch(e) {
-        logger.error("Update failed: " + e);
+        logger.error(`Solr update failed for ${doc['record_type_s']} ${doc['id']}`);
+        logger.error(e);
         if( e.response ) {
           logger.error(e.response.status);
         }      
@@ -141,7 +152,7 @@ async function main (argv) {
 
 async function checkSolr(solrPing, retries, retryInterval) {
   for( let i = 0; i < retries; i++ ) {
-    logger.info(`Pinging Solr ${solrPing} - attempt ${i + 1} of ${retries}`)  
+    logger.debug(`Pinging Solr ${solrPing} - attempt ${i + 1} of ${retries}`)  
     try {
       const response = await axios({
         url: solrPing,
@@ -155,11 +166,11 @@ async function checkSolr(solrPing, retries, retryInterval) {
         }
       }
     } catch(e) {
-      logger.info(`Solr ping failed`);
+      logger.silly(`Still waiting for solr`);
     }
     await sleep(retryInterval);
   }
-  logger.info(`Maximum connection attempts ${retries}`);
+  logger.error(`Couldn't connect to Solr after ${retries} connection attempts`);
   return false;
 }
 
@@ -367,28 +378,34 @@ async function loadFromOcfl(repoPath, catalogFilename, hashAlgorithm) {
 
   const objects = await repo.objects();
   const records = [];
+  const catalogs = Array.isArray(catalogFilename) ? catalogFilename : [ catalogFilename ];
 
   for ( let object of objects ) {
-    logger.info(`Loading ocfl object at ${object.path}`);
     const inv = await object.getInventory();
-    var headState = inv.versions[inv.head].state;
-    for (let hash of Object.keys(headState)){
-      if (headState[hash].includes(catalogFilename)) {
-        const jsonfile = path.join(object.path, inv.manifest[hash][0]);
-        const json = await fs.readJson(jsonfile);
-        records.push({
-          path: path.relative(repoPath, object.path),
-          hash_path: hasha(object.path, { algorithm: hashAlgorithm }),
-          jsonld: json,
-          ocflObject: object
-        });
-      } else {
-        logger.warn(`Couldn't find ${catalogFilename} in ${object.path}`);
-      }
+    const headState = inv.versions[inv.head].state;
+    var json = null;
+    for (let hash of Object.keys(headState)) {
+      for( let cfile of catalogs ) {
+        if (headState[hash].includes(cfile)) {
+          const jsonfile = path.join(object.path, inv.manifest[hash][0]);
+          json = await fs.readJson(jsonfile);
+          break;
+        }
+      } 
+    }
+    if( json ) {
+      records.push({
+        path: path.relative(repoPath, object.path),
+        hash_path: hasha(object.path, { algorithm: hashAlgorithm }),
+        jsonld: json,
+        ocflObject: object
+      });
+      logger.info(`Loaded ocfl object ${object.path}`);
+    } else {
+      logger.error(`Couldn't find ${catalogFilename} in ${object.path}`);
     }
   }
   return records;
-  
 }
 
 
@@ -441,8 +458,7 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
       
       }
     } catch(e) {
-      logger.error(`Error creating solr doc from ${record['path']}`);
-      logger.error(e);
+      logger.error(`Indexing error ${record['path']}: ${e}`);
     }
 
   }
