@@ -394,9 +394,11 @@ async function loadFromOcfl(repoPath, catalogFilename, hashAlgorithm) {
       } 
     }
     if( json ) {
+      const p = path.relative(repoPath, object.path);
+      const pid = p.replace(/\//g, ''); 
       records.push({
         path: path.relative(repoPath, object.path),
-        hash_path: hasha(object.path, { algorithm: hashAlgorithm }),
+        hash_path: pid,
         jsonld: json,
         ocflObject: object
       });

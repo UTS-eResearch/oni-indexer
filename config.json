@@ -11,16 +11,28 @@
   "solrBase": "http://localhost:8983/solr/ocfl",
   "hashAlgorithm": "md5",
   "waitPeriod": 0,
+  "schemaBase": "./config/schema_base.json",
 
-  "logLevel": "info",
+  "logLevel": "debug",
+
   "log": {
     "filename": "./logs/indexer.log",
     "level": "info"
   },
 
-  "dump": "./dump",
+
+  "portal": {
+    "base": "./config/portal_base.json",
+    "config": "./config/portal.json",
+    "facetDefaults": {
+      "limit": 5
+    }
+  },
+
+
 
   "fields": {
+    "main_search": [ "name", "description", "id", "author" ],
     "map_all": {
       "@id": [ "id", "id_orig" ],
       "@type": [ "record_type_s", "type_label" ]
@@ -29,10 +41,6 @@
     "licenses": {
       "__default__": "public"
     },
-
-    "main_search": [
-      "name", "description", "author", "id"
-    ],
 
     "types": {
 
@@ -60,11 +68,12 @@
         },
 
         "author": {
-          "resolve": "multi",
-          "facet": {
-            "id": "@id",
+          "multi": true,
+          "resolve": {
+            "search": "@id",
             "display": "name"
-          }
+          },
+          "facet": true
         },
 
         "keywords": {
@@ -74,23 +83,29 @@
           }
         },
 
+        "description": {
+          "link_rebase": "publication"
+        },
+
         "about": [
           {
             "match": { "@id": { "re": "anzsrc-for" } },
             "index_as": "FOR",
             "multi": true,
-            "resolve": "multi",
-            "facet": true
+            "resolve": {
+              "search": "@id", 
+              "display": "name"
+            }
           }
         ],
 
         "contactPoint" : {
-          "multi": true,
+          "multi": "true",
           "escapedJSON": true
         },
 
         "geo" : {
-          "multi": true,
+          "multi": "true",
           "escapedJSON": true
         },
 
@@ -102,7 +117,11 @@
         },
       
         "publisher": {
-          "resolve": "multi"
+          "multi": true,
+          "resolve": {
+            "search": "@id", 
+            "display": "name"
+          }
         }
       }
     }
