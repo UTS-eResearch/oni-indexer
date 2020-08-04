@@ -461,6 +461,7 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
       }
     } catch(e) {
       logger.error(`Indexing error ${record['path']}: ${e}`);
+      logger.debug(`Stack trace ${e.stack}`);
     }
 
   }
