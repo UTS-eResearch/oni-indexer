@@ -5,3 +5,4 @@ test-data/datacrates/
 test-data/generated/
 working/
 dump/
+logs/*
