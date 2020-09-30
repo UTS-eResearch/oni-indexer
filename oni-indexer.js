@@ -110,23 +110,47 @@ async function main (argv) {
     const records = await loadFromOcfl(cf['ocfl'], cf['catalogFilename'], cf['hashAlgorithm']);
 
     if( cf['limit'] ) {
-      records.length = cf['limit'];
+      logger.warn(`only indexing first ${cf['limit']} items`);  
     }
 
     const solrDocs = await indexRecords(
       indexer, cf['dump'], cf['uriIds'], cf['ocfl'], records
     );
 
+    let count = 0;
+
     for( const doc of solrDocs ) {
       try {
         await updateDocs(solrUpdate, [ doc ]);
         await commitDocs(solrUpdate, '?commit=true&overwrite=true');
         logger.debug(`Indexed ${doc['record_type_s']} ${doc['id']}`);
+        if( cf['waitInterval'] ) {
+          logger.debug(`waiting ${cf['waitInterval']}`);
+          await sleep(cf['waitInterval']);
+        }
+        if( cf['dump'] ) {
+          const cleanid = doc['id'][0].replace(/[^a-zA-Z0-9_]/g, '_');
+          const dumpfn = path.join(cf['dump'], cleanid + '.json');
+
+          await fs.writeJson(dumpfn, doc, { spaces: 2});
+          logger.info(`Wrote solr doc to ${dumpfn}`);
+        }
       } catch(e) {
-        logger.error("Update failed: " + e);
+        logger.error(`Update failed for ${doc['id']}: ` + e);
+        if( cf['dump'] ) {
+          const cleanid = doc['id'][0].replace(/[^a-zA-Z0-9_]/g, '_');
+          const dumpfn = path.join(cf['dump'], cleanid + '_error.json');
+
+          await fs.writeJson(dumpfn, doc, { spaces: 2});
+          logger.error(`Wrote solr doc to ${dumpfn}`);
+        }
         if( e.response ) {
           logger.error(e.response.status);
         }      
+      }
+      count++;
+      if( cf['limit'] && count > cf['limit'] ) {
+        break;
       }
     }
 
@@ -155,7 +179,7 @@ async function checkSolr(solrPing, retries, retryInterval) {
         }
       }
     } catch(e) {
-      logger.info(`Solr ping failed`);
+      logger.debug("Waiting for Solr to start");
     }
     await sleep(retryInterval);
   }
@@ -405,6 +429,7 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
 
   const solrDocs = [];
   for( record of records ) {
+    logger.info(`Indexing record ${record['path']}`);
     try {
       const jsonld = record['jsonld'];
       const docs = await indexer.createSolrDocument(record['jsonld'], async (fpath) => {
@@ -437,7 +462,7 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
               solrDocs.push(item);
             });
           }
-      }
+        }
       
       }
     } catch(e) {
