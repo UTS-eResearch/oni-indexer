@@ -1,5 +1,7 @@
 FROM node:10
 
+VOLUME ["/etc/share/dump"]
+
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install

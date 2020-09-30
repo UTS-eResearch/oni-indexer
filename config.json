@@ -1,5 +1,5 @@
 {
-  "ocfl": "../oni-express/ocfl",
+  "ocfl": "/Users/moises/source/github/uts-eresearch/heurist2ro-crate/en_ocfl",
   "identifierNamespace": "public_ocfl",
   "uriIds": "identifiers",
   "retries": 10,
@@ -7,20 +7,33 @@
   "purge": true,
   "updateSchema": true,
   "dryRun": false,
-  "catalogFilename": "ro-crate-metadata.jsonld",
+  "catalogFilename": "ro-crate-metadata.json",
   "solrBase": "http://localhost:8983/solr/ocfl",
   "hashAlgorithm": "md5",
-  "waitPeriod": 0,
+  "schemaBase": "/Users/moises/source/github/uts-eresearch/oni-express/config/schema_base.json",
 
   "logLevel": "debug",
+
+  "dump": "./dump",
+
   "log": {
     "filename": "./logs/indexer.log",
     "level": "debug"
   },
 
-  "dump": "./dump",
+
+  "portal": {
+    "base": "/Users/moises/source/github/uts-eresearch/oni-express/config/portal_base.json",
+    "config": "/Users/moises/source/github/uts-eresearch/oni-express/config/portal.json",
+    "facetDefaults": {
+      "limit": 5
+    }
+  },
+
+
 
   "fields": {
+    "main_search": [ "name", "description", "id" ],
     "map_all": {
       "@id": [ "id", "id_orig" ],
       "@type": [ "record_type_s", "type_label" ]
@@ -30,80 +43,57 @@
       "__default__": "public"
     },
 
-    "main_search": [
-      "name", "description", "author", "id"
-    ],
-
     "types": {
 
       "Dataset": {
-    
-        "@id": { 
-          "name": "public_ocfl",
-          "filter": { "is_root": true }
-        },
         "@reverse": { "skip": true },
- 
+
+        "hasPart": { "skip": true },
+
+        "hasFile": { "skip": true }
+
+      },
+      "MilitaryService": {
+        "@reverse": { "skip": true },
+
+        "hasPart": { "skip": true },
+
+        "hasFile": { "skip": true }
+
+      },
+      "Person": {
+
+        "@reverse": { "skip": true },
+
         "hasPart": { "skip": true },
 
         "hasFile": { "skip": true },
-      
+
         "temporalCoverage": { "skip": true },
-
-        "license": {
-          "multi": true,
-          "facet": true
-        },
-
-        "licenseOriginal": {
-          "multi": true
-        },
-
-        "author": {
-          "resolve": "multi",
-          "facet": {
-            "id": "@id",
+        "birth" : {
+          "resolve": {
+            "search": "@id",
             "display": "name"
           }
         },
-
-        "keywords": {
+        "sectorName": {
           "multi": true,
-          "facet": {
-            "tokenize": { "delim": "[,;]\\s*" }
-          }
+          "facet": true
         },
-
-        "about": [
-          {
-            "match": { "@id": { "re": "anzsrc-for" } },
-            "index_as": "FOR",
-            "multi": true,
-            "resolve": "multi",
-            "facet": true
-          }
-        ],
-
-        "contactPoint" : {
+        "militaryServicePlace": {
           "multi": true,
-          "escapedJSON": true
+          "facet": true
         },
-
-        "geo" : {
+        "universityConnections": {
           "multi": true,
-          "escapedJSON": true
-        },
-
-        "datePublished": {
-          "facet": true,
-          "validate": {
-            "re": "^\\d\\d\\d\\d"
-          }
-        },
-      
-        "publisher": {
-          "resolve": "multi"
+          "resolve": {
+            "search": "@id",
+            "display": "name"
+          },
+          "facet": true
         }
+
+
       }
     }
   }

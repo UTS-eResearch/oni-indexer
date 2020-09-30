@@ -41,6 +41,9 @@ var argv = require('yargs')
     .string('i')
     .help('h')
     .alias('h', 'help')
+    .describe('p', 'Purge')
+    .alias('p', 'purge')
+    .boolean('p')
     .argv;
 
 const configPath = argv.config;
@@ -94,6 +97,9 @@ async function main (argv) {
   const solrUp = await checkSolr(cf['solrBase'] + '/admin/ping', cf['retries'], cf['retryInterval']);
 
   if( solrUp ) {
+    if(!_.isUndefined(argv.p)) {
+      cf['purge'] = argv.p;
+    }
     if( cf['purge'] ) {
       await purgeSolr(solrUpdate);
     }
