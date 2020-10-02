@@ -2,7 +2,7 @@ const assert = require('assert');
 const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
-//const randomize = require('datacrate/lib/randomize');
+const randomize = require('../lib/randomize');
 const CatalogSolr = require('../lib/CatalogSolr');
 const winston = require('winston');
 
@@ -16,27 +16,28 @@ const logger = winston.createLogger({
 
 let sourcedata = {};
 let datapubs = [];
-const datacrateDirPath = path.join(process.cwd(), './test-data/datacrates');
+const rocrateDirPath = path.join(process.cwd(), './test-data/rocrates');
 const fieldsPath = path.join(process.cwd(), '/test-data/', 'fields.json');
 
 
 before(async () => {
-  fs.ensureDirSync(datacrateDirPath);
-  //sourcedata = await randomize.loadsourcedata('./node_modules/datacrate/vocabularies');
+  fs.ensureDirSync(rocrateDirPath);
+  //sourcedata = await randomize.loadsourcedata('./node_modules/rocrate/vocabularies');
 });
 
 let catalogjson = null;
 
-describe.skip('get random datcrates', function () {
-  it('randomize 1 datacrate', async function () {
+describe('create random ro-crates', function () {
+  it('randomize 1 rocrate', async function () {
     datapubs = randomize.randdatapubs(1, sourcedata);
-    const id = await randomize.makedir(datacrateDirPath);
-    return randomize.makedatacrate(datacrateDirPath, datapubs[0], id).then(() => {
-      catalogjson = require(path.join(datacrateDirPath, id, 'CATALOG.json'));
-      assert.notStrictEqual(catalogjson['@graph'], undefined, 'datacrate not created');
-    });
+    const id = await randomize.makedir(rocrateDirPath);
+    await randomize.makerocrate(rocrateDirPath, datapubs[0], id);
+    catalogjson = await fs.readJson(path.join(rocrateDirPath, id, 'ro-crate-metadata.jsonld'));
+    assert.notStrictEqual(catalogjson['@graph'], undefined, 'ro-crate not created');
   });
 });
+
+// I don't want to rewrite these now (ML 2-10-2020)
 
 describe.skip('catalog', function () {
   let catalog = {};
@@ -61,11 +62,6 @@ describe.skip('catalog', function () {
 
       const fieldConfig = catalog.config;
 
-      //Peter's idea is to convert everything into an array then it is safer to work to convert
-      const graph = _.each(ca['@graph'], (g) => {
-        return catalog.ensureObjArray(g);
-      });
-
       let graphElement = _.find(graph, (g) => {
         return _.find(g['@type'], (gg) => gg === 'Dataset') ? g : undefined;
       });
@@ -83,11 +79,6 @@ describe.skip('catalog', function () {
       const ca = require(caPath);
 
       const fieldConfig = catalog.config;
-
-      //Peter's idea is to convert everything into an array then it is safer to work to convert
-      const graph = _.each(ca['@graph'], (g) => {
-        return catalog.ensureObjArray(g);
-      });
 
       let graphElement = _.find(graph, (g) => {
         return _.find(g['@type'], (gg) => gg === 'Person') ? g : undefined;

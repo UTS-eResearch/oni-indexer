@@ -28,7 +28,8 @@ const DEFAULTS = {
   'uriIds': 'hashpaths',
   'updateSchema': true,
   'hashAlgorithm': 'md5',
-  'logLevel': 'warn'
+  'logLevel': 'warn',
+  'timeout': 180
 };
 
 var argv = require('yargs')
@@ -151,8 +152,14 @@ async function main (argv) {
           logger.error(`Wrote solr doc to ${dumpfn}`);
         }
         if( e.response ) {
-          logger.error(e.response.status);
-        }      
+          logger.error("Solr request failed with status " + e.response.status);
+          const error = e.response.data.error;
+          logger.error(error['msg']);
+          logger.error(JSON.stringify(error['metadata'], null, 2));
+        } else {
+          logger.error("Request failed");
+          logger.error(e.message);
+        }
       }
       count++;
       if( cf['limit'] && count > cf['limit'] ) {
@@ -201,23 +208,25 @@ async function checkSolr(solrPing, retries, retryInterval) {
 
 
 
-function commitDocs(solrURL, args) {
+function commitDocs(solrURL, args, cf) {
   return axios({
     url: solrURL + args,
     method: 'get',
     responseType: 'json',
+    timeout: cf['timeout'] * 1000,
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
 }
 
-function updateDocs(solrURL, coreObjects) {
+function updateDocs(solrURL, coreObjects, cf) {
   return axios({
     url: solrURL + '/docs',
     method: 'post',
     data: coreObjects,
     responseType: 'json',
+    timeout: cf['timeout'] * 1000,
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }

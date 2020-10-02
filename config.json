@@ -12,6 +12,8 @@
   "hashAlgorithm": "md5",
   "schemaBase": "/Users/moises/source/github/uts-eresearch/oni-express/config/schema_base.json",
 
+  "timeout": 180,
+
   "logLevel": "debug",
 
   "dump": "./dump",
