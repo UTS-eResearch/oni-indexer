@@ -16,13 +16,14 @@ const logger = winston.createLogger({
 
 let sourcedata = {};
 let datapubs = [];
+
 const rocrateDirPath = path.join(process.cwd(), './test-data/rocrates');
 const fieldsPath = path.join(process.cwd(), '/test-data/', 'fields.json');
 
 
 before(async () => {
-  fs.ensureDirSync(rocrateDirPath);
-  //sourcedata = await randomize.loadsourcedata('./node_modules/rocrate/vocabularies');
+  await fs.ensureDir(rocrateDirPath);
+  sourcedata = await randomize.loadsourcedata('./vocabularies');
 });
 
 let catalogjson = null;
@@ -165,7 +166,7 @@ describe.skip('catalog', function () {
 });
 
 after(() => {
-  fs.remove(datacrateDirPath);
+  //fs.remove(rocrateDirPath);
 });
 
 

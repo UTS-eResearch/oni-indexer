@@ -8,7 +8,7 @@ const rocrate = require('ro-crate');
 const winston = require('winston');
 
 const logger = winston.createLogger({
-  level: 'debug',
+  level: 'error',
   format: winston.format.simple(),
   transports: [
     new winston.transports.Console()
@@ -144,7 +144,7 @@ describe('converting ro-crates to solr documents', function () {
         "search": authorItem['@id'],
         "display": authorItem['name']
       }
-      expect(facets[0]).to.equal(JSON.stringify(resolved));
+      expect(JSON.parse(facets[0])).to.deep.equal(resolved);
     }
 
   });

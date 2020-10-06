@@ -128,19 +128,14 @@ async function main (argv) {
 
     for( const doc of solrDocs ) {
       try {
-        await updateDocs(solrUpdate, [ doc ]);
-        await commitDocs(solrUpdate, '?commit=true&overwrite=true');
+        logger.info(`Updating ${doc['record_type_s']} ${doc['id']}`);
+        await updateDocs(solrUpdate, [ doc ], cf);
+        logger.info(`Committing ${doc['record_type_s']} ${doc['id']}`);
+        await commitDocs(solrUpdate, '?commit=true&overwrite=true', cf);
         logger.debug(`Indexed ${doc['record_type_s']} ${doc['id']}`);
         if( cf['waitInterval'] ) {
           logger.debug(`waiting ${cf['waitInterval']}`);
           await sleep(cf['waitInterval']);
-        }
-        if( cf['dump'] ) {
-          const cleanid = doc['id'][0].replace(/[^a-zA-Z0-9_]/g, '_');
-          const dumpfn = path.join(cf['dump'], cleanid + '.json');
-
-          await fs.writeJson(dumpfn, doc, { spaces: 2});
-          logger.info(`Wrote solr doc to ${dumpfn}`);
         }
       } catch(e) {
         logger.error(`Update failed for ${doc['id']}: ` + e);
