@@ -58,7 +58,16 @@
 
       "Person": {
      
-        "@reverse": { "skip": true },
+        "@reverse": { 
+          "resolve": {
+            "via": [ 
+              { "property": "object", "reverse": true },
+              { "property": "location" }
+            ],
+            "display": "name",
+            "search": "geo"
+          }
+         },
  
         "hasPart": { "skip": true },
 
@@ -71,8 +80,9 @@
             "display": "name",
             "search": "@id"
           }
-
         }
+
+
         
       }
     }
