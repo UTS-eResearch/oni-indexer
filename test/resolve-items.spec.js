@@ -8,7 +8,7 @@ const rocrate = require('ro-crate');
 const winston = require('winston');
 
 const logger = winston.createLogger({
-  level: 'info',
+  level: 'error',
   format: winston.format.simple(),
   transports: [
     new winston.transports.Console()
@@ -25,6 +25,7 @@ async function initIndexer(configFile) {
 
 
 describe('indexing values with item resolution', function () {
+  this.timeout(0);
   const test_data = path.join(process.cwd(), 'test-data', 'criminals');
 
   it('can index the criminal characters dataset', async function () {
@@ -38,20 +39,26 @@ describe('indexing values with item resolution', function () {
 
 
 
-    const birthPlacesJson = await fs.readFile(path.join(test_data, "birthPlaces.json"));
-    const birthPlaces = JSON.parse(birthPlacesJson);
+    const testCasesFile = await fs.readFile(path.join(test_data, "testCases.json"));
+    const testCases = JSON.parse(testCasesFile);
 
     // note: the members of the solr doc objects returned by createSolrDocument
     // are weird JS objects which look like single-element arrays when 
     // stringified, which is what the [0] in the filter is for. This is bad
     // and needs fixing.
 
-    for( let id in birthPlaces ) {
+    await fs.writeJson(path.join(test_data, "doc_dump.json"), solrDocs, {'spaces': 2});
+
+    for( let id in testCases ) {
+      const testCase = testCases[id]
       const solrDoc = persons.filter((d) => { return d['id'][0] === id });
       expect(solrDoc).to.not.be.empty;
       const bp = solrDoc[0]['birthPlace'];
-      expect(bp).to.equal(birthPlaces[id]);
+      console.log(`birthplace matches ${bp} = ${testCase['birthPlace']}`);
+      expect(bp).to.equal(testCase['birthPlace']);
     }
+
+
 
   });
 

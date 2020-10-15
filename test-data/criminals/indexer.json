@@ -63,9 +63,19 @@
         "hasFile": { "skip": true },
       
         "temporalCoverage": { "skip": true },
+
+        "birthPlace": {
+          "resolve": {
+            "display": "name",
+            "search": "@id"
+          }
+        },
+
+
      
         "@reverse": {
           "object": {
+            "index_as": "reverseSentence",
             "resolve": {
               "via": [ { "property": "location" } ],
               "search": "geo",
@@ -74,17 +84,13 @@
             }
           }
         },
- 
 
-        "birthPlace": {
+        "conviction": {
           "resolve": {
-            "display": "name",
-            "search": "@id"
+            "via": [ { "property": "location" }]
           }
         }
 
-
-        
       }
     }
   }
