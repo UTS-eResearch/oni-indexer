@@ -57,23 +57,24 @@
       },
 
       "Person": {
-     
-        "@reverse": { 
-          "resolve": {
-            "via": [ 
-              { "property": "object", "reverse": true },
-              { "property": "location" }
-            ],
-            "display": "name",
-            "search": "geo"
-          }
-         },
- 
+
         "hasPart": { "skip": true },
 
         "hasFile": { "skip": true },
       
         "temporalCoverage": { "skip": true },
+     
+        "@reverse": {
+          "object": {
+            "resolve": {
+              "via": [ { "property": "location" } ],
+              "search": "geo",
+              "display": "name",
+              "multi": true
+            }
+          }
+        },
+ 
 
         "birthPlace": {
           "resolve": {
