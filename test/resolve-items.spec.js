@@ -54,12 +54,12 @@ describe('indexing values with item resolution', function () {
   });
 
 
-  it('can resolve multiple lookups', async function () {
+  it.skip('can resolve multiple lookups', async function () {
     await testResolveCase('convictions');
   });
 
 
-  it('can resolve reverse lookups', async function () {
+  it.skip('can resolve reverse lookups', async function () {
     await testResolveCase('reverse_convictions');
   });
 
