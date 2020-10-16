@@ -1,14 +1,18 @@
 {
 	"#person__VICFP_18551934_1_573": {
-		"birthPlace": "{\"@id\":\"#place_IRELAND\",\"display\":\"IRELAND\",\"search\":\"#place_IRELAND\"}"
+		"birthPlace": "{\"@id\":\"#place_IRELAND\",\"display\":\"IRELAND\",\"search\":\"#place_IRELAND\"}",
+		"convictions": [ "foo "]
 	},
 	"#person_VICFP_18551934_10_260":{
-		"birthPlace": "{\"@id\":\"#place_ENGLAND\",\"display\":\"ENGLAND\",\"search\":\"#place_ENGLAND\"}"
+		"birthPlace": "{\"@id\":\"#place_ENGLAND\",\"display\":\"ENGLAND\",\"search\":\"#place_ENGLAND\"}",
+		"convictions": [ "foo "]
 	},
 	"#person__VICFP_18551934_9_323": {
-		"birthPlace": "{\"@id\":\"#place_FOOTSCRAY\",\"display\":\"FOOTSCRAY\",\"search\":\"#place_FOOTSCRAY\"}"
+		"birthPlace": "{\"@id\":\"#place_FOOTSCRAY\",\"display\":\"FOOTSCRAY\",\"search\":\"#place_FOOTSCRAY\"}",
+		"convictions": [ "foo "]
 	},
 	"#person__VICFP_18551934_2_522": {
-		"birthPlace": "{\"@id\":\"#place_SCOTLAND\",\"display\":\"SCOTLAND\",\"search\":\"#place_SCOTLAND\"}"
+		"birthPlace": "{\"@id\":\"#place_SCOTLAND\",\"display\":\"SCOTLAND\",\"search\":\"#place_SCOTLAND\"}",
+		"convictions": [ "foo "]
 	}
 }
