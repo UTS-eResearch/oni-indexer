@@ -8,7 +8,7 @@ const rocrate = require('ro-crate');
 const winston = require('winston');
 
 const logger = winston.createLogger({
-  level: 'error',
+  level: 'debug',
   format: winston.format.simple(),
   transports: [
     new winston.transports.Console()
@@ -49,12 +49,12 @@ async function testResolveCase(testType) {
 describe('indexing values with item resolution', function () {
   this.timeout(0);
 
-  it('can resolve single lookups', async function () {
+  it.skip('can resolve single lookups', async function () {
     await testResolveCase('birthPlace');
   });
 
 
-  it.skip('can resolve multiple lookups', async function () {
+  it('can resolve multi-step lookups', async function () {
     await testResolveCase('convictions');
   });
 

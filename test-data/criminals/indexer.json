@@ -87,7 +87,9 @@
 
         "conviction": {
           "resolve": {
-            "via": [ { "property": "location" }]
+            "via": [ { "property": "conviction" }, { "property": "location" }],
+            "search": "@id",
+            "display": "name"
           }
         }
 
