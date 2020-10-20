@@ -3,7 +3,7 @@ const expect = require('chai').expect;
 const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
-const CatalogSolr = require('../lib/CatalogSolr');
+const ROCrateIndexer = require('../lib/ROCrateIndexer');
 const rocrate = require('ro-crate');
 
 const winston = require('winston');
@@ -18,7 +18,7 @@ const logger = winston.createLogger({
 
 async function initIndexer(configFile) {
   const cf = await fs.readJson(configFile);
-  const indexer = new CatalogSolr(logger);
+  const indexer = new ROCrateIndexer(logger);
   indexer.setConfig(cf);
   return indexer;
 }
