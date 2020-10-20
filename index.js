@@ -1,3 +1,3 @@
 module.exports = {
-    CatalogSolr: require('./lib/CatalogSolr.js')
+    ROCrateIndexer: require('./lib/ROCrateIndexer.js')
   }

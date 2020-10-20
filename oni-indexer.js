@@ -3,7 +3,7 @@
 
 const axios = require('axios');
 const _ = require('lodash');
-const CatalogSolr = require('./lib/CatalogSolr');
+const ROCrateIndexer = require('./lib/ROCrateIndexer');
 const ROCrate = require('ro-crate').ROCrate;
 const fs = require('fs-extra');
 const path = require('path');
@@ -87,7 +87,7 @@ async function main (argv) {
   }
 
 
-  const indexer = new CatalogSolr(logger, cf['debug']);
+  const indexer = new ROCrateIndexer(logger, cf['debug']);
 
   if( !indexer.setConfig(cf['fields']) ) {
     return;

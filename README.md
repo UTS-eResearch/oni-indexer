@@ -8,7 +8,7 @@
 >    TODO: 
 >    - build schema of solr with config file
 >    - Generalise to use any json-ld
->    - Make createCatalogSolr as part of the library
+>    - Make createROCrateIndexer as part of the library
 >    - Test with other types of json-ld's
 ---
 
@@ -41,13 +41,13 @@ npm run commit
 
 ```JavaScript
 const fieldConfig = require('./fields.json');
-let catalog = new CatalogSolr();
-catalog.setConfig(fieldConfig);
+let indexer = new ROCrateIndexer();
+indexer.setConfig(fieldConfig);
 
 const entryPath = path.join('test-data','CATALOG.json');
 let entryJson = fs.readFileSync(entryPath).toString();
 entryJson = JSON.parse(entryJson);
 
-const solrObject = catalog.createSolrObject(entryJson, '@graph');
+const solrObject = await indexer.createSolrObject(entryJson, '@graph');
 ```
 
