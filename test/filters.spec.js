@@ -4,7 +4,7 @@
 const expect = require('chai').expect;
 const _ = require('lodash');
 const randomWord = require('random-word');
-const CatalogSolr = require('../lib/CatalogSolr');
+const ROCrateIndexer = require('../lib/ROCrateIndexer');
 
 const winston = require('winston');
 
@@ -35,16 +35,16 @@ function randomGraph(n, type, fields, value_callback) {
   });
 }
 
-function makeCatalog(fieldcf) {
-  const catalog = new CatalogSolr(logger);
+function makeIndexer(fieldcf) {
+  const indexer = new ROCrateIndexer(logger);
   
-  catalog.setConfig({
+  indexer.setConfig({
     types: {
       Dataset: fieldcf
     }
   });
 
-  return catalog;
+  return indexer;
 }
 
 
@@ -84,8 +84,8 @@ describe('type selection filters - simple', function () {
 
   it('matches everything when filter is empty', function () {
     const graph = randomGraph(GRAPH, 'Dataset', ['path']);
-    const catalog = makeCatalog({path: {} });
-    const matches = graph.filter(catalog.typeFilters['Dataset']);
+    const indexer = makeIndexer({path: {} });
+    const matches = graph.filter(indexer.typeFilters['Dataset']);
     expect(matches).to.be.an('array').and.to.have.lengthOf(GRAPH);
   });
 
@@ -97,8 +97,8 @@ describe('type selection filters - simple', function () {
       const graph = randomGraph(GRAPH, 'Dataset', ['path']);
       const item = _.sample(graph);
       const lookfor = item['path'][0];
-      const catalog = makeCatalog({path: {filter: lookfor} });
-      const matches = graph.filter(catalog.typeFilters['Dataset']);
+      const indexer = makeIndexer({path: {filter: lookfor} });
+      const matches = graph.filter(indexer.typeFilters['Dataset']);
       expect(matches).to.be.an('array').and.to.not.be.empty;
       _.each(matches, (match) => {
         expect(match).to.have.property('path');
@@ -112,8 +112,8 @@ describe('type selection filters - simple', function () {
       const graph = randomGraph(GRAPH, 'Dataset', ['path']);
       const item = _.sample(graph);
       const lookfor = randomSubstring(item['path'][0]);
-      const catalog = makeCatalog({ path: { filter: { re: lookfor } } });
-      const matches = graph.filter(catalog.typeFilters['Dataset']);
+      const indexer = makeIndexer({ path: { filter: { re: lookfor } } });
+      const matches = graph.filter(indexer.typeFilters['Dataset']);
       expect(matches).to.be.an('array').and.to.not.be.empty;
       const lookfor_re = new RegExp(lookfor);
       _.each(matches, (match) => {
@@ -127,8 +127,8 @@ describe('type selection filters - simple', function () {
     _.times(REPEATS, () => {
       const graph = randomGraph(GRAPH, 'Dataset', ['path'], () => [ _.sample(['./', 'data/'])] );
       const lookfor = "^\\./|data/$";
-      const catalog = makeCatalog({path: { filter: { re: lookfor } } } );
-      const matches = graph.filter(catalog.typeFilters['Dataset']);
+      const indexer = makeIndexer({path: { filter: { re: lookfor } } } );
+      const matches = graph.filter(indexer.typeFilters['Dataset']);
       expect(matches).to.be.an('array').and.to.have.lengthOf(GRAPH);
       const lookfor_re = new RegExp(lookfor);
       _.each(matches, (match) => {
@@ -145,8 +145,8 @@ describe('type selection filters - simple', function () {
       const lookfor = item['path'][0];
       // add more items without a path
       const graph2 = graph.concat(randomGraph(GRAPH, 'Dataset', ['name']));
-      const catalog = makeCatalog({path: {filter: { re: lookfor } }});
-      const matches = graph2.filter(catalog.typeFilters['Dataset']);
+      const indexer = makeIndexer({path: {filter: { re: lookfor } }});
+      const matches = graph2.filter(indexer.typeFilters['Dataset']);
       const lookfor_re = new RegExp(lookfor);
       _.each(matches, (match) => {
         expect(match).to.have.property('path');
@@ -159,8 +159,8 @@ describe('type selection filters - simple', function () {
   it('can filter values whether or not they are in arrays', function () {
     const values = [ [ 'one' ], [ 'two' ], 'one', 'two' ];
     const graph = values.map((v) => { return { '@type': 'Dataset', 'path': v }});
-    const catalog = makeCatalog({path: {filter: 'one' }});
-    const matches = graph.filter(catalog.typeFilters['Dataset']);
+    const indexer = makeIndexer({path: {filter: 'one' }});
+    const matches = graph.filter(indexer.typeFilters['Dataset']);
     expect(matches).to.have.lengthOf(2);
     _.each(matches, (match) => {
       expect(match).to.have.property('path');
@@ -183,8 +183,8 @@ describe('type selection filters - complex', function () {
       const graph = randomGraph(GRAPH, 'Dataset', fields);
       const item = _.sample(graph);
       const filterspec = randomFilter(fields, item);
-      const catalog = makeCatalog(filterspec);
-      const matches = graph.filter(catalog.typeFilters['Dataset']);
+      const indexer = makeIndexer(filterspec);
+      const matches = graph.filter(indexer.typeFilters['Dataset']);
       expect(matches).to.be.an('array').and.to.not.be.empty;
       const res = {};
       // precompile the regexps for checking the results
@@ -225,7 +225,7 @@ describe('field match filters', function () {
       'match': matchval
     };
 
-    const matcher = makeCatalog({}).compileFilter(matchcf['match']);
+    const matcher = makeIndexer({}).compileFilter(matchcf['match']);
     expect(matcher).to.be.a('function');
     const matches = values.filter(matcher);
     expect(matches).to.be.an('array').and.to.have.lengthOf(1);
@@ -244,7 +244,7 @@ describe('field match filters', function () {
       'match': { re: '.*' }
     };
 
-    const matcher = makeCatalog({}).compileFilter(matchcf['match']);
+    const matcher = makeIndexer({}).compileFilter(matchcf['match']);
     expect(matcher).to.be.a('function');
     const matches = values.filter(matcher);
     expect(matches).to.be.an('array').and.to.have.lengthOf(1);
@@ -274,7 +274,7 @@ describe('field match filters', function () {
     ];
     const values = text_values.concat(for_values, seo_values);
 
-    const cat = makeCatalog({});
+    const cat = makeIndexer({});
     const text_filter = cat.compileFilter(match_text);
     const for_filter = cat.compileFilter(match_for);
 
