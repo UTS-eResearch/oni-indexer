@@ -47,15 +47,6 @@
 
     "types": {
 
-      "Dataset": {
-        "@reverse": { "skip": true },
- 
-        "hasPart": { "skip": true },
-
-        "hasFile": { "skip": true }
-
-      },
-
       "Person": {
 
         "hasPart": { "skip": true },
@@ -71,8 +62,14 @@
           }
         },
 
-
-     
+        "conviction": {
+          "multi": true,
+          "resolve": {
+            "via": [ { "property": "location" } ],
+            "search": "@id",
+            "display": "name"
+          }
+        },
         "@reverse": {
           "object": {
             "index_as": "reverseSentence",
@@ -82,14 +79,6 @@
               "display": "name",
               "multi": true
             }
-          }
-        },
-
-        "conviction": {
-          "resolve": {
-            "via": [ { "property": "conviction" }, { "property": "location" }],
-            "search": "@id",
-            "display": "name"
           }
         }
 

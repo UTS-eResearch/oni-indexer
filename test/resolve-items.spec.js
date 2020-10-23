@@ -8,7 +8,7 @@ const rocrate = require('ro-crate');
 const winston = require('winston');
 
 const logger = winston.createLogger({
-  level: 'debug',
+  level: 'info',
   format: winston.format.simple(),
   transports: [
     new winston.transports.Console()
@@ -22,6 +22,7 @@ const TESTCF = path.join(TESTDIR, 'indexer.json');
 const TESTJSON = path.join(TESTDIR, 'ro-crate-metadata.json');
 
 async function testResolveCase(testType) {
+
   const cf = await fs.readJson(TESTCF);
   const indexer = new ROCrateIndexer(logger);
   indexer.setConfig(cf['fields']);
@@ -37,30 +38,35 @@ async function testResolveCase(testType) {
   for( let id in testCases ) {
     const testCase = testCases[id]
     const solrDoc = persons.filter((d) => { return d['id'][0] === id });
+    await fs.writeJson(path.join(TESTDIR, "dump_" + id + ".json"), solrDoc, { spaces: 2 });
     expect(solrDoc).to.not.be.empty;
-    const bp = solrDoc[0][testType];
-    expect(testCase[testType]).to.not.be.empty;
-    expect(bp).to.equal(testCase[testType]);
+    const resolved = solrDoc[0][testType];
+    //console.log(`${id} ${testType}\n${JSON.stringify(resolved)}\n${JSON.stringify(testCase[testType])}`)
+    expect(resolved).to.deep.equal(testCase[testType]);
   }
+
 }
+
+
+
 
 
 
 describe('indexing values with item resolution', function () {
   this.timeout(0);
 
-  it.skip('can resolve single lookups', async function () {
+  it('can resolve single lookups', async function () {
     await testResolveCase('birthPlace');
   });
 
 
   it('can resolve multi-step lookups', async function () {
-    await testResolveCase('convictions');
+    await testResolveCase('conviction');
   });
 
 
   it.skip('can resolve reverse lookups', async function () {
-    await testResolveCase('reverse_convictions');
+    await testResolveCase('reverse_conviction');
   });
 
 
