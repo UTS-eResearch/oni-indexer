@@ -5,10 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/_mocha",
+    "buildAndStart": "npm install && npm start",
+    "start": "node oni-indexer.js -c /etc/share/config/indexer.json",
     "index": "node oni-indexer.js --config ./config.json",
     "d:build": "source docker-build.sh",
-    "d:index": "source docker-run.sh",
-    "d:index:destroy": "source docker-run.sh clean"
+    "d:index": "source docker-run.sh dirty",
+    "d:id": "npm run d:index:dirty:detached",
+    "d:index:dirty:detached": "source docker-run.sh dirty detached",
+    "d:icd": "npm run d:index:clean:detached",
+    "d:index:clean:detached": "source docker-run.sh clean detached",
+    "d:stop": "docker stop en-oni-indexer"
   },
   "repository": {
     "type": "git",
