@@ -6,7 +6,7 @@
   "scripts": {
     "test": "./node_modules/.bin/_mocha",
     "buildAndStart": "npm install && npm start",
-    "start": "node oni-indexer.js -c /etc/share/config/indexer.json",
+    "start": "node oni-indexer.js",
     "index": "node oni-indexer.js --config ./config.json",
     "d:build": "source docker-build.sh",
     "d:index": "source docker-run.sh dirty",
