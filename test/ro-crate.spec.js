@@ -43,7 +43,7 @@ describe('converting ro-crates to solr documents', function () {
   });
 
 
-  it('indexes an "about" relation split by FOR and SEO codes', async function () {
+  it.skip('indexes an "about" relation split by FOR and SEO codes', async function () {
     const cf_file = path.join(test_data, 'fields-index-matching.json');
     const jsonld = await fs.readJson(path.join(test_data, 'FOR-codes-ro-crate-metadata.jsonld'));
     const indexer = await initIndexer(cf_file);

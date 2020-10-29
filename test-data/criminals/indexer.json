@@ -72,7 +72,7 @@
         },
         "@reverse": {
           "object": {
-            "multi": false,
+            "multi": true,
             "index_as": "reverseSentence",
             "resolve": {
               "via": [ { "property": "location" } ],
