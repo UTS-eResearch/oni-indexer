@@ -72,12 +72,12 @@
         },
         "@reverse": {
           "object": {
+            "multi": false,
             "index_as": "reverseSentence",
             "resolve": {
               "via": [ { "property": "location" } ],
               "search": "geo",
-              "display": "name",
-              "multi": true
+              "display": "name"
             }
           }
         }
