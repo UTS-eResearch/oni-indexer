@@ -404,25 +404,49 @@ async function loadFromOcfl(repoPath, catalogFilename, hashAlgorithm) {
 
   for ( let object of objects ) {
     logger.info(`Loading ocfl object at ${object.path}`);
-    const inv = await object.getInventory();
-    var headState = inv.versions[inv.head].state;
-    for (let hash of Object.keys(headState)){
-      if (headState[hash].includes(catalogFilename)) {
-        const jsonfile = path.join(object.path, inv.manifest[hash][0]);
+    const json = await readCrate(object, catalogFilename);
+    if( json ) {
+      records.push({
+        path: path.relative(repoPath, object.path),
+        hash_path: hasha(object.path, { algorithm: hashAlgorithm }),
+        jsonld: json,
+        ocflObject: object
+      });
+    } else {
+      logger.warn(`Couldn't find ${catalogFilename} in OCFL inventory for ${object.path}`);
+    }
+  }
+
+  logger.info(`got ${records.length} records`);
+
+  return records;
+  
+}
+
+
+// look for the ro-crate metadata file in the ocfl object's
+// inventory, and if found, try to load and parse it.
+// if it's not found, returns undefined
+
+async function readCrate(object, catalogFilename) {
+
+  const inv = await object.getInventory();
+  var headState = inv.versions[inv.head].state;
+
+  for (let hash of Object.keys(headState)){
+    if (headState[hash].includes(catalogFilename)) {
+      const jsonfile = path.join(object.path, inv.manifest[hash][0]);
+      try {
         const json = await fs.readJson(jsonfile);
-        records.push({
-          path: path.relative(repoPath, object.path),
-          hash_path: hasha(object.path, { algorithm: hashAlgorithm }),
-          jsonld: json,
-          ocflObject: object
-        });
-      } else {
-        logger.warn(`Couldn't find ${catalogFilename} in ${object.path}`);
+        return json;
+      } catch(e) {
+        logger.error(`Error reading ${jsonfile}`);
+        logger.error(e);
+        return undefined;
       }
     }
   }
-  return records;
-  
+  return undefined;
 }
 
 
