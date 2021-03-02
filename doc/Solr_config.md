@@ -163,13 +163,105 @@ If a filter exists on multiple fields for an item, it has to pass them all to be
 
 ### resolve
 
-Resolve fields whose value is a list of ids in the graph by looking them up in the graph and serialising the JSON results. If the "multi" flag is set, the results of resolution will be serialised separately and stored and facetted as an array, otherwise the values are serialised together.
+The **resolve** option is used to convert values which are links to other graph items, by following the links and returning some value from the resolved album to use in the Solr index. Here's a common example:
 
-These serialised results will be used as the facet values, if faceting is defined and the facet config doesn't specify something else.
+    {
+        "@id": "./",
+        "@type": "Dataset",
+        "author": {
+            "@id": "https://orcid.org/XXXXXXXX"
+        }
+        "datePublished": "2010-11-12",
+        "name": "Sample dataset",
+        "description": "A dataset of some kind\n",
+        "id": "0f7efe84-6995-4959-9bc3-4e6d3f3d14f8",
+        "keywords": [],
+        "license": {
+            "@id": "https://creativecommons.org/licenses/by-nc-sa/3.0/au/"
+        }
+    },
+    {
+        "@id": "https://orcid.org/XXXXXXXXX",
+        "@type": "Person",
+        "email": "A.Researcher@uts.edu.au"
+        "familyName": "Researcher",
+        "givenName": "A",
+        "name": "Ms A Researcher",
+    }
 
-**resolve** can traverse more than one relation in the graph using the **via** option. For example, if a Dataset was associated with one or more Persons, each of which has a Location, we could use **via** to resolve the double link to the Location, which would allow us to facet on Datasets by Location:
+To have the author as a useful field in the index for Dataset, the indexer needs to follow the @id "https://orcid.org/XXXXXXXX" and then know what fields to display to the user and to use as a search key in the index.
 
-    ""
+The following config will tell the indexer to resolve author ids, display the name to the user, and use "@id" as the search key:
+
+    {
+        "types": {
+            "Dataset": {
+                "author": {
+                    "multi": true,
+                    "resolve": {
+                        "display": "name",
+                        "search": "@id"
+                    }
+                }
+            }
+        }
+    }
+
+If the "multi" flag is set, the results of resolution will be serialised separately and stored and facetted as an array, otherwise the values are serialised together.
+
+**resolve** can traverse more than one relation in the graph using the **via** option. The following example is three items from the @graph of an RO-Crate which models historical criminal convictions. A Person is linked to one or more Sentences, and each Sentence has a location, which is a Place (the court at which they were convicted). 
+
+    {
+      "@id": "#person_VICFP_18551934_11_197",
+      "@type": "Person",
+      "name": "ADAMS, AMELIA",
+      "conviction": [
+        {
+          "@id": "#conviction_2"
+        }
+      ]
+    },
+    {
+      "@id": "#conviction_2",
+      "@type": "Sentence",
+      "object": {
+        "@id": "#person_VICFP_18551934_11_197"
+      },
+      "name": "01-AUG-1892 ADAMS, AMELIA: 12 MONTHS BIGAMY MELBOURNE SUPREME COURT",
+      "sentence": "12 MONTHS",
+      "offence": {
+        "@id": "#offence_BIGAMY"
+      },
+      "startTime": "01-AUG-1892",
+      "location": {
+        "@id": "#place_MELBOURNE SUPREME COURT"
+      }
+    },
+    {
+      "@id": "#place_MELBOURNE SUPREME COURT",
+      "@type": "Place",
+      "name": "Melbourne Supreme Court",
+      "geo": {
+        "@id": "#-37.808598,144.966347"
+      },
+      "startDate": 1852,
+      "endDate": 1883,
+    }
+
+To index the name of the courts at which a person was convicted, we need to tell the indexer to resolve any @ids found in "conviction" to get to a Sentence, and then follow the "location" property on the Sentence to get to the Place:
+
+    "conviction": {
+        "resolve": {
+            "via": [ { "property": "location" } ],
+            "search": "@id",
+            "display": "name"
+        },
+    }
+
+Note that we don't have to tell the indexer the @type of the items it's following.
+
+Also, note that because the resolver will follow every @id in the property'
+
 
 FIXME more details
 
