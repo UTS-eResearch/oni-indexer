@@ -91,6 +91,8 @@ If a @type is included in the "types" block, then each item of that type will be
 * is there a **resolve** item? - if Y, try to resolve the value, log an error if it fails
 * copy the value or resolved values to Solr
 
+![A flowchart showing how the indexer decideds what will be indexed](indexing_config.png)
+
 The following section describes all of the key values which a config block can have.
 
 ### facet
