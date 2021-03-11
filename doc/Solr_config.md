@@ -8,7 +8,7 @@ block, which tells the indexer how to transform RO-Crate items into Solr index d
   - item Person  -> solr document for Person
 
 
-For the rest of the indexer config, see indexer_config.md in this folder.
+For the rest of the indexer config, see indexer_config.md (link coming soon)
 
 Terminology for this document:
 
@@ -51,6 +51,8 @@ This is an example of the "fields" block from an indexer config file, which show
 ## Top-level config
 
 ### licenses
+
+Configures a default licence for any items which don't have an explicit licence. (Note: it's the US spelling 'license' because we decided it was better to be consistent with the schema.org spelling.)
 
 ### main_search
 
@@ -209,6 +211,8 @@ The following config will tell the indexer to resolve author ids, display the na
 
 If the "multi" flag is set, the results of resolution will be serialised separately and stored and facetted as an array, otherwise the values are serialised together.
 
+**Note**: the following section describes the **via** option, which is experimental and only available on the feature-subgraph.
+
 **resolve** can traverse more than one relation in the graph using the **via** option. The following example is three items from the @graph of an RO-Crate which models historical criminal convictions. A Person is linked to one or more Sentences, and each Sentence has a location, which is a Place (the court at which they were convicted). 
 
     {
@@ -260,11 +264,31 @@ To index the name of the courts at which a person was convicted, we need to tell
 
 Note that we don't have to tell the indexer the @type of the items it's following.
 
-Also, note that because the resolver will follow every @id in the property'
+Also, note that because the resolver will follow every @id as it works its way down the **via** array, the number of resolved items can get large fairly quickly.
 
+**resolve** can have the following options:
 
-FIXME more details
+- **search** - which property of resolved items to use as a search index
+- **display** - which property of resolved items to display to the user
+- **via** - a list of objects which specify how to resolve across multiple item links
+- **store_subgraph** - keep all of the items passed through when using **via**
 
+**store_subgraph** is an experimental feature for indexing collections which are a single large RO-Crate. For an individual item, the subgraph is defined as everything in the collection which is related to the item along a path through the graph described in the **via** array. This allows the frontend to show an item and its "context" with a single Solr lookup, rather than having to traverse the graph at search time.
+
+The **via** item can have the following options:
+
+**includes** - filter resolved links to those having a certain property. For example.
+
+    "resolve": {
+        "via": [
+            {
+                "property": "link",
+                "includes": { "@type": "Person" }
+            }
+        ]
+    }
+
+will only follow items on "link" if the items have "@type" equal to "Person".
 
 ### match
 
@@ -335,8 +359,5 @@ In the example, every 'about' item which is just a string (rather than an object
 Note that at present, there would be an issue if you wanted to match against an item field called "re", as the config parser will treat "re" as a regular expression.
 
 
-## Omitted for now
-
-"type" faceting - I want to handle this separately as I think it needs to be applied to everything. So it should be in a global config section, not done on each item.
 
 
