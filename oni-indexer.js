@@ -19,8 +19,9 @@ const logger = winston.createLogger({
   transports: [ consoleLog ]
 });
 
+const DEFAULT_CONFIG = './config.json';
+
 const DEFAULTS = {
-  'config': './config.json',
   'schemaBase': './config/schema_base.json',
   'retries': 10,
   'retryInterval': 10,
@@ -36,7 +37,7 @@ var argv = require('yargs')
     .usage('Usage: $0 [options]')
     .describe('c', 'Config file')
     .alias('c', 'config')
-    .default('c', DEFAULTS['config'])
+    .default('c', DEFAULT_CONFIG)
     .alias('i', 'item')
     .describe('i', 'Index a single item')
     .string('i')
