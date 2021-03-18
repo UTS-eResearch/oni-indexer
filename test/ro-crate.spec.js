@@ -8,7 +8,7 @@ const rocrate = require('ro-crate');
 const winston = require('winston');
 
 const logger = winston.createLogger({
-  level: 'debug',
+  level: 'info',
   format: winston.format.simple(),
   transports: [
     new winston.transports.Console()
@@ -28,7 +28,7 @@ async function initIndexer(configFile) {
 describe('converting ro-crates to solr documents', function () {
   const test_data = path.join(process.cwd(), 'test-data');
 
-  it.skip('converts an RO-crate to a solr document with facets', async function () {
+  it('converts an RO-crate to a solr document with facets', async function () {
     const cf_file = path.join(test_data, 'fields.json');
     const ca = await fs.readJson(path.join(test_data, 'vic-arch-ro-crate-metadata.jsonld'));
     const indexer = await initIndexer(cf_file);
@@ -43,7 +43,25 @@ describe('converting ro-crates to solr documents', function () {
   });
 
 
-  it.skip('indexes an "about" relation split by FOR and SEO codes', async function () {
+  it('can index a field under an alias using index_as', async function () {
+    const cf_file = path.join(test_data, 'fields_alias.json');
+    const ca = await fs.readJson(path.join(test_data, 'vic-arch-ro-crate-metadata.jsonld'));
+    const indexer = await initIndexer(cf_file);
+
+    const solrObject = await indexer.createSolrDocument(ca, '@graph');
+
+    expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
+    const dsSolr = solrObject['Dataset'][0];
+
+    await fs.writeJson(path.join(test_data, 'dump_alias_solr.json'), dsSolr, { spaces: 2 });
+
+    expect(dsSolr).to.have.property("lead");
+    expect(dsSolr).to.have.property("Dataset_lead_facetmulti");
+  });
+
+
+
+  it('indexes an "about" relation split by FOR and SEO codes', async function () {
     const cf_file = path.join(test_data, 'fields-index-matching.json');
     const jsonld = await fs.readJson(path.join(test_data, 'FOR-codes-ro-crate-metadata.jsonld'));
     const indexer = await initIndexer(cf_file);
@@ -62,6 +80,8 @@ describe('converting ro-crates to solr documents', function () {
     expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
     const dsSolr = solrObject['Dataset'][0];
 
+    await fs.writeJson(path.join(test_data, 'dump_about_solr.json'), dsSolr, { spaces: 2 });
+
     expect(dsSolr).to.have.property('FOR');
     expect(dsSolr['FOR']).to.be.an('array');
     expect(dsSolr['FOR']).to.have.lengthOf(orig_fors.length);
@@ -71,10 +91,9 @@ describe('converting ro-crates to solr documents', function () {
     expect(dsSolr['SEO']).to.have.lengthOf(orig_seos.length);
 
 
-    // expect(dsSolr).to.have.property("Dataset_about_facetmulti");
   });
 
-  it.skip('facets on FOR and SEO codes', async function () {
+  it('facets on FOR and SEO codes', async function () {
     const cf_file = path.join(test_data, 'fields-index-matching.json');
     const jsonld = await fs.readJson(path.join(test_data, 'FOR-codes-ro-crate-metadata.jsonld'));
     const indexer = await initIndexer(cf_file);
@@ -97,7 +116,7 @@ describe('converting ro-crates to solr documents', function () {
 
   // TODO: test this more thoroughly
 
-  it.skip('sets the JSON flag against resolved facets based on config', async function () {
+  it('sets the JSON flag against resolved facets based on config', async function () {
     const cf_file = path.join(test_data, 'fields.json');
 
     const indexer = await initIndexer(cf_file);
@@ -110,7 +129,7 @@ describe('converting ro-crates to solr documents', function () {
   });
 
 
-  it.skip('normalises JSON facets to an id and a display value', async function () {
+  it('normalises JSON facets to an id and a display value', async function () {
     const cf_file = path.join(test_data, 'fields.json');
     const jsonld = await fs.readJson(path.join(test_data, 'vic-arch-ro-crate-metadata.jsonld'));
     const indexer = await initIndexer(cf_file);
