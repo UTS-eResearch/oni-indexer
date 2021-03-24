@@ -55,6 +55,7 @@ const sleep = ms => new Promise((r, j) => {
 });
 
 
+
 main(argv);
 
 async function main (argv) {
@@ -121,43 +122,75 @@ async function main (argv) {
       logger.warn(`only indexing first ${cf['limit']} items`);  
     }
 
-    const solrDocs = await indexRecords(
-      indexer, cf['dump'], cf['uriIds'], cf['ocfl'], records
-    );
 
     let count = 0;
 
-    for( const doc of solrDocs ) {
-      try {
-        logger.info(`Updating ${doc['record_type_s']} ${doc['id']}`);
-        await updateDocs(solrUpdate, [ doc ], cf);
-        logger.info(`Committing ${doc['record_type_s']} ${doc['id']}`);
-        await commitDocs(solrUpdate, '?commit=true&overwrite=true', cf);
-        logger.debug(`Indexed ${doc['record_type_s']} ${doc['id']}`);
-        if( cf['waitInterval'] ) {
-          logger.debug(`waiting ${cf['waitInterval']}`);
-          await sleep(cf['waitInterval']);
-        }
-      } catch(e) {
-        logger.error(`Update failed for ${doc['id']}: ` + e);
-        if( cf['dump'] ) {
-          const cleanid = doc['id'][0].replace(/[^a-zA-Z0-9_]/g, '_');
-          const dumpfn = path.join(cf['dump'], cleanid + '_error.json');
+    logger.info(`loaded ${records.length} records from ocfl`);
 
-          await fs.writeJson(dumpfn, doc, { spaces: 2});
-          logger.error(`Wrote solr doc to ${dumpfn}`);
-        }
-        if( e.response ) {
-          logger.error("Solr request failed with status " + e.response.status);
-          const error = e.response.data.error;
-          logger.error(error['msg']);
-          logger.error(JSON.stringify(error['metadata'], null, 2));
-        } else {
-          logger.error("Request failed");
-          logger.error(e.message);
+    for( const record of records ) {
+      logger.warn(`Indexing ${record['path']}`);
+      const solrDocs = await indexRecords(
+        indexer, cf['dump'], cf['uriIds'], cf['ocfl'], [ record ]
+      );
+
+      logger.info(`Got ${solrDocs.length} solr docs`);
+      if( solrDocs.length < 1 ) {
+        logger.error(`Warning: ${record['id']} returned no solr docs`);
+      }
+      for( let doc of solrDocs ) {
+        try {
+          if(! doc['id'] ) {
+            logger.error('Document without an id - skipping');
+          } else {
+            let skipped = false;
+            if( cf['skip'] ) {
+              if( cf['skip'].includes(doc['id'][0]) ) {
+                logger.warn(`Skipping ${doc['id']} from cf.skip`);
+                skipped = true;
+              }
+            }
+            if( !skipped ) {
+              logger.info(`Updating ${doc['record_type_s']} ${doc['id']}`);
+              await updateDocs(solrUpdate, [ doc ], cf);
+              logger.info(`Committing ${doc['record_type_s']} ${doc['id']}`);
+              await commitDocs(solrUpdate, '?commit=true&overwrite=true', cf);
+              logger.debug(`Indexed ${doc['record_type_s']} ${doc['id']}`);
+              if( cf['waitInterval'] ) {
+                logger.debug(`waiting ${cf['waitInterval']}`);
+                await sleep(cf['waitInterval']);
+              }
+            }
+          }
+        } catch(e) {
+          logger.error(`Update failed for ${doc['id']}: ` + e);
+          if( cf['dump'] ) {
+            const cleanid = doc['id'][0].replace(/[^a-zA-Z0-9_]/g, '_');
+            const dumpfn = path.join(cf['dump'], cleanid + '_error.json');
+
+            await fs.writeJson(dumpfn, doc, { spaces: 2});
+            logger.error(`Wrote solr doc to ${dumpfn}`);
+          }
+          if( e.response ) {
+            logger.error("Solr request failed with status " + e.response.status);
+            const error = e.response.data.error;
+            if( error ) {
+              logger.error(error['msg']);
+              logger.error(error['metadata']);
+              if( error['trace'] ) {
+                logger.error(error['trace'].substr(0,40));
+              }
+            } else {
+              logger.error("No error object in response");
+              logger.error(JSON.stringify(e.response.data));
+            }
+          } else {
+            logger.error("Request failed");
+            logger.error(e.message);
+          }
         }
       }
       count++;
+      logger.info(`Sent ${count} documents of ${records.length} to Solr`);
       if( cf['limit'] && count > cf['limit'] ) {
         break;
       }
@@ -225,7 +258,9 @@ function updateDocs(solrURL, coreObjects, cf) {
     timeout: cf['timeout'] * 1000,
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
-    }
+    },
+    maxContentLength: Infinity,
+    maxBodyLength: Infinity
   });
 }
 
@@ -299,7 +334,7 @@ async function setSchemaField(solrURL, fieldtype, schemaJson) {
   } catch(e) {
     logger.error("Error updating schema");
     logger.error(`URL: ${url}`);
-    logger.debug(`schemaAPIJson: ${JSON.stringify(schemaAPIJson)}`);
+    logger.info(`schemaAPIJson: ${JSON.stringify(schemaAPIJson)}`);
     if( e.response ) {
       logger.error(`${e.response.status} ${e.response.statusText}`);
     } else {
@@ -349,13 +384,16 @@ async function tryDeleteCopyField(solrURL, copyFieldJson) {
       if( e.response.status === 404 ) {
         logger.error("Schema field " + field + " not found");
         return false;
-      } else {
-        logger.error("copy field delete error " + e.response.status);
-        return false;
+      }
+      if( e.response.status === 400 ) {
+        // we assume that a bad request indicates that we were trying to
+        // delete a copyfield which hadn't been defined yet, which isn't
+        // an error
+        logger.info("copy field returned 400 - this usually isn't an error");
+        return true;
       }
     } else { 
       logger.error("unknown error " + e);
-      throw(e);
       return false;
     } 
   }
