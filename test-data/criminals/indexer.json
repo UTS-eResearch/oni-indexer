@@ -45,6 +45,8 @@
       "__default__": "public"
     },
 
+    "store_subgraph": true,
+
     "types": {
 
       "Person": {
@@ -68,8 +70,10 @@
             "via": [ { "property": "location" } ],
             "search": "@id",
             "display": "name"
-          }
+          },
+          "store_subgraph": true
         },
+
         "@reverse": {
           "object": {
             "multi": true,
@@ -77,7 +81,8 @@
             "resolve": {
               "via": [ { "property": "location" } ],
               "search": "geo",
-              "display": "name"
+              "display": "name",
+              "store_subgraph": true
             }
           }
         }
