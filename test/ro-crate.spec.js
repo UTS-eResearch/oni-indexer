@@ -3,12 +3,12 @@ const expect = require('chai').expect;
 const _ = require('lodash');
 const path = require('path');
 const fs = require('fs-extra');
-const CatalogSolr = require('../lib/CatalogSolr');
+const ROCrateIndexer = require('../lib/ROCrateIndexer');
 const rocrate = require('ro-crate');
 const winston = require('winston');
 
 const logger = winston.createLogger({
-  level: 'debug',
+  level: 'info',
   format: winston.format.simple(),
   transports: [
     new winston.transports.Console()
@@ -17,7 +17,7 @@ const logger = winston.createLogger({
 
 async function initIndexer(configFile) {
   const cf = await fs.readJson(configFile);
-  const indexer = new CatalogSolr(logger);
+  const indexer = new ROCrateIndexer(logger);
   indexer.setConfig(cf);
   return indexer;
 }
@@ -37,9 +37,28 @@ describe('converting ro-crates to solr documents', function () {
 
     expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
     const dsSolr = solrObject['Dataset'][0];
+
     expect(dsSolr).to.have.property("Dataset_publisher_facet");
     expect(dsSolr).to.have.property("Dataset_datePublished_facet");
   });
+
+
+  it('can index a field under an alias using index_as', async function () {
+    const cf_file = path.join(test_data, 'fields_alias.json');
+    const ca = await fs.readJson(path.join(test_data, 'vic-arch-ro-crate-metadata.jsonld'));
+    const indexer = await initIndexer(cf_file);
+
+    const solrObject = await indexer.createSolrDocument(ca, '@graph');
+
+    expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
+    const dsSolr = solrObject['Dataset'][0];
+
+    await fs.writeJson(path.join(test_data, 'dump_alias_solr.json'), dsSolr, { spaces: 2 });
+
+    expect(dsSolr).to.have.property("lead");
+    expect(dsSolr).to.have.property("Dataset_lead_facetmulti");
+  });
+
 
 
   it('indexes an "about" relation split by FOR and SEO codes', async function () {
@@ -61,6 +80,8 @@ describe('converting ro-crates to solr documents', function () {
     expect(solrObject['Dataset'][0]['record_type_s'][0]).to.equal('Dataset');
     const dsSolr = solrObject['Dataset'][0];
 
+    await fs.writeJson(path.join(test_data, 'dump_about_solr.json'), dsSolr, { spaces: 2 });
+
     expect(dsSolr).to.have.property('FOR');
     expect(dsSolr['FOR']).to.be.an('array');
     expect(dsSolr['FOR']).to.have.lengthOf(orig_fors.length);
@@ -70,7 +91,6 @@ describe('converting ro-crates to solr documents', function () {
     expect(dsSolr['SEO']).to.have.lengthOf(orig_seos.length);
 
 
-    // expect(dsSolr).to.have.property("Dataset_about_facetmulti");
   });
 
   it('facets on FOR and SEO codes', async function () {
@@ -144,7 +164,7 @@ describe('converting ro-crates to solr documents', function () {
         "search": authorItem['@id'],
         "display": authorItem['name']
       }
-      expect(facets[0]).to.equal(JSON.stringify(resolved));
+      expect(JSON.parse(facets[0])).to.deep.equal(resolved);
     }
 
   });

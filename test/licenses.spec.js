@@ -2,7 +2,7 @@
 const expect = require('chai').expect;
 const _ = require('lodash');
 const randomWord = require('random-word');
-const CatalogSolr = require('../lib/CatalogSolr');
+const ROCrateIndexer = require('../lib/ROCrateIndexer');
 const ROCrate = require('ro-crate').ROCrate;
 
 const winston = require('winston');
@@ -34,9 +34,9 @@ function makeLicenseCf(hasDefault) {
 
 
 function makeIndexer(hasDefault) {
-  const catalog = new CatalogSolr(logger);
+  const indexer = new ROCrateIndexer(logger);
   
-  catalog.setConfig({
+  indexer.setConfig({
     licenses: makeLicenseCf(hasDefault),
     types: {
       Dataset: {
@@ -45,7 +45,7 @@ function makeIndexer(hasDefault) {
     }
   });
 
-  return catalog;
+  return indexer;
 }
 
 // returns a stub graph with a root dataset with the list of

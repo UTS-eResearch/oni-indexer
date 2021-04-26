@@ -23,14 +23,20 @@
           "match": { "@id": { "re": "anzsrc-for" } },
           "index_as": "FOR",
           "multi": true,
-          "resolve": "multi",
+          "resolve": {
+              "search": "@id", 
+              "display": "name"
+            },
           "facet": true
         },
         {
           "match": { "@id": { "re": "anzsrc-seo" } },
           "index_as": "SEO",
           "multi": true,
-          "resolve": "multi",
+          "resolve": {
+              "search": "@id", 
+              "display": "name"
+            },
           "facet": true
         }
       ],

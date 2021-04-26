@@ -3,7 +3,7 @@
 
 const axios = require('axios');
 const _ = require('lodash');
-const CatalogSolr = require('./lib/CatalogSolr');
+const ROCrateIndexer = require('./lib/ROCrateIndexer');
 const ROCrate = require('ro-crate').ROCrate;
 const fs = require('fs-extra');
 const path = require('path');
@@ -19,8 +19,9 @@ const logger = winston.createLogger({
   transports: [ consoleLog ]
 });
 
+const DEFAULT_CONFIG = './config.json';
+
 const DEFAULTS = {
-  'config': './config.json',
   'schemaBase': './config/schema_base.json',
   'retries': 10,
   'retryInterval': 10,
@@ -28,19 +29,23 @@ const DEFAULTS = {
   'uriIds': 'hashpaths',
   'updateSchema': true,
   'hashAlgorithm': 'md5',
-  'logLevel': 'warn'
+  'logLevel': 'warn',
+  'timeout': 180
 };
 
 var argv = require('yargs')
     .usage('Usage: $0 [options]')
     .describe('c', 'Config file')
     .alias('c', 'config')
-    .default('c', DEFAULTS['config'])
+    .default('c', DEFAULT_CONFIG)
     .alias('i', 'item')
     .describe('i', 'Index a single item')
     .string('i')
     .help('h')
     .alias('h', 'help')
+    .describe('p', 'Purge')
+    .alias('p', 'purge')
+    .boolean('p')
     .argv;
 
 const configPath = argv.config;
@@ -50,11 +55,12 @@ const sleep = ms => new Promise((r, j) => {
 });
 
 
+
 main(argv);
 
 async function main (argv) {
   let cf;
-  
+
   try {
     cf = await fs.readJson(argv.config);
   } catch(e) {
@@ -83,7 +89,7 @@ async function main (argv) {
   }
 
 
-  const indexer = new CatalogSolr(logger, cf['debug']);
+  const indexer = new ROCrateIndexer(logger, cf['debug']);
 
   if( !indexer.setConfig(cf['fields']) ) {
     return;
@@ -94,6 +100,9 @@ async function main (argv) {
   const solrUp = await checkSolr(cf['solrBase'] + '/admin/ping', cf['retries'], cf['retryInterval']);
 
   if( solrUp ) {
+    if(!_.isUndefined(argv.p)) {
+      cf['purge'] = argv.p;
+    }
     if( cf['purge'] ) {
       logger.info("Purging all records from solr");
       await purgeSolr(solrUpdate);
@@ -114,30 +123,80 @@ async function main (argv) {
     const records = await loadFromOcfl(cf['ocfl'], cf['catalogFilename'], cf['hashAlgorithm']);
 
     if( cf['limit'] ) {
-      records.length = cf['limit'];
+      logger.warn(`only indexing first ${cf['limit']} items`);
     }
 
-    logger.info(`Got ${records.length} ro-crates`);
 
-    logger.info("Indexing");
+    let count = 0;
 
-    const solrDocs = await indexRecords(
-      indexer, cf['dump'], cf['uriIds'], cf['ocfl'], records
-    );
+    logger.info(`loaded ${records.length} records from ocfl`);
 
-    logger.info(`Committing ${solrDocs.length} solr docs`);
+    for( const record of records ) {
+      logger.warn(`Indexing ${record['path']}`);
+      const solrDocs = await indexRecords(
+        indexer, cf['dump'], cf['uriIds'], cf['ocfl'], [ record ]
+      );
 
-    for( const doc of solrDocs ) {
-      try {
-        await updateDocs(solrUpdate, [ doc ]);
-        await commitDocs(solrUpdate, '?commit=true&overwrite=true');
-        logger.info(`Indexed ${doc['record_type_s']} ${doc['id']}`);
-      } catch(e) {
-        logger.error(`Solr update failed for ${doc['record_type_s']} ${doc['id']}`);
-        logger.error(e);
-        if( e.response ) {
-          logger.error(e.response.status);
-        }      
+      logger.info(`Got ${solrDocs.length} solr docs`);
+      if( solrDocs.length < 1 ) {
+        logger.error(`Warning: ${record['id']} returned no solr docs`);
+      }
+      for( let doc of solrDocs ) {
+        try {
+          if(! doc['id'] ) {
+            logger.error('Document without an id - skipping');
+          } else {
+            let skipped = false;
+            if( cf['skip'] ) {
+              if( cf['skip'].includes(doc['id'][0]) ) {
+                logger.warn(`Skipping ${doc['id']} from cf.skip`);
+                skipped = true;
+              }
+            }
+            if( !skipped ) {
+              logger.info(`Updating ${doc['record_type_s']} ${doc['id']}`);
+              await updateDocs(solrUpdate, [ doc ], cf);
+              logger.info(`Committing ${doc['record_type_s']} ${doc['id']}`);
+              await commitDocs(solrUpdate, '?commit=true&overwrite=true', cf);
+              logger.debug(`Indexed ${doc['record_type_s']} ${doc['id']}`);
+              if( cf['waitInterval'] ) {
+                logger.debug(`waiting ${cf['waitInterval']}`);
+                await sleep(cf['waitInterval']);
+              }
+            }
+          }
+        } catch(e) {
+          logger.error(`Update failed for ${doc['id']}: ` + e);
+          if( cf['dump'] ) {
+            const cleanid = doc['id'][0].replace(/[^a-zA-Z0-9_]/g, '_');
+            const dumpfn = path.join(cf['dump'], cleanid + '_error.json');
+
+            await fs.writeJson(dumpfn, doc, { spaces: 2});
+            logger.error(`Wrote solr doc to ${dumpfn}`);
+          }
+          if( e.response ) {
+            logger.error("Solr request failed with status " + e.response.status);
+            const error = e.response.data.error;
+            if( error ) {
+              logger.error(error['msg']);
+              logger.error(error['metadata']);
+              if( error['trace'] ) {
+                logger.error(error['trace'].substr(0,40));
+              }
+            } else {
+              logger.error("No error object in response");
+              logger.error(JSON.stringify(e.response.data));
+            }
+          } else {
+            logger.error("Request failed");
+            logger.error(e.message);
+          }
+        }
+      }
+      count++;
+      logger.info(`Sent ${count} documents of ${records.length} to Solr`);
+      if( cf['limit'] && count > cf['limit'] ) {
+        break;
       }
     }
 
@@ -152,7 +211,7 @@ async function main (argv) {
 
 async function checkSolr(solrPing, retries, retryInterval) {
   for( let i = 0; i < retries; i++ ) {
-    logger.debug(`Pinging Solr ${solrPing} - attempt ${i + 1} of ${retries}`)  
+    logger.debug(`Pinging Solr ${solrPing} - attempt ${i + 1} of ${retries}`)
     try {
       const response = await axios({
         url: solrPing,
@@ -166,7 +225,7 @@ async function checkSolr(solrPing, retries, retryInterval) {
         }
       }
     } catch(e) {
-      logger.silly(`Still waiting for solr`);
+      logger.debug("Waiting for Solr to start");
     }
     await sleep(retryInterval);
   }
@@ -182,26 +241,30 @@ async function checkSolr(solrPing, retries, retryInterval) {
 
 
 
-function commitDocs(solrURL, args) {
+function commitDocs(solrURL, args, cf) {
   return axios({
     url: solrURL + args,
     method: 'get',
     responseType: 'json',
+    timeout: cf['timeout'] * 1000,
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
     }
   });
 }
 
-function updateDocs(solrURL, coreObjects) {
+function updateDocs(solrURL, coreObjects, cf) {
   return axios({
     url: solrURL + '/docs',
     method: 'post',
     data: coreObjects,
     responseType: 'json',
+    timeout: cf['timeout'] * 1000,
     headers: {
       'Content-Type': 'application/json; charset=utf-8'
-    }
+    },
+    maxContentLength: Infinity,
+    maxBodyLength: Infinity
   });
 }
 
@@ -255,7 +318,7 @@ async function setSchemaField(solrURL, fieldtype, schemaJson) {
     if( await schemaFieldExists(url, name) ) {
       logger.debug(`Schema: replacing ${fieldtype} ${name}`);
       schemaAPIJson['replace-' + apifield] = schemaJson;
-    } else {    
+    } else {
       logger.debug(`Schema: adding ${fieldtype} ${name}`);
       schemaAPIJson['add-' + apifield] = schemaJson;
     }
@@ -275,7 +338,7 @@ async function setSchemaField(solrURL, fieldtype, schemaJson) {
   } catch(e) {
     logger.error("Error updating schema");
     logger.error(`URL: ${url}`);
-    logger.debug(`schemaAPIJson: ${JSON.stringify(schemaAPIJson)}`);
+    logger.info(`schemaAPIJson: ${JSON.stringify(schemaAPIJson)}`);
     if( e.response ) {
       logger.error(`${e.response.status} ${e.response.statusText}`);
     } else {
@@ -291,7 +354,7 @@ async function schemaFieldExists(solrURL, field) {
     const resp = await axios ({
       url: url,
       method: 'get',
-      responseType: 'json', 
+      responseType: 'json',
     });
     logger.debug("Schema field " + field + " already exists");
     return true;
@@ -303,7 +366,7 @@ async function schemaFieldExists(solrURL, field) {
       logger.error("unknown error " + e);
       throw(e);
       return false;
-    } 
+    }
   }
 }
 
@@ -325,15 +388,18 @@ async function tryDeleteCopyField(solrURL, copyFieldJson) {
       if( e.response.status === 404 ) {
         logger.error("Schema field " + field + " not found");
         return false;
-      } else {
-        logger.error("copy field delete error " + e.response.status);
-        return false;
       }
-    } else { 
+      if( e.response.status === 400 ) {
+        // we assume that a bad request indicates that we were trying to
+        // delete a copyfield which hadn't been defined yet, which isn't
+        // an error
+        logger.info("copy field returned 400 - this usually isn't an error");
+        return true;
+      }
+    } else {
       logger.error("unknown error " + e);
-      throw(e);
       return false;
-    } 
+    }
   }
 }
 
@@ -381,33 +447,49 @@ async function loadFromOcfl(repoPath, catalogFilename, hashAlgorithm) {
   const catalogs = Array.isArray(catalogFilename) ? catalogFilename : [ catalogFilename ];
 
   for ( let object of objects ) {
-    const inv = await object.getInventory();
-    const headState = inv.versions[inv.head].state;
-    var json = null;
-    for (let hash of Object.keys(headState)) {
-      for( let cfile of catalogs ) {
-        if (headState[hash].includes(cfile)) {
-          const jsonfile = path.join(object.path, inv.manifest[hash][0]);
-          json = await fs.readJson(jsonfile);
-          break;
-        }
-      } 
-    }
+    logger.info(`Loading ocfl object at ${object.path}`);
+    const json = await readCrate(object, catalogFilename);
     if( json ) {
-      const p = path.relative(repoPath, object.path);
-      const pid = p.replace(/\//g, ''); 
       records.push({
         path: path.relative(repoPath, object.path),
-        hash_path: pid,
+        hash_path: hasha(object.path, { algorithm: hashAlgorithm }),
         jsonld: json,
         ocflObject: object
       });
-      logger.info(`Loaded ocfl object ${object.path}`);
     } else {
-      logger.error(`Couldn't find ${catalogFilename} in ${object.path}`);
+      logger.warn(`Couldn't find ${catalogFilename} in OCFL inventory for ${object.path}`);
     }
   }
+
+  logger.info(`got ${records.length} records`);
+
   return records;
+}
+
+
+// look for the ro-crate metadata file in the ocfl object's
+// inventory, and if found, try to load and parse it.
+// if it's not found, returns undefined
+
+async function readCrate(object, catalogFilename) {
+
+  const inv = await object.getInventory();
+  var headState = inv.versions[inv.head].state;
+
+  for (let hash of Object.keys(headState)){
+    if (headState[hash].includes(catalogFilename)) {
+      const jsonfile = path.join(object.path, inv.manifest[hash][0]);
+      try {
+        const json = await fs.readJson(jsonfile);
+        return json;
+      } catch(e) {
+        logger.error(`Error reading ${jsonfile}`);
+        logger.error(e);
+        return undefined;
+      }
+    }
+  }
+  return undefined;
 }
 
 
@@ -424,6 +506,7 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
 
   const solrDocs = [];
   for( record of records ) {
+    logger.info(`Indexing record ${record['path']}`);
     try {
       const jsonld = record['jsonld'];
       const docs = await indexer.createSolrDocument(record['jsonld'], async (fpath) => {
@@ -456,8 +539,8 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
               solrDocs.push(item);
             });
           }
-      }
-      
+        }
+
       }
     } catch(e) {
       logger.error(`Indexing error ${record['path']}: ${e}`);
@@ -483,7 +566,7 @@ async function makePortalFacets(cf, facets) {
       if( portal['facetDefaults'] ) {
         newFacets[facetField] = _.cloneDeep(portal['facetDefaults']);
       } else {
-        newFacets[facetField] = {}; 
+        newFacets[facetField] = {};
       };
       newFacets[facetField]['field'] = field;
       newFacets[facetField]['label'] = field[0].toUpperCase() + field.substr(1);
@@ -541,5 +624,3 @@ async function readConf(portalcf) {
     return null;
   }
 }
-
-
