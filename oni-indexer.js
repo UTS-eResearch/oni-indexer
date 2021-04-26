@@ -134,7 +134,7 @@ async function main (argv) {
     for( const record of records ) {
       logger.warn(`Indexing ${record['path']}`);
       const solrDocs = await indexRecords(
-        indexer, cf['dump'], cf['uriIds'], cf['ocfl'], [ record ]
+          indexer, cf['dump'], cf['uriIds'], cf['ocfl'], [ record ]
       );
 
       logger.info(`Got ${solrDocs.length} solr docs`);
@@ -332,7 +332,7 @@ async function setSchemaField(solrURL, fieldtype, schemaJson) {
       data: schemaAPIJson,
       responseType: 'json',
       headers: {
-      'Content-Type': 'application/json; charset=utf-8'
+        'Content-Type': 'application/json; charset=utf-8'
       }
     });
   } catch(e) {
@@ -378,7 +378,7 @@ async function tryDeleteCopyField(solrURL, copyFieldJson) {
       data: { "delete-copy-field": { source: copyFieldJson['source'], dest: copyFieldJson['dest'] } },
       responseType: 'json',
       headers: {
-      'Content-Type': 'application/json; charset=utf-8'
+        'Content-Type': 'application/json; charset=utf-8'
       }
     });
     logger.debug("copyfield removed");
@@ -510,10 +510,10 @@ async function indexRecords(indexer, dumpDir, uriIds, ocflPath, records) {
     try {
       const jsonld = record['jsonld'];
       const docs = await indexer.createSolrDocument(record['jsonld'], async (fpath) => {
-        const relpath = await record['ocflObject'].getFilePath(fpath);
-        return path.join(ocflPath, record['path'], relpath);
-      },
-      record['hash_path']
+            const relpath = await record['ocflObject'].getFilePath(fpath);
+            return path.join(ocflPath, record['path'], relpath);
+          },
+          record['hash_path']
       );
       if (docs) {
         if( dumpDir ) {

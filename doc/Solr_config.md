@@ -15,7 +15,7 @@ Terminology for this document:
 * graph - the JSON-LD graph in the RO-crate
 * item - the graph is a list of items
 * id - the id of an item in the graph
-* field - keys of an item 
+* field - keys of an item
 * value - values of an item
 * facet - a solr document can have one or more facets, which group it in aggregated searches
 * filter - criteria by which items are included in the solr document
@@ -128,7 +128,7 @@ Note that the **facet** config is used both at initialisation, where it turns on
 
 ### index_as
 
-Changes the field name which this field's value is given in the Solr index. For example, 
+Changes the field name which this field's value is given in the Solr index. For example,
 
     "author": {
         "index_as": "lead"
@@ -213,7 +213,7 @@ If the "multi" flag is set, the results of resolution will be serialised separat
 
 **Note**: the following section describes the **via** option, which is experimental and only available on the feature-subgraph.
 
-**resolve** can traverse more than one relation in the graph using the **via** option. The following example is three items from the @graph of an RO-Crate which models historical criminal convictions. A Person is linked to one or more Sentences, and each Sentence has a location, which is a Place (the court at which they were convicted). 
+**resolve** can traverse more than one relation in the graph using the **via** option. The following example is three items from the @graph of an RO-Crate which models historical criminal convictions. A Person is linked to one or more Sentences, and each Sentence has a location, which is a Place (the court at which they were convicted).
 
     {
       "@id": "#person_VICFP_18551934_11_197",
@@ -357,7 +357,6 @@ A match field can also match against plaintext values:
 In the example, every 'about' item which is just a string (rather than an object) will be compared against the regexp `/.*/` - in other words, every string will be indexed as "Affiliation".
 
 Note that at present, there would be an issue if you wanted to match against an item field called "re", as the config parser will treat "re" as a regular expression.
-
 
 
 
