@@ -22,7 +22,10 @@ const fieldsPath = path.join(process.cwd(), '/test-data/', 'fields.json');
 
 
 before(async () => {
-  await fs.ensureDir(rocrateDirPath);
+  await /* TODO: JSFIX could not patch the breaking change:
+  Creating a directory with fs-extra no longer returns the path 
+  Suggested fix: The returned promise no longer includes the path of the new directory */
+  fs.ensureDir(rocrateDirPath);
   sourcedata = await randomize.loadsourcedata('./vocabularies');
 });
 
