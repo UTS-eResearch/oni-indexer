@@ -34,7 +34,10 @@ const GEOPATH = path.join(CWD, 'test-data/geo');
 const CONVICTIONS = path.join(CWD, 'test-data', 'criminals');
 
 before(async () => {
-  await fs.ensureDir(GEOPATH);	
+  await /* TODO: JSFIX could not patch the breaking change:
+  Creating a directory with fs-extra no longer returns the path 
+  Suggested fix: The returned promise no longer includes the path of the new directory */
+  fs.ensureDir(GEOPATH);	
   sourcedata = await randomize.loadsourcedata(VOCABPATH);
 });
 
